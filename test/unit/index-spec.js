@@ -1,17 +1,20 @@
-/* jshint node:true, expr:true */
 'use strict';
 
 const _chai = require('chai');
 _chai.use(require('sinon-chai'));
 _chai.use(require('chai-as-promised'));
 const expect = _chai.expect;
+const _rewire = require('rewire');
 
-const _index = require('../../src/index');
+let _index = null;
+const _asyncHelper = require('../../src/async-helper');
 
 describe('index', function() {
+    beforeEach(() => {
+        _index = _rewire('../../src/index');
+    });
+
     it('should implement methods required by the interface', function() {
-        expect(_index)
-            .to.have.property('todo')
-            .and.to.be.a('function');
+        expect(_index.asyncHelper).to.equal(_asyncHelper);
     });
 });

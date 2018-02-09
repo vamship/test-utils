@@ -1,14 +1,10 @@
-/* jshint node:true, expr:true */
 'use strict';
 
 module.exports = {
     /**
-     * Empty function, to be removed and replaced with something more
-     * meaningful.
+     * Helper module that provides utilities for testing of async methods.
      *
-     * @param {String} firstArg Dummy first argument
-     * @param {String} second Dummy second argument
-     * @return {String} Dummy return parameter
+     * @return {Object} Reference to the async helper module.
      */
-    todo: function(first, second) {}
+    asyncHelper: require('./async-helper')
 };
