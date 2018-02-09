@@ -72,7 +72,7 @@ describe('asyncHelper', function() {
             });
 
             it('should not resolve the promise until the delay expires', (done) => {
-                const delay = 500;
+                const delay = 100;
                 const checkCount = 5;
                 const wait = _initWaiter(delay);
 
