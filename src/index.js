@@ -19,5 +19,12 @@ module.exports = {
      *
      * @type {module:consoleHelper}
      */
-    consoleHelper: require('./console-helper')
+    consoleHelper: require('./console-helper'),
+
+    /**
+     * Helper module that generates random values to be used during testing.
+     *
+     * @type {module:valueGenerator}
+     */
+    valueGenerator: require('./value-generator')
 };
