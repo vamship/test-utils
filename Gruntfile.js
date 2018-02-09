@@ -48,9 +48,9 @@ const HELP_TEXT =
 '                                                                                \n' +
 '   all               : Performs standard pre-checkin activities. Runs           \n' +
 '                       formatting on all source files, validates the files      \n' +
-'                       (linting), executes tests against files, and regenerates \n' +
-'                       documentation. All temporary files/folders are cleaned   \n' +
-'                       up on task completion.                                   \n' +
+'                       (linting), and executes tests against source code.       \n' +
+'                       All temporary files/folders are cleaned up on task       \n' +
+'                       completion.                                              \n' +
 '                                                                                \n' +
 ' Supported Options:                                                             \n' +
 '   --test-suite      : Can be used to specify a unit test suite to execute when \n' +
@@ -286,5 +286,5 @@ module.exports = function(grunt) {
      *  - Test source code
      *  - Cleaning up temporary files
      */
-    grunt.registerTask('all', ['format', 'lint', 'test:unit', 'docs', 'clean']);
+    grunt.registerTask('all', ['format', 'lint', 'test:unit', 'clean']);
 };
