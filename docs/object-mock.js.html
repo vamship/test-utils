@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>console-helper.js - Documentation</title>
+    <title>object-mock.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">console-helper.js</h1>
+    <h1 class="page-title">object-mock.js</h1>
     
 
     
@@ -39,51 +39,19 @@
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
 
-const _methodNames = ['log', 'info', 'warn', 'error'];
-const _consoleMethods = {};
-let _isMuted = false;
-
 /**
- * Exposes utility methods to help manipulate console statements during
- * testing. This will allow test results to appear clean, without being
- * interrupted by outputs from console.log statements.
- *
- * @module consoleHelper
+ * A mocker object that can be used to selectively mock methods on an existing
+ * object, or to create a new object with mock methods for testing.
  */
-module.exports = {
+class ObjectMock {
     /**
-     * Replaces all console messages with dummy implementations, effectively
-     * muting all console related output. This action can be undone by invoking
-     * [unmute()]{@link module:consoleHelper.unmute}
+     * &lt;params>
      */
-    mute: function() {
-        if (_isMuted) {
-            return;
-        }
-        _methodNames.forEach((method) => {
-            // eslint-disable-next-line no-console
-            _consoleMethods[method] = console[method];
-
-            // eslint-disable-next-line no-console
-            console[method] = () => {};
-        });
-        _isMuted = true;
-    },
-
-    /**
-     * Unmutes all console output methods by restoring previously saved
-     * references to the methods.
-     */
-    unmute: function() {
-        if (!_isMuted) {
-            return;
-        }
-        for (let method in _consoleMethods) {
-            // eslint-disable-next-line no-console
-            console[method] = _consoleMethods[method];
-        }
+    constructor() {
     }
-};
+}
+
+module.exports = Stub;
 </code></pre>
         </article>
     </section>

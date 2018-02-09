@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>consoleHelper - Documentation</title>
+    <title>ObjectMock - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">consoleHelper</h1>
+    <h1 class="page-title">ObjectMock</h1>
     
 
     
@@ -39,8 +39,12 @@
 
 <header>
     
+        <h2>
+        ObjectMock
+        </h2>
         
-            
+            <div class="class-description">A mocker object that can be used to selectively mock methods on an existing
+object, or to create a new object with mock methods for testing.</div>
         
     
 </header>
@@ -49,13 +53,14 @@
     <div class="container-overview">
     
         
-            <div class="description">Exposes utility methods to help manipulate console statements during
-testing. This will allow test results to appear clean, without being
-interrupted by outputs from console.log statements.</div>
-        
 
-        
-            
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="ObjectMock"><span class="type-signature"></span>new ObjectMock<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
 
 
 
@@ -65,7 +70,7 @@ interrupted by outputs from console.log statements.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="console-helper.js.html">console-helper.js</a>, <a href="console-helper.js.html#line7">line 7</a>
+        <a href="object-mock.js.html">object-mock.js</a>, <a href="object-mock.js.html#line7">line 7</a>
     </li></ul></dd>
     
 
@@ -104,6 +109,9 @@ interrupted by outputs from console.log statements.</div>
 
 
 
+<div class="description">
+    <params>
+</div>
 
 
 
@@ -128,7 +136,7 @@ interrupted by outputs from console.log statements.</div>
 
 
 
-        
+
     
     </div>
 
@@ -144,181 +152,6 @@ interrupted by outputs from console.log statements.</div>
 
     
 
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id=".mute"><span class="type-signature">(static) </span>mute<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="console-helper.js.html">console-helper.js</a>, <a href="console-helper.js.html#line20">line 20</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Replaces all console messages with dummy implementations, effectively
-muting all console related output. This action can be undone by invoking
-<a href="module-consoleHelper.html#.unmute">unmute()</a>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".unmute"><span class="type-signature">(static) </span>unmute<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="console-helper.js.html">console-helper.js</a>, <a href="console-helper.js.html#line38">line 38</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Unmutes all console output methods by restoring previously saved
-references to the methods.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
     
 
     
