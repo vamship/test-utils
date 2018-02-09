@@ -12,9 +12,7 @@ const HELP_TEXT =
 ' includes tasks for linting, building and testing.                              \n' +
 '                                                                                \n' +
 ' Supported Tasks:                                                               \n' +
-'   [default]         : Performs standard pre-checkin activities. Runs           \n' +
-'                       formatting on all source files, validates the files      \n' +
-'                       (linting), and then executes tests against the files.    \n' +
+'   [default]         : Shows help documentation.                                \n' +
 '                                                                                \n' +
 '   help              : Shows this help message.                                 \n' +
 '                                                                                \n' +
@@ -43,6 +41,10 @@ const HELP_TEXT =
 '                       this task only increments the patch version number. Major\n' +
 '                       and minor version numbers can be incremented by          \n' +
 '                       specifying the "major" or "minor" subtask.               \n' +
+'                                                                                \n' +
+'   all               : Performs standard pre-checkin activities. Runs           \n' +
+'                       formatting on all source files, validates the files      \n' +
+'                       (linting), and then executes tests against the files.    \n' +
 '                                                                                \n' +
 ' Supported Options:                                                             \n' +
 '   --test-suite      : Can be used to specify a unit test suite to execute when \n' +
@@ -256,5 +258,5 @@ module.exports = function(grunt) {
      *  - Test source code
      *  - Cleaning up temporary files
      */
-    grunt.registerTask('checkin', ['format', 'lint', 'test:unit', 'clean']);
+    grunt.registerTask('all', ['format', 'lint', 'test:unit', 'clean']);
 };
