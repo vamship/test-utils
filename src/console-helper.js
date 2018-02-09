@@ -8,12 +8,14 @@ let _isMuted = false;
  * Exposes utility methods to help manipulate console statements during
  * testing. This will allow test results to appear clean, without being
  * interrupted by outputs from console.log statements.
+ *
+ * @module consoleHelper
  */
-const consoleHelper = {
+module.exports = {
     /**
      * Replaces all console messages with dummy implementations, effectively
      * muting all console related output. This action can be undone by invoking
-     * unmute();
+     * [unmute()]{@link module:consoleHelper.unmute}
      */
     mute: function() {
         if (_isMuted) {
@@ -43,5 +45,3 @@ const consoleHelper = {
         }
     }
 };
-
-module.exports = consoleHelper;

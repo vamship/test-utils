@@ -4,8 +4,9 @@ const Promise = require('bluebird').Promise;
 
 /**
  * Exposes utility methods to help execution of async tests.
+ * @module asyncHelper
  */
-const asyncHelper = {
+module.exports = {
     /**
      * Returns a promise that will be resolved after a specific delay. Useful
      * when relying on timing to ensure that tests are evaluated correctly, or
@@ -14,7 +15,7 @@ const asyncHelper = {
      * @param {Number} delay The delay (in milliseconds) after which the
      *        promise will be resolved.
      *
-     * @return {Object} A promise that will be resolved once the delay
+     * @return {Promise} A promise that will be resolved once the delay
      *         expires.
      */
     wait: function(delay) {
@@ -30,5 +31,3 @@ const asyncHelper = {
         };
     }
 };
-
-module.exports = asyncHelper;
