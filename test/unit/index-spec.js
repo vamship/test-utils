@@ -9,7 +9,7 @@ const _rewire = require('rewire');
 let _index = null;
 const _asyncHelper = require('../../src/async-helper');
 const _consoleHelper = require('../../src/console-helper');
-const _valueGenerator = require('../../src/value-generator');
+const _testValues = require('../../src/test-values');
 
 describe('index', function() {
     beforeEach(() => {
@@ -19,6 +19,6 @@ describe('index', function() {
     it('should implement methods required by the interface', function() {
         expect(_index.asyncHelper).to.equal(_asyncHelper);
         expect(_index.consoleHelper).to.equal(_consoleHelper);
-        expect(_index.valueGenerator).to.equal(_valueGenerator);
+        expect(_index.testValues).to.equal(_testValues);
     });
 });

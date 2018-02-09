@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>consoleHelper - Documentation</title>
+    <title>_index - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">consoleHelper</h1>
+    <h1 class="page-title">_index</h1>
     
 
     
@@ -49,9 +49,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Exposes utility methods to help manipulate console statements during
-testing. This will allow test results to appear clean, without being
-interrupted by outputs from console.log statements.</div>
+            <div class="description">Utility library that provides useful functionality for writing tests.</div>
         
 
         
@@ -65,7 +63,7 @@ interrupted by outputs from console.log statements.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="console-helper.js.html">console-helper.js</a>, <a href="console-helper.js.html#line7">line 7</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -143,18 +141,12 @@ interrupted by outputs from console.log statements.</div>
     
 
     
-
-    
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title">Members</h3>
 
         
             
+<h4 class="name" id=".asyncHelper"><span class="type-signature">(static) </span>asyncHelper<span class="type-signature"> :<a href="module-asyncHelper.html">module:asyncHelper</a></span></h4>
 
-    
-
-    <h4 class="name" id=".mute"><span class="type-signature">(static) </span>mute<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
 
 
 
@@ -164,7 +156,7 @@ interrupted by outputs from console.log statements.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="console-helper.js.html">console-helper.js</a>, <a href="console-helper.js.html#line20">line 20</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line14">line 14</a>
     </li></ul></dd>
     
 
@@ -204,29 +196,20 @@ interrupted by outputs from console.log statements.</div>
 
 
 <div class="description">
-    Replaces all console messages with dummy implementations, effectively
-muting all console related output. This action can be undone by invoking
-<a href="module-consoleHelper.html#.unmute">unmute()</a>
+    Helper module that provides utilities for testing of async methods.
 </div>
 
 
 
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="module-asyncHelper.html">module:asyncHelper</a></span>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        </li>
+    </ul>
 
 
 
@@ -235,12 +218,8 @@ muting all console related output. This action can be undone by invoking
 
         
             
+<h4 class="name" id=".consoleHelper"><span class="type-signature">(static) </span>consoleHelper<span class="type-signature"> :<a href="module-consoleHelper.html">module:consoleHelper</a></span></h4>
 
-    
-
-    <h4 class="name" id=".unmute"><span class="type-signature">(static) </span>unmute<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
 
 
 
@@ -250,7 +229,7 @@ muting all console related output. This action can be undone by invoking
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="console-helper.js.html">console-helper.js</a>, <a href="console-helper.js.html#line38">line 38</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -290,28 +269,21 @@ muting all console related output. This action can be undone by invoking
 
 
 <div class="description">
-    Unmutes all console output methods by restoring previously saved
-references to the methods.
+    Helper module that provides utilities for manipulating the behavior of
+console statements.
 </div>
 
 
 
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="module-consoleHelper.html">module:consoleHelper</a></span>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        </li>
+    </ul>
 
 
 
@@ -319,6 +291,81 @@ references to the methods.
 
 
         
+            
+<h4 class="name" id=".testValues"><span class="type-signature">(static) </span>testValues<span class="type-signature"> :<a href="module-testValues.html">module:testValues</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Helper module that generates random values to be used during testing.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="module-testValues.html">module:testValues</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+    
+
     
 
     

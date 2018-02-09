@@ -3,7 +3,7 @@
 /**
  * Utility library that provides useful functionality for writing tests.
  *
- * @module testUtils
+ * @module _index
  */
 module.exports = {
     /**
@@ -24,7 +24,7 @@ module.exports = {
     /**
      * Helper module that generates random values to be used during testing.
      *
-     * @type {module:valueGenerator}
+     * @type {module:testValues}
      */
-    valueGenerator: require('./value-generator')
+    testValues: require('./test-values')
 };
