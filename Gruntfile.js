@@ -20,11 +20,13 @@ const HELP_TEXT =
 '                       or directories.                                          \n' +
 '                                                                                \n' +
 '   monitor:[<opt1>]: : Monitors files for changes, and triggers actions based   \n' +
-'           [<opt2>]    on specified options. Supported options are as follows:  \n' +
-'                        [lint]    : Performs linting with default options       \n' +
+'           [<opt2>]:   on specified options. Supported options are as follows:  \n' +
+'           [<opt3>]     [lint]    : Performs linting with default options       \n' +
 '                                    against all source files.                   \n' +
 '                        [unit]    : Executes unit tests against all source      \n' +
 '                                    files.                                      \n' +
+'                        [docs]    : Regenerates project documentation based     \n' +
+'                                    on jsdocs.                                  \n' +
 '                                                                                \n' +
 '                       Multiple options may be specified, and the triggers will \n' +
 '                       be executed in the order specified. If a specific task   \n' +
@@ -34,6 +36,8 @@ const HELP_TEXT =
 '   lint              : Performs linting of all source and test files.           \n' +
 '                                                                                \n' +
 '   format            : Formats source and test files.                           \n' +
+'                                                                                \n' +
+'   docs              : Generates project documentation.                         \n' +
 '                                                                                \n' +
 '   test:[unit]       : Executes unit tests against source files.                \n' +
 '                                                                                \n' +
@@ -77,12 +81,16 @@ module.exports = function(grunt) {
         test: {
             unit: null
         },
+        docs: null,
+        node_modules: null,
         coverage: null
     });
 
     // Shorthand references to key folders.
     const SRC = PROJECT.getChild('src');
     const TEST = PROJECT.getChild('test');
+    const DOCS = PROJECT.getChild('docs');
+    const NODE_MODULES = PROJECT.getChild('node_modules');
     const COVERAGE = PROJECT.getChild('coverage');
 
     /* ------------------------------------------------------------------------
@@ -134,6 +142,21 @@ module.exports = function(grunt) {
                 'Gruntfile.js',
                 SRC.getAllFilesPattern('js'),
                 TEST.getAllFilesPattern('js')
+            ]
+        },
+
+        /**
+         * Configuration for grunt-jsdoc, which can be used to:
+         *  - Generate code documentation.
+         */
+        jsdoc: {
+            options: {
+                destination: DOCS.path,
+                template : NODE_MODULES.getFilePath('docdash'),
+            },
+            src: [
+                'README.md',
+                SRC.getAllFilesPattern('js')
             ]
         },
 
@@ -203,7 +226,8 @@ module.exports = function(grunt) {
         (...args) => {
             const validTasks = {
                 lint: 'lint',
-                unit: 'test:unit'
+                unit: 'test:unit',
+                docs: 'docs'
             };
 
             // Process the arguments (specified as subtasks).
@@ -239,9 +263,14 @@ module.exports = function(grunt) {
     grunt.registerTask('format', ['prettier']);
 
     /**
+     * Documentation task - generates documentation for the project.
+     */
+    grunt.registerTask('docs', ['jsdoc']);
+
+    /**
      * Shows help information on how to use the Grunt tasks.
      */
-    grunt.registerTask('help', 'Displays grunt help documentation', function() {
+    grunt.registerTask('help', 'Displays grunt help documentation', () => {
         grunt.log.writeln(HELP_TEXT);
     });
 
