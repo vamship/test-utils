@@ -201,7 +201,7 @@ module.exports = function(grunt) {
                 const path = TEST.getChild(testType).getFilePath(testSuite);
                 grunt.log.writeln(`Running test suite: [${testSuite}]`);
                 grunt.log.writeln(`Tests will be limited to: [${path}]`);
-                grunt.config.set(task, path);
+                grunt.config.set(`mocha_istanbul.${testType}`, path);
             }
         }
 
