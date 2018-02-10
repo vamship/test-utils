@@ -88,7 +88,7 @@ describe('Mock', function() {
             const response = 'bar';
             const spy = _sinon.stub().returns(response);
             const instance = {};
-            const args = [ 'abc', 123, true ];
+            const args = ['abc', 123, true];
             new Mock(instance, 'foo', spy);
 
             expect(spy).to.not.have.been.called;
@@ -119,7 +119,6 @@ describe('Mock', function() {
         });
     });
 
-
     describe('ret', () => {
         it('should return an Error object if inspected before the mock has been invoked', () => {
             const mock = new Mock({}, 'foo');
@@ -130,7 +129,7 @@ describe('Mock', function() {
 
         it('should return the actual response if inspected after mock has been invoked', () => {
             const response = 'bar';
-            const inputs = [ response, _sinon.stub().returns(response)];
+            const inputs = [response, _sinon.stub().returns(response)];
 
             inputs.forEach((returnValue) => {
                 const instance = {};

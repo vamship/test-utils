@@ -8,8 +8,7 @@ class ObjectMock {
     /**
      * <params>
      */
-    constructor() {
-    }
+    constructor() {}
 }
 
 module.exports = Stub;

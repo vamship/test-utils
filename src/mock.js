@@ -45,7 +45,7 @@ class Mock {
         this._stub = _sinon.stub(this._instance, this._methodName);
         this._stub.callsFake((...args) => {
             let ret = returnValue;
-            if(typeof returnValue === 'function') {
+            if (typeof returnValue === 'function') {
                 ret = returnValue(...args);
             }
             this._responses.push(ret);
