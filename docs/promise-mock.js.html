@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>console-helper.js - Documentation</title>
+    <title>promise-mock.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">console-helper.js</h1>
+    <h1 class="page-title">promise-mock.js</h1>
     
 
     
@@ -39,51 +39,80 @@
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
 
-const _methodNames = ['log', 'info', 'warn', 'error'];
-const _consoleMethods = {};
-let _isMuted = false;
+const Mock = require('./mock');
+const Promise = require('bluebird').Promise;
 
 /**
- * Exposes utility methods to help manipulate console statements during
- * testing. This will allow test results to appear clean, without being
- * interrupted by outputs from console.log statements.
+ * Returns a wrapper that contains a reference to a promise object, and the
+ * reject and resolve methods of the promise object. This can be used to
+ * reject or resolve the promise from outside the mock.
  *
- * @module consoleHelper
+ * @private
  */
-module.exports = {
-    /**
-     * Replaces all console messages with dummy implementations, effectively
-     * muting all console related output. This action can be undone by invoking
-     * [unmute()]{@link module:consoleHelper.unmute}
-     */
-    mute: function() {
-        if (_isMuted) {
-            return;
-        }
-        _methodNames.forEach((method) => {
-            // eslint-disable-next-line no-console
-            _consoleMethods[method] = console[method];
+function _initPromise() {
+    const wrapper = {};
+    wrapper.promise = new Promise((resolve, reject) => {
+        wrapper.resolve = resolve;
+        wrapper.reject = reject;
+    });
+    return wrapper;
+}
 
-            // eslint-disable-next-line no-console
-            console[method] = () => {};
+/**
+ * Class that creates a mock method on an object, but is specifically designed
+ * for methods that return a promise. Extends the [Mock]{@link Mock} class and
+ * provides additional promise specific functionality.
+ *
+ * &lt;p>
+ * This class is not meant to be instantiated directly, but is designed for
+ * use within the [ObjectMock]{@link ObjectMock} class.
+ * &lt;/p>
+ *
+ * @extends {Mock}
+ */
+class PromiseMock extends Mock {
+    /**
+     * @param {Object} instance The object instance on which the method will be
+     *        mocked.
+     * @param {String} methodName The name of the method on the object that
+     *        needs to be mocked. If the specified method does not exist, a
+     *        placeholder method will be injected into the instance which will
+     *        then be mocked.
+     */
+    constructor(instance, methodName) {
+        const firstResponse = _initPromise();
+        super(instance, methodName, () => {
+            console.log(this.promise);
+            return firstResponse;
         });
-        _isMuted = true;
-    },
+
+        this._firstResponse = firstResponse;
+    }
+
 
     /**
-     * Unmutes all console output methods by restoring previously saved
-     * references to the methods.
+     * Returns a reference to the promise associated with the upcoming
+     * invocation of the mock. Promises for all completed invocations of the 
+     * the first
+     * one) can be obtained by inspecting the [responses]{@link Mock#responses}
+     * method.
+     *
+     * &lt;p>
+     * The value of this property is that actions can be be assigned to the
+     * &lt;code>then(...)&lt;/code> callback of the mock even before the mock has
+     * been invoked. The use of the [responses]{@link Mock#responses} array
+     * is retroactive in nature, and cannot be accessed until after the first
+     * invocation.
+     * &lt;/p>
+     *
+     * @type {Promise}
      */
-    unmute: function() {
-        if (!_isMuted) {
-            return;
-        }
-        for (let method in _consoleMethods) {
-            // eslint-disable-next-line no-console
-            console[method] = _consoleMethods[method];
-        }
+    get promise() {
+        return this._firstResponse.promise;
     }
-};
+}
+
+module.exports = PromiseMock;
 </code></pre>
         </article>
     </section>

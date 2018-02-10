@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Mock - Documentation</title>
+    <title>PromiseMock - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Mock</h1>
+    <h1 class="page-title">PromiseMock</h1>
     
 
     
@@ -40,11 +40,12 @@
 <header>
     
         <h2>
-        Mock
+        PromiseMock
         </h2>
         
-            <div class="class-description">Class that creates a mock method on an object, and provides useful methods
-to track the response returned on each call.
+            <div class="class-description">Class that creates a mock method on an object, but is specifically designed
+for methods that return a promise. Extends the <a href="Mock.html">Mock</a> class and
+provides additional promise specific functionality.
 
 <p>
 This class is not meant to be instantiated directly, but is designed for
@@ -63,7 +64,7 @@ use within the <a href="ObjectMock.html">ObjectMock</a> class.
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="Mock"><span class="type-signature"></span>new Mock<span class="signature">(instance, methodName, returnValue)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="PromiseMock"><span class="type-signature"></span>new PromiseMock<span class="signature">(instance, methodName)</span><span class="type-signature"></span></h4>
 
     
 
@@ -75,7 +76,7 @@ use within the <a href="ObjectMock.html">ObjectMock</a> class.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="mock.js.html">mock.js</a>, <a href="mock.js.html#line14">line 14</a>
+        <a href="promise-mock.js.html">promise-mock.js</a>, <a href="promise-mock.js.html#line34">line 34</a>
     </li></ul></dd>
     
 
@@ -196,35 +197,6 @@ use within the <a href="ObjectMock.html">ObjectMock</a> class.
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>returnValue</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-|
-
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">A return value that will be returned by
-       the mock method. If a function is passed in, the function will be
-       invoked, and ther return value of the function will be returned as
-       the response.</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -245,6 +217,17 @@ use within the <a href="ObjectMock.html">ObjectMock</a> class.
 
     
     </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="Mock.html">Mock</a></li>
+    </ul>
+
 
     
 
@@ -280,6 +263,11 @@ use within the <a href="ObjectMock.html">ObjectMock</a> class.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Mock.html#instance">Mock#instance</a>
+    </li></ul></dd>
     
 
     
@@ -355,6 +343,11 @@ it.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Mock.html#methodName">Mock#methodName</a>
+    </li></ul></dd>
+    
 
     
 
@@ -409,6 +402,91 @@ been mocked.
 
         
             
+<h4 class="name" id="promise"><span class="type-signature"></span>promise<span class="type-signature"> :Promise</span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="promise-mock.js.html">promise-mock.js</a>, <a href="promise-mock.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Returns a reference to the promise associated with the upcoming
+invocation of the mock. Promises for all completed invocations of the 
+the first
+one) can be obtained by inspecting the <a href="Mock.html#responses">responses</a>
+method.
+
+<p>
+The value of this property is that actions can be be assigned to the
+<code>then(...)</code> callback of the mock even before the mock has
+been invoked. The use of the <a href="Mock.html#responses">responses</a> array
+is retroactive in nature, and cannot be accessed until after the first
+invocation.
+</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Promise</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="responses"><span class="type-signature"></span>responses<span class="type-signature"> :Array</span></h4>
 
 
@@ -428,6 +506,11 @@ been mocked.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Mock.html#responses">Mock#responses</a>
+    </li></ul></dd>
     
 
     
@@ -502,6 +585,11 @@ Responses may be promises depending on how the mock has been configured.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Mock.html#ret">Mock#ret</a>
+    </li></ul></dd>
     
 
     
@@ -579,6 +667,11 @@ been invoked yet, an Error object will be returned.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Mock.html#stub">Mock#stub</a>
+    </li></ul></dd>
     
 
     
@@ -664,6 +757,11 @@ the mocked method.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Mock.html#reset">Mock#reset</a>
+    </li></ul></dd>
     
 
     
