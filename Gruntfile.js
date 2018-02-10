@@ -104,7 +104,8 @@ module.exports = function(grunt) {
          *  - Remove temporary files and folders.
          */
         clean: {
-            coverage: [COVERAGE.path]
+            coverage: [COVERAGE.path],
+            ctags: [PROJECT.getFilePath('tags')]
         },
 
         /**
