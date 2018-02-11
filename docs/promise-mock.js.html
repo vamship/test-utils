@@ -22,7 +22,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mock.html">Mock</a><ul class='methods'><li data-type='method'><a href="Mock.html#reset">reset</a></li></ul></li><li><a href="ObjectMock.html">ObjectMock</a></li><li><a href="PromiseMock.html">PromiseMock</a><ul class='methods'><li data-type='method'><a href="PromiseMock.html#reset">reset</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-_index.html">_index</a></li><li><a href="module-asyncHelper.html">asyncHelper</a><ul class='methods'><li data-type='method'><a href="module-asyncHelper.html#.wait">wait</a></li></ul></li><li><a href="module-consoleHelper.html">consoleHelper</a><ul class='methods'><li data-type='method'><a href="module-consoleHelper.html#.mute">mute</a></li><li data-type='method'><a href="module-consoleHelper.html#.unmute">unmute</a></li></ul></li><li><a href="module-testValues.html">testValues</a><ul class='methods'><li data-type='method'><a href="module-testValues.html#.allButArray">allButArray</a></li><li data-type='method'><a href="module-testValues.html#.allButBoolean">allButBoolean</a></li><li data-type='method'><a href="module-testValues.html#.allButFunction">allButFunction</a></li><li data-type='method'><a href="module-testValues.html#.allButNull">allButNull</a></li><li data-type='method'><a href="module-testValues.html#.allButNumber">allButNumber</a></li><li data-type='method'><a href="module-testValues.html#.allButObject">allButObject</a></li><li data-type='method'><a href="module-testValues.html#.allButSelected">allButSelected</a></li><li data-type='method'><a href="module-testValues.html#.allButString">allButString</a></li><li data-type='method'><a href="module-testValues.html#.allButUndefined">allButUndefined</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mock.html">Mock</a><ul class='methods'><li data-type='method'><a href="Mock.html#reset">reset</a></li></ul></li><li><a href="ObjectMock.html">ObjectMock</a><ul class='methods'><li data-type='method'><a href="ObjectMock.html#addMock">addMock</a></li><li data-type='method'><a href="ObjectMock.html#addPromiseMock">addPromiseMock</a></li><li data-type='method'><a href="ObjectMock.html#restore">restore</a></li></ul></li><li><a href="PromiseMock.html">PromiseMock</a><ul class='methods'><li data-type='method'><a href="PromiseMock.html#promise">promise</a></li><li data-type='method'><a href="PromiseMock.html#reject">reject</a></li><li data-type='method'><a href="PromiseMock.html#reset">reset</a></li><li data-type='method'><a href="PromiseMock.html#resolve">resolve</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-_index.html">_index</a></li><li><a href="module-asyncHelper.html">asyncHelper</a><ul class='methods'><li data-type='method'><a href="module-asyncHelper.html#.wait">wait</a></li></ul></li><li><a href="module-consoleHelper.html">consoleHelper</a><ul class='methods'><li data-type='method'><a href="module-consoleHelper.html#.mute">mute</a></li><li data-type='method'><a href="module-consoleHelper.html#.unmute">unmute</a></li></ul></li><li><a href="module-testValues.html">testValues</a><ul class='methods'><li data-type='method'><a href="module-testValues.html#.allButArray">allButArray</a></li><li data-type='method'><a href="module-testValues.html#.allButBoolean">allButBoolean</a></li><li data-type='method'><a href="module-testValues.html#.allButFunction">allButFunction</a></li><li data-type='method'><a href="module-testValues.html#.allButNull">allButNull</a></li><li data-type='method'><a href="module-testValues.html#.allButNumber">allButNumber</a></li><li data-type='method'><a href="module-testValues.html#.allButObject">allButObject</a></li><li data-type='method'><a href="module-testValues.html#.allButSelected">allButSelected</a></li><li data-type='method'><a href="module-testValues.html#.allButString">allButString</a></li><li data-type='method'><a href="module-testValues.html#.allButUndefined">allButUndefined</a></li><li data-type='method'><a href="module-testValues.html#.getNumber">getNumber</a></li><li data-type='method'><a href="module-testValues.html#.getString">getString</a></li><li data-type='method'><a href="module-testValues.html#.getTimestamp">getTimestamp</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -41,22 +41,6 @@
 
 const Mock = require('./mock');
 const Promise = require('bluebird').Promise;
-
-/**
- * Returns a wrapper that contains a reference to a promise object, and the
- * reject and resolve methods of the promise object. This can be used to
- * reject or resolve the promise from outside the mock.
- *
- * @private
- */
-function _initPromise() {
-    const wrapper = {};
-    wrapper.promise = new Promise((resolve, reject) => {
-        wrapper.resolve = resolve;
-        wrapper.reject = reject;
-    });
-    return wrapper;
-}
 
 /**
  * Class that creates a mock method on an object, but is specifically designed
@@ -80,35 +64,128 @@ class PromiseMock extends Mock {
      *        then be mocked.
      */
     constructor(instance, methodName) {
-        const firstResponse = _initPromise();
+        let callIndex = 0;
         super(instance, methodName, () => {
-            console.log(this.promise);
-            return firstResponse;
+            const wrapper = this._getPromiseWrapper(callIndex);
+            callIndex++;
+            return wrapper.promise;
         });
 
-        this._firstResponse = firstResponse;
+        this._wrappers = [];
     }
 
+    /**
+     * Returns a wrapper that contains a reference to a promise object, and the
+     * reject and resolve methods of the promise object. This can be used to
+     * reject or resolve the promise from outside the mock.
+     *
+     * If a wrapper for a specific invocation has already been created, it will
+     * be returned, if not a new wrapper will be created for the specified
+     * index.
+     *
+     * @private
+     * @param {Number} callIndex The invocation index for which to get the
+     *        wrapper.
+     *
+     * @return {Object} A simple object with references to the promise, reject
+     *         and resolve methods.
+     */
+    _getPromiseWrapper(callIndex) {
+        let wrapper = this._wrappers[callIndex];
+        if (!wrapper) {
+            wrapper = {};
+            wrapper.promise = new Promise((resolve, reject) => {
+                wrapper.resolve = resolve;
+                wrapper.reject = reject;
+            });
+            this._wrappers[callIndex] = wrapper;
+        }
+        return wrapper;
+    }
 
     /**
-     * Returns a reference to the promise associated with the upcoming
-     * invocation of the mock. Promises for all completed invocations of the 
-     * the first
-     * one) can be obtained by inspecting the [responses]{@link Mock#responses}
-     * method.
+     * Returns the promise associated with a specific invocation of the mock,
+     * identified by the call index. This value could reference a future
+     * invocation (meaning that the specific invocation of the mock has not yet
+     * occurred).
+     *
+     * Promises for all completed invocations of the mock can be  obtained by
+     * inspecting the [responses]{@link Mock#responses} method.
      *
      * &lt;p>
-     * The value of this property is that actions can be be assigned to the
+     * The value of this method is that actions can be be assigned to the
      * &lt;code>then(...)&lt;/code> callback of the mock even before the mock has
      * been invoked. The use of the [responses]{@link Mock#responses} array
-     * is retroactive in nature, and cannot be accessed until after the first
-     * invocation.
+     * is retroactive in nature, and cannot be accessed until after the method
+     * has been invoked, which does not always work in asynchronous scenarios.
      * &lt;/p>
      *
-     * @type {Promise}
+     * @param {Number} [callIndex=0] The index of the invocation, with the
+     *        first invocation starting at index 0. Defaults to 0.
+     *
+     * @return {Promise} The promise associated with the specified call index.
      */
-    get promise() {
-        return this._firstResponse.promise;
+    promise(callIndex) {
+        if (typeof callIndex !== 'number' || callIndex &lt;= 0) {
+            callIndex = 0;
+        }
+        return this._getPromiseWrapper(callIndex).promise;
+    }
+
+    /**
+     * Rejects the promise associated with a specific invocation of the mock,
+     * identified by the call index. This value could reference a future
+     * invocation (meaning that the specific invocation of the mock has not yet
+     * occurred).
+     *
+     * &lt;p>
+     * The value of this method is that a rejection can be set on a specific
+     * invocation prior to it actually occurring.
+     * &lt;/p>
+     *
+     * @param {*} [error=undefined] The rejection response for the promise.
+     *        This is typically an error, but can be any value.
+     *
+     * @param {Number} [callIndex=0] The index of the invocation, with the
+     *        first invocation starting at index 0. Defaults to 0.
+     *
+     * @return {Promise} The promise associated with the specified call index.
+     */
+    reject(error, callIndex) {
+        if (typeof callIndex !== 'number' || callIndex &lt;= 0) {
+            callIndex = 0;
+        }
+        const wrapper = this._getPromiseWrapper(callIndex);
+        wrapper.reject(error);
+        return wrapper.promise;
+    }
+
+    /**
+     * Resolves the promise associated with a specific invocation of the mock,
+     * identified by the call index. This value could reference a future
+     * invocation (meaning that the specific invocation of the mock has not yet
+     * occurred).
+     *
+     * &lt;p>
+     * The value of this method is that a resolution can be set on a specific
+     * invocation prior to it actually occurring.
+     * &lt;/p>
+     *
+     * @param {*} [response=undefined] The resolution response for the promise.
+     *        This is typically an error, but can be any value.
+     *
+     * @param {Number} [callIndex=0] The index of the invocation, with the
+     *        first invocation starting at index 0. Defaults to 0.
+     *
+     * @return {Promise} The promise associated with the specified call index.
+     */
+    resolve(response, callIndex) {
+        if (typeof callIndex !== 'number' || callIndex &lt;= 0) {
+            callIndex = 0;
+        }
+        const wrapper = this._getPromiseWrapper(callIndex);
+        wrapper.resolve(response);
+        return wrapper.promise;
     }
 }
 
@@ -125,7 +202,7 @@ module.exports = PromiseMock;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Feb 09 2018 15:53:15 GMT-0500 (EST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Feb 11 2018 14:18:00 GMT-0500 (EST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
