@@ -164,7 +164,7 @@ module.exports = {
      * @return {String} The generated string.
      */
     getString: function(prefix) {
-        if(typeof prefix !== 'string' || prefix.length <= 0) {
+        if (typeof prefix !== 'string' || prefix.length <= 0) {
             prefix = '';
         } else {
             prefix = `${prefix}_`;
@@ -188,7 +188,7 @@ module.exports = {
         if (typeof start !== 'number' || start <= 0) {
             start = Date.now();
         }
-        if(typeof range !== 'number') {
+        if (typeof range !== 'number') {
             range = 10000;
         }
         return start + Math.floor(Math.random() * range);
@@ -208,7 +208,7 @@ module.exports = {
         if (typeof start !== 'number') {
             start = 0;
         }
-        if(typeof range !== 'number') {
+        if (typeof range !== 'number') {
             range = 100;
         }
         return start + Math.floor(Math.random() * range);

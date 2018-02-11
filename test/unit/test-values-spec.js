@@ -391,7 +391,7 @@ describe('testValues', function() {
 
         it('should default the range to 10000 if a valid number is not provided', () => {
             const inputs = [undefined, null, 'foo', true, {}, [], () => {}];
-            const defaultRange = 10000;
+            const defRange = 10000;
 
             inputs.forEach((range) => {
                 const startTime = Date.now();
@@ -399,9 +399,9 @@ describe('testValues', function() {
                 // NOTE: This is not a proper test. Since range is a randomly
                 // generated value, it is hard to deterministically test its
                 // value
-                for(let index = 0; index<1000; index++) {
+                for (let index = 0; index < 1000; index++) {
                     const ret = _testValues.getTimestamp(range, startTime);
-                    expect(ret).to.be.within(startTime, startTime + defaultRange);
+                    expect(ret).to.be.within(startTime, startTime + defRange);
                 }
             });
         });
@@ -440,7 +440,7 @@ describe('testValues', function() {
 
         it('should default the range to 10000 if a valid number is not provided', () => {
             const inputs = [undefined, null, 'foo', true, {}, [], () => {}];
-            const defaultRange = 100;
+            const defRange = 100;
 
             inputs.forEach((range) => {
                 const start = Date.now();
@@ -448,9 +448,9 @@ describe('testValues', function() {
                 // NOTE: This is not a proper test. Since range is a randomly
                 // generated value, it is hard to deterministically test its
                 // value
-                for(let index = 0; index<1000; index++) {
+                for (let index = 0; index < 1000; index++) {
                     const ret = _testValues.getNumber(range, start);
-                    expect(ret).to.be.within(start, start+ defaultRange);
+                    expect(ret).to.be.within(start, start + defRange);
                 }
             });
         });
