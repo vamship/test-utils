@@ -1,5 +1,15 @@
 'use strict';
 
+const _shortId = require('shortid');
+
+/**
+ * Helper method that generates an array of test values, excluding values
+ * of specific types as requested.
+ *
+ * @private
+ * @param {...String} omit A list of parameters to omit
+ * @return {Array} An array of test values
+ */
 function _getTestValues(...omit) {
     const inputs = [undefined, null, 123, 'abc', true, {}, [], () => {}];
     return inputs.filter((testValue) => {
@@ -142,5 +152,65 @@ module.exports = {
      */
     allButBoolean: function(...extras) {
         return _getTestValues('boolean').concat(extras);
+    },
+
+    /**
+     * Generates and returns a new random string, prefixed with the specified
+     * value.
+     *
+     * @param {String} [prefix=''] A constant prefix for the generated value.
+     *        Useful when debugging tests.
+     *
+     * @return {String} The generated string.
+     */
+    getString: function(prefix) {
+        if(typeof prefix !== 'string' || prefix.length <= 0) {
+            prefix = '';
+        } else {
+            prefix = `${prefix}_`;
+        }
+        return `${prefix}${_shortId.generate()}`;
+    },
+
+    /**
+     * Generates and returns a timestamp value based on the current timestamp,
+     * shifted up or down by a random value within the specified range.
+     *
+     * @param {Number} [range=10000] The range (in milliseconds) to use when
+     *        generating random shifts. Positive values shift up, negative
+     *        values shift down.
+     * @param {Number} [start=<current time>] An optional start timestamp,
+     *        defaults to the current time.
+     *
+     * @return {Number} A timestamp value used for testing.
+     */
+    getTimestamp: function(range, start) {
+        if (typeof start !== 'number' || start <= 0) {
+            start = Date.now();
+        }
+        if(typeof range !== 'number') {
+            range = 10000;
+        }
+        return start + Math.floor(Math.random() * range);
+    },
+
+    /**
+     * Generates and returns a random integer by using the start value, shifted
+     * up or down by a random value within the specified range.
+     *
+     * @param {Number} [range=100] The range from which to choose the number.
+     *        Positive value shift up, negative values shift down.
+     * @param {Number} [start=0] An optional start point, defaults to 0.
+     *
+     * @return {Number} A random number generated within the range.
+     */
+    getNumber: function(range, start) {
+        if (typeof start !== 'number') {
+            start = 0;
+        }
+        if(typeof range !== 'number') {
+            range = 100;
+        }
+        return start + Math.floor(Math.random() * range);
     }
 };

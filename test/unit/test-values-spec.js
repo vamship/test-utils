@@ -55,6 +55,10 @@ describe('testValues', function() {
         expect(_testValues.allButArray).to.be.a('function');
         expect(_testValues.allButFunction).to.be.a('function');
         expect(_testValues.allButBoolean).to.be.a('function');
+
+        expect(_testValues.getString).to.be.a('function');
+        expect(_testValues.getNumber).to.be.a('function');
+        expect(_testValues.getTimestamp).to.be.a('function');
     });
 
     describe('allButSelected()', () => {
@@ -302,6 +306,153 @@ describe('testValues', function() {
             expectedValues.primitives.splice(4, 1);
             expectedValues.extra = extras;
             _checkResults(values, expectedValues);
+        });
+    });
+
+    describe('getString()', () => {
+        function _split(str) {
+            const tokens = str.split('_');
+            const result = {
+                tokens: tokens.concat()
+            };
+
+            result.prefix = tokens[0];
+            tokens.shift();
+            result.suffix = tokens.join('');
+
+            return result;
+        }
+        it('should return string with the appropriate prefix', () => {
+            const expectedPrefix = 'foo';
+            const ret = _testValues.getString(expectedPrefix);
+
+            expect(ret).to.be.a('string').and.not.to.be.empty;
+            const { tokens, prefix, suffix } = _split(ret);
+
+            expect(tokens.length).to.be.at.least(2);
+            expect(prefix).to.equal(expectedPrefix);
+            expect(suffix).to.be.a('string').and.not.to.be.empty;
+        });
+
+        it('should generate different suffixes for different invocations', () => {
+            const expectedPrefix = 'foo';
+            const ret1 = _testValues.getString(expectedPrefix);
+            const ret2 = _testValues.getString(expectedPrefix);
+
+            const { prefix, suffix } = _split(ret1);
+            const results = _split(ret2);
+
+            expect(results.prefix).to.equal(prefix);
+            expect(results.suffix).to.not.equal(suffix);
+        });
+
+        it('should return a string without prefix if one was not specified', () => {
+            const inputs = [undefined, null, 12, '', true, {}, [], () => {}];
+
+            inputs.forEach((prefix) => {
+                const ret = _testValues.getString(prefix);
+
+                expect(ret.startsWith('undefined')).to.be.false;
+                expect(ret.substr(0, 1)).to.not.equal('_');
+            });
+        });
+    });
+
+    describe('getTimestamp()', () => {
+        it('should return a timestamp when invoked with a start time and range', () => {
+            const startTime = Date.now();
+            const range = 1000;
+            const ret = _testValues.getTimestamp(range, startTime);
+
+            expect(ret).to.be.a('number');
+            expect(ret).to.be.within(startTime, startTime + range);
+        });
+
+        it('should return use the start time as the upper bound if a negative range is specified', () => {
+            const startTime = Date.now();
+            const range = -1000;
+            const ret = _testValues.getTimestamp(range, startTime);
+
+            expect(ret).to.be.a('number');
+            expect(ret).to.be.within(startTime + range, startTime);
+        });
+
+        it('should default the start time to the current time if a valid number is not provided', () => {
+            const inputs = [undefined, null, 'foo', -1, true, {}, [], () => {}];
+
+            inputs.forEach((startTime) => {
+                const range = 1000;
+                const now = Date.now();
+                const ret = _testValues.getTimestamp(range, startTime);
+
+                expect(ret).to.be.within(now, now + range);
+            });
+        });
+
+        it('should default the range to 10000 if a valid number is not provided', () => {
+            const inputs = [undefined, null, 'foo', true, {}, [], () => {}];
+            const defaultRange = 10000;
+
+            inputs.forEach((range) => {
+                const startTime = Date.now();
+
+                // NOTE: This is not a proper test. Since range is a randomly
+                // generated value, it is hard to deterministically test its
+                // value
+                for(let index = 0; index<1000; index++) {
+                    const ret = _testValues.getTimestamp(range, startTime);
+                    expect(ret).to.be.within(startTime, startTime + defaultRange);
+                }
+            });
+        });
+    });
+
+    describe('getNumber()', () => {
+        it('should return a number when invoked with a start value and range', () => {
+            const start = 20;
+            const range = 1000;
+            const ret = _testValues.getNumber(range, start);
+
+            expect(ret).to.be.a('number');
+            expect(ret).to.be.within(start, start + range);
+        });
+
+        it('should return use the start value as the upper bound if a negative range is specified', () => {
+            const start = 20;
+            const range = -1000;
+            const ret = _testValues.getNumber(range, start);
+
+            expect(ret).to.be.a('number');
+            expect(ret).to.be.within(start + range, start);
+        });
+
+        it('should default the start value to 0 if a valid number is not provided', () => {
+            const inputs = [undefined, null, 'foo', true, {}, [], () => {}];
+
+            inputs.forEach((start) => {
+                const range = 1000;
+                const defaultStart = 0;
+                const ret = _testValues.getNumber(range, start);
+
+                expect(ret).to.be.within(defaultStart, defaultStart + range);
+            });
+        });
+
+        it('should default the range to 10000 if a valid number is not provided', () => {
+            const inputs = [undefined, null, 'foo', true, {}, [], () => {}];
+            const defaultRange = 100;
+
+            inputs.forEach((range) => {
+                const start = Date.now();
+
+                // NOTE: This is not a proper test. Since range is a randomly
+                // generated value, it is hard to deterministically test its
+                // value
+                for(let index = 0; index<1000; index++) {
+                    const ret = _testValues.getNumber(range, start);
+                    expect(ret).to.be.within(start, start+ defaultRange);
+                }
+            });
         });
     });
 });
