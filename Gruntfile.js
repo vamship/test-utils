@@ -157,7 +157,7 @@ module.exports = function(grunt) {
                 destination: DOCS.path,
                 template: NODE_MODULES.getFilePath('docdash')
             },
-            src: ['README.md', SRC.getAllFilesPattern('js')]
+            src: ['package.json', 'README.md', SRC.getAllFilesPattern('js')]
         },
 
         /**
