@@ -26,5 +26,13 @@ module.exports = {
      *
      * @type {module:testValues}
      */
-    testValues: require('./test-values')
+    testValues: require('./test-values'),
+
+    /**
+     * Class that can be used to mock out methods on existing objects, or
+     * create new objects with mocked methods.
+     *
+     * @type {ObjectMock}
+     */
+    ObjectMock: require('./object-mock')
 };
