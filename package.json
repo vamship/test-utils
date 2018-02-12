@@ -1,6 +1,6 @@
 {
   "name": "@vamship/test-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utility library that provides useful functionality for writing tests",
   "main": "src/index.js",
   "scripts": {
