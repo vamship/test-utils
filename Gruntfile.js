@@ -275,11 +275,6 @@ module.exports = function(grunt) {
     });
 
     /**
-     * Default task. Shows help information.
-     */
-    grunt.registerTask('default', ['help']);
-
-    /**
      * Pre check in task. Intended to be run prior to commiting/pushing code.
      * Performs the following actions:
      *  - Format files
@@ -288,4 +283,9 @@ module.exports = function(grunt) {
      *  - Cleaning up temporary files
      */
     grunt.registerTask('all', ['format', 'lint', 'test:unit', 'clean']);
+
+    /**
+     * Default task. Shows help information.
+     */
+    grunt.registerTask('default', ['help']);
 };
