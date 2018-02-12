@@ -20,3 +20,7 @@ working/
 
 # Distribution directory
 dist/
+
+# Documentation and test (not required for publishing)
+docs/
+test/
