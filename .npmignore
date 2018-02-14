@@ -15,6 +15,11 @@ coverage
 # Temporary files.
 .tmp/
 
+# Development tool configuration files
+.eslintrc.json
+.prettierrc
+.projections.json
+
 # Working directory
 working/
 
@@ -24,3 +29,7 @@ dist/
 # Documentation and test (not required for publishing)
 docs/
 test/
+
+# README and Gruntfile (not required for publishing)
+README.md
+Gruntfile.js
