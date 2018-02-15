@@ -1,4 +1,5 @@
 # @vamship/test-lib
+
 _Utility library that provides useful functionality for writing tests_
 
 This library exports a collection of classes and modules that makes writing
@@ -6,8 +7,8 @@ tests easier. While not specific to any given testing library or framework,
 this library has been developed with [mocha](https://mochajs.org/) and
 [chai](http://chaijs.com/) in mind.
 
-
 ## Motivation
+
 Testing is an important part of application development, and as well tested
 applications and libraries grow in size, so do the automated tests that go
 with them. Over time, common test patterns emerge, and one finds oneself
@@ -23,16 +24,19 @@ be used to generate dummy values for testing. The `ObjectMock` class provides
 a simple way to mock out methods on objects allowing unit tests to be executed
 while having mocks replace dependencies for the entities under test.
 
-
 ## Installation
+
 This library can be installed using npm:
+
 ```
 npm install @vamship/test-utils
 ```
 
 ## Usage
+
 The classes and modules exported by this library are independent, and can be
 used by importing them into the source code as follows:
+
 ```
 const _rewire = require('rewire');
 const _testValues = require('@vamship/test-utils').testValues;
@@ -50,7 +54,7 @@ describe('MyClass', () => {
 
     it('should throw an error if invoked without a valid username', () => {
         const error = 'Invalid username specified (arg #1)';
-        
+
         // Create an array of test values containing all types except a string,
         // and then add an empty string to that list
         const inputs = _testValues.allButString('');
@@ -69,4 +73,3 @@ describe('MyClass', () => {
 The example above is just one of many possible examples of how this library and
 its exported modules and classes may be used. For more information, please
 review the API documentation.
-
