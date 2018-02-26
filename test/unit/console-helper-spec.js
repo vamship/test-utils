@@ -60,6 +60,10 @@ describe('consoleHelper', function() {
             _stopSpying();
 
             expect(consoleSpy).to.not.have.been.called;
+
+            //Note: Querying private variable.
+            const isMuted = _consoleHelper.__get__('_isMuted');
+            expect(isMuted).to.be.true;
         });
 
         it('should do nothing if the console is already muted', () => {
@@ -83,17 +87,6 @@ describe('consoleHelper', function() {
     });
 
     describe('unmute()', () => {
-        it('should do nothing if the console is not muted', () => {
-            _startSpying();
-            expect(consoleSpy).to.not.have.been.called;
-
-            _consoleHelper.unmute();
-            _invokeConsole();
-            _stopSpying();
-
-            expect(consoleSpy.callCount).to.equal(_methodNames.length);
-        });
-
         it('should restore all console methods with original references', () => {
             _startSpying();
             _consoleHelper.mute();
@@ -101,6 +94,21 @@ describe('consoleHelper', function() {
 
             // Now unmute the console, and see if the spy gets called multiple
             // times.
+            _consoleHelper.unmute();
+            _invokeConsole();
+            _stopSpying();
+
+            expect(consoleSpy.callCount).to.equal(_methodNames.length);
+
+            //Note: Querying private variable.
+            const isMuted = _consoleHelper.__get__('_isMuted');
+            expect(isMuted).to.be.false;
+        });
+
+        it('should do nothing if the console is not muted', () => {
+            _startSpying();
+            expect(consoleSpy).to.not.have.been.called;
+
             _consoleHelper.unmute();
             _invokeConsole();
             _stopSpying();
