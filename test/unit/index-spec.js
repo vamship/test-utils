@@ -10,6 +10,7 @@ let _index = null;
 const _asyncHelper = require('../../src/async-helper');
 const _consoleHelper = require('../../src/console-helper');
 const _testValues = require('../../src/test-values');
+const _superSpy = require('../../src/super-spy');
 const ObjectMock = require('../../src/object-mock');
 
 describe('index', function() {
@@ -21,6 +22,7 @@ describe('index', function() {
         expect(_index.asyncHelper).to.equal(_asyncHelper);
         expect(_index.consoleHelper).to.equal(_consoleHelper);
         expect(_index.testValues).to.equal(_testValues);
+        expect(_index.superSpy).to.equal(_superSpy);
         expect(_index.ObjectMock).to.equal(ObjectMock);
     });
 });
