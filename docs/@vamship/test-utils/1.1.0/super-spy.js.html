@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>super-spy.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mock.html">Mock</a><ul class='methods'><li data-type='method'><a href="Mock.html#reset">reset</a></li></ul></li><li><a href="module-superSpy-SpyClass.html">SpyClass</a><ul class='methods'><li data-type='method'><a href="module-superSpy-SpyClass.html#.restore">restore</a></li></ul></li><li><a href="ObjectMock.html">ObjectMock</a><ul class='methods'><li data-type='method'><a href="ObjectMock.html#addMock">addMock</a></li><li data-type='method'><a href="ObjectMock.html#addPromiseMock">addPromiseMock</a></li><li data-type='method'><a href="ObjectMock.html#restore">restore</a></li></ul></li><li><a href="PromiseMock.html">PromiseMock</a><ul class='methods'><li data-type='method'><a href="PromiseMock.html#promise">promise</a></li><li data-type='method'><a href="PromiseMock.html#reject">reject</a></li><li data-type='method'><a href="PromiseMock.html#reset">reset</a></li><li data-type='method'><a href="PromiseMock.html#resolve">resolve</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-asyncHelper.html">asyncHelper</a><ul class='methods'><li data-type='method'><a href="module-asyncHelper.html#.wait">wait</a></li></ul></li><li><a href="module-consoleHelper.html">consoleHelper</a><ul class='methods'><li data-type='method'><a href="module-consoleHelper.html#.mute">mute</a></li><li data-type='method'><a href="module-consoleHelper.html#.unmute">unmute</a></li></ul></li><li><a href="module-superSpy.html">superSpy</a><ul class='methods'><li data-type='method'><a href="module-superSpy.html#.inject">inject</a></li></ul></li><li><a href="module-testValues.html">testValues</a><ul class='methods'><li data-type='method'><a href="module-testValues.html#.allButArray">allButArray</a></li><li data-type='method'><a href="module-testValues.html#.allButBoolean">allButBoolean</a></li><li data-type='method'><a href="module-testValues.html#.allButFunction">allButFunction</a></li><li data-type='method'><a href="module-testValues.html#.allButNull">allButNull</a></li><li data-type='method'><a href="module-testValues.html#.allButNumber">allButNumber</a></li><li data-type='method'><a href="module-testValues.html#.allButObject">allButObject</a></li><li data-type='method'><a href="module-testValues.html#.allButSelected">allButSelected</a></li><li data-type='method'><a href="module-testValues.html#.allButString">allButString</a></li><li data-type='method'><a href="module-testValues.html#.allButUndefined">allButUndefined</a></li><li data-type='method'><a href="module-testValues.html#.getNumber">getNumber</a></li><li data-type='method'><a href="module-testValues.html#.getString">getString</a></li><li data-type='method'><a href="module-testValues.html#.getTimestamp">getTimestamp</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">super-spy.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const _sinon = require('sinon');
+
+/**
+ * Allows the injection of an intermediate class between a child class and its
+ * parent, enabling the testing of calls to the super() call.
+ *
+ * @module superSpy
+ */
+module.exports = {
+    /**
+     * Injects a spy class between a parent and child class. The spy class will
+     * always mirror all calls to the constructor to a sinon spy that can be
+     * inspected to perform tests on constructor calls, specifically allowing
+     * calls to super() to be tested.
+     *
+     * @param {Class} Parent The parent class reference
+     * @param {Function} Child The child class reference
+     *
+     * @return {module:superSpy~SpyClass} A reference to the spy class, that in
+     *         turn allows the inspection of constructor calls.
+     */
+    inject: function(Parent, Child) {
+        if (typeof Parent !== 'function') {
+            throw new Error('Invalid Parent specified (arg #1)');
+        }
+        if (typeof Child !== 'function') {
+            throw new Error('Invalid Child specified (arg #1)');
+        }
+
+        const superSpy = _sinon.spy();
+
+        /**
+         * Intermediate class that is generated and injected into the hierarchy
+         * &lt;p>&lt;strong>Parent --> Child hierarchy&lt;/strong>&lt;/p>
+         * ,making it:
+         * &lt;p>&lt;strong>Parent --> SpyClass --> Child&lt;/strong>&lt;/p>
+         * This allows the intermediate class to spy on calls to
+         * &lt;strong>super()&lt;/strong> made by the child class.
+         */
+        class SpyClass extends Parent {
+            constructor(...args) {
+                super(...args);
+                superSpy(...args);
+            }
+
+            /**
+             * Returns a reference to the spy method on the child's call to
+             * &lt;strong>super()&lt;/strong>. The response is a reference to
+             * a [sinon spy]{@link http://sinonjs.org/releases/v4.2.2/spies/}.
+             *
+             * @type {Function}
+             */
+            static get superSpy() {
+                return superSpy;
+            }
+
+            /**
+             * Restores the relationship between parent and child, by removing
+             * this class from the hierarchy. i.e, the relationship goes from:
+             * &lt;p>&lt;strong>Parent --> SpyClass --> Child&lt;/strong>&lt;/p>
+             * to:
+             * &lt;p>&lt;strong>Parent --> Child&lt;/strong>&lt;/p>
+             */
+            static restore() {
+                Object.setPrototypeOf(Child, Parent);
+            }
+        }
+
+        Object.setPrototypeOf(Child, SpyClass);
+        return SpyClass;
+    }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 19 2018 16:55:56 GMT-0400 (EDT) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
