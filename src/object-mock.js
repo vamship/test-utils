@@ -46,10 +46,10 @@ class ObjectMock {
     }
 
     /**
-     * Reference to an object containing references to mocks for each method
-     * on the instance that has been mocked.
+     * Reference to an object containing references to {@link Mock} objects for
+     * each method on the instance that has been mocked.
      *
-     * @return {Mock} A map containing the info about defined stubs
+     * @type {Object}
      */
     get mocks() {
         return this._mocks;
