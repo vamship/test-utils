@@ -21,10 +21,10 @@ module.exports = {
     testValues: require('./test-values'),
 
     /**
-     * Helper module that can be used to spy on super() calls in parent-child
-     * inheritance hierarchies.
+     * Class that can be used to create spies on parent methods in class
+     * hierarchies.
      */
-    superSpy: require('./super-spy'),
+    SuperSpyBuilder: require('./super-spy-builder'),
 
     /**
      * Class that can be used to mock out methods on existing objects, or
