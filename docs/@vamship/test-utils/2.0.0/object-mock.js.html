@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>object-mock.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mock.html">Mock</a><ul class='methods'><li data-type='method'><a href="Mock.html#reset">reset</a></li></ul></li><li><a href="ObjectMock.html">ObjectMock</a><ul class='methods'><li data-type='method'><a href="ObjectMock.html#addMock">addMock</a></li><li data-type='method'><a href="ObjectMock.html#addPromiseMock">addPromiseMock</a></li><li data-type='method'><a href="ObjectMock.html#restore">restore</a></li></ul></li><li><a href="PromiseMock.html">PromiseMock</a><ul class='methods'><li data-type='method'><a href="PromiseMock.html#promise">promise</a></li><li data-type='method'><a href="PromiseMock.html#reject">reject</a></li><li data-type='method'><a href="PromiseMock.html#reset">reset</a></li><li data-type='method'><a href="PromiseMock.html#resolve">resolve</a></li></ul></li><li><a href="SuperSpy.html">SuperSpy</a></li><li><a href="SuperSpyBuilder.html">SuperSpyBuilder</a><ul class='methods'><li data-type='method'><a href="SuperSpyBuilder.html#addMock">addMock</a></li><li data-type='method'><a href="SuperSpyBuilder.html#inject">inject</a></li><li data-type='method'><a href="SuperSpyBuilder.html#restore">restore</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-asyncHelper.html">asyncHelper</a><ul class='methods'><li data-type='method'><a href="module-asyncHelper.html#.wait">wait</a></li></ul></li><li><a href="module-consoleHelper.html">consoleHelper</a><ul class='methods'><li data-type='method'><a href="module-consoleHelper.html#.mute">mute</a></li><li data-type='method'><a href="module-consoleHelper.html#.unmute">unmute</a></li></ul></li><li><a href="module-testValues.html">testValues</a><ul class='methods'><li data-type='method'><a href="module-testValues.html#.allButArray">allButArray</a></li><li data-type='method'><a href="module-testValues.html#.allButBoolean">allButBoolean</a></li><li data-type='method'><a href="module-testValues.html#.allButFunction">allButFunction</a></li><li data-type='method'><a href="module-testValues.html#.allButNull">allButNull</a></li><li data-type='method'><a href="module-testValues.html#.allButNumber">allButNumber</a></li><li data-type='method'><a href="module-testValues.html#.allButObject">allButObject</a></li><li data-type='method'><a href="module-testValues.html#.allButSelected">allButSelected</a></li><li data-type='method'><a href="module-testValues.html#.allButString">allButString</a></li><li data-type='method'><a href="module-testValues.html#.allButUndefined">allButUndefined</a></li><li data-type='method'><a href="module-testValues.html#.getNumber">getNumber</a></li><li data-type='method'><a href="module-testValues.html#.getString">getString</a></li><li data-type='method'><a href="module-testValues.html#.getTimestamp">getTimestamp</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">object-mock.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const _sinon = require('sinon');
+const Mock = require('./mock');
+const PromiseMock = require('./promise-mock');
+
+/**
+ * A mocker object that can be used to selectively mock methods on an existing
+ * object, or to create a new object with mock methods for testing.
+ */
+class ObjectMock {
+    /**
+     * @param {Object} [instance={}] The object instance on which the mocks
+     *        will be created. If omitted, a default empty object will be used.
+     */
+    constructor(instance) {
+        if (
+            !instance ||
+            instance instanceof Array ||
+            typeof instance !== 'object'
+        ) {
+            instance = {};
+        }
+        this._instance = instance;
+        this._ctor = _sinon.stub().returns(this._instance);
+        this._mocks = {};
+    }
+
+    /**
+     * A refence to the object that is being mocked.
+     *
+     * @type {Object}
+     */
+    get instance() {
+        return this._instance;
+    }
+
+    /**
+     * Returns a reference to the constructor of the mocked object. This is
+     * a mock constructor that returns a reference to the object being mocked.
+     *
+     * @type {Function}
+     */
+    get ctor() {
+        return this._ctor;
+    }
+
+    /**
+     * Reference to an object containing references to {@link Mock} objects for
+     * each method on the instance that has been mocked.
+     *
+     * @type {Object}
+     */
+    get mocks() {
+        return this._mocks;
+    }
+
+    /**
+     * Adds a mock for the specified method.
+     *
+     * @param {String} methodName The name of the method to be mocked. If the
+     *        method does not exist, an empty placeholder method will be creted
+     *        and then mocked.
+     * @param {*} [returnValue=undefined] The return value of the mocked
+     *        method. If this parameter is a function, the function will be
+     *        invoked, and its response will be returned.
+     *
+     * @return {Object} A reference to the mock object (can be used to chain
+     *         method calls)
+     */
+    addMock(methodName, returnValue) {
+        if (typeof methodName !== 'string' || methodName.length &lt;= 0) {
+            throw new Error('Invalid methodName specified (arg #1)');
+        }
+        this._mocks[methodName] = new Mock(
+            this.instance,
+            methodName,
+            returnValue
+        );
+        return this;
+    }
+
+    /**
+     * Adds a mock for the specified method, treating the method as one that
+     * returns a promise.
+     *
+     * @param {String} methodName The name of the method to be mocked. If the
+     *        method does not exist, an empty placeholder method will be creted
+     *        and then mocked.
+     *
+     * @return {Object} A reference to the mock object (can be used to chain
+     *         method calls)
+     */
+    addPromiseMock(methodName) {
+        if (typeof methodName !== 'string' || methodName.length &lt;= 0) {
+            throw new Error('Invalid methodName specified (arg #1)');
+        }
+        this._mocks[methodName] = new PromiseMock(this.instance, methodName);
+        return this;
+    }
+
+    /**
+     * Removes a mock for the specified method, and restores the original
+     * method. If no mocks have been defined for the specified method name,
+     * no changes will be made for that method.
+     *
+     * @param {String} methodName The name of the method for which mocks will
+     *        be removed.
+     *
+     * @return {Object} A reference to the mock object (can be used to chain
+     *         method calls)
+     */
+    restore(methodName) {
+        if (typeof methodName !== 'string' || methodName.length &lt;= 0) {
+            throw new Error('Invalid methodName specified (arg #1)');
+        }
+        if (this._mocks[methodName]) {
+            this._mocks[methodName].stub.restore();
+            delete this._mocks[methodName];
+        }
+        return this;
+    }
+}
+
+module.exports = ObjectMock;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu May 03 2018 19:42:15 GMT-0400 (EDT) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
