@@ -218,6 +218,13 @@ describe('SuperSpyBuilder', () => {
             expect(wrapper).to.not.throw();
         });
 
+        it('should return a reference to the builder object', () => {
+            const builder = _createInstance();
+            const ret = builder.addMock('testMethod1');
+
+            expect(ret).to.equal(builder);
+        });
+
         it('should create a spy for the spy method name', () => {
             const builder = _createInstance();
             const methods = ['testMethod1', 'testMethod2'];

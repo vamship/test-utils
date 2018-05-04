@@ -99,6 +99,8 @@ class SuperSpyBuilder {
             fake,
             invokeSuperMethod: !skipSuperMethod
         };
+
+        return this;
     }
 
     /**
