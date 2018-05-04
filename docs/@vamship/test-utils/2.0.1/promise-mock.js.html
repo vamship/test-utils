@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>promise-mock.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mock.html">Mock</a><ul class='methods'><li data-type='method'><a href="Mock.html#reset">reset</a></li></ul></li><li><a href="ObjectMock.html">ObjectMock</a><ul class='methods'><li data-type='method'><a href="ObjectMock.html#addMock">addMock</a></li><li data-type='method'><a href="ObjectMock.html#addPromiseMock">addPromiseMock</a></li><li data-type='method'><a href="ObjectMock.html#restore">restore</a></li></ul></li><li><a href="PromiseMock.html">PromiseMock</a><ul class='methods'><li data-type='method'><a href="PromiseMock.html#promise">promise</a></li><li data-type='method'><a href="PromiseMock.html#reject">reject</a></li><li data-type='method'><a href="PromiseMock.html#reset">reset</a></li><li data-type='method'><a href="PromiseMock.html#resolve">resolve</a></li></ul></li><li><a href="SuperSpy.html">SuperSpy</a></li><li><a href="SuperSpyBuilder.html">SuperSpyBuilder</a><ul class='methods'><li data-type='method'><a href="SuperSpyBuilder.html#addMock">addMock</a></li><li data-type='method'><a href="SuperSpyBuilder.html#inject">inject</a></li><li data-type='method'><a href="SuperSpyBuilder.html#restore">restore</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-asyncHelper.html">asyncHelper</a><ul class='methods'><li data-type='method'><a href="module-asyncHelper.html#.wait">wait</a></li></ul></li><li><a href="module-consoleHelper.html">consoleHelper</a><ul class='methods'><li data-type='method'><a href="module-consoleHelper.html#.mute">mute</a></li><li data-type='method'><a href="module-consoleHelper.html#.unmute">unmute</a></li></ul></li><li><a href="module-testValues.html">testValues</a><ul class='methods'><li data-type='method'><a href="module-testValues.html#.allButArray">allButArray</a></li><li data-type='method'><a href="module-testValues.html#.allButBoolean">allButBoolean</a></li><li data-type='method'><a href="module-testValues.html#.allButFunction">allButFunction</a></li><li data-type='method'><a href="module-testValues.html#.allButNull">allButNull</a></li><li data-type='method'><a href="module-testValues.html#.allButNumber">allButNumber</a></li><li data-type='method'><a href="module-testValues.html#.allButObject">allButObject</a></li><li data-type='method'><a href="module-testValues.html#.allButSelected">allButSelected</a></li><li data-type='method'><a href="module-testValues.html#.allButString">allButString</a></li><li data-type='method'><a href="module-testValues.html#.allButUndefined">allButUndefined</a></li><li data-type='method'><a href="module-testValues.html#.getNumber">getNumber</a></li><li data-type='method'><a href="module-testValues.html#.getString">getString</a></li><li data-type='method'><a href="module-testValues.html#.getTimestamp">getTimestamp</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">promise-mock.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const Mock = require('./mock');
+const Promise = require('bluebird').Promise;
+
+/**
+ * Class that creates a mock method on an object, but is specifically designed
+ * for methods that return a promise. Extends the [Mock]{@link Mock} class and
+ * provides additional promise specific functionality.
+ *
+ * &lt;p>
+ * This class is not meant to be instantiated directly, but is designed for
+ * use within the [ObjectMock]{@link ObjectMock} class.
+ * &lt;/p>
+ *
+ * @extends {Mock}
+ */
+class PromiseMock extends Mock {
+    /**
+     * @param {Object} instance The object instance on which the method will be
+     *        mocked.
+     * @param {String} methodName The name of the method on the object that
+     *        needs to be mocked. If the specified method does not exist, a
+     *        placeholder method will be injected into the instance which will
+     *        then be mocked.
+     */
+    constructor(instance, methodName) {
+        let callIndex = 0;
+        super(instance, methodName, () => {
+            const wrapper = this._getPromiseWrapper(callIndex);
+            callIndex++;
+            return wrapper.promise;
+        });
+
+        this._wrappers = [];
+    }
+
+    /**
+     * Returns a wrapper that contains a reference to a promise object, and the
+     * reject and resolve methods of the promise object. This can be used to
+     * reject or resolve the promise from outside the mock.
+     *
+     * If a wrapper for a specific invocation has already been created, it will
+     * be returned, if not a new wrapper will be created for the specified
+     * index.
+     *
+     * @private
+     * @param {Number} callIndex The invocation index for which to get the
+     *        wrapper.
+     *
+     * @return {Object} A simple object with references to the promise, reject
+     *         and resolve methods.
+     */
+    _getPromiseWrapper(callIndex) {
+        let wrapper = this._wrappers[callIndex];
+        if (!wrapper) {
+            wrapper = {};
+            wrapper.promise = new Promise((resolve, reject) => {
+                wrapper.resolve = resolve;
+                wrapper.reject = reject;
+            });
+            this._wrappers[callIndex] = wrapper;
+        }
+        return wrapper;
+    }
+
+    /**
+     * Returns the promise associated with a specific invocation of the mock,
+     * identified by the call index. This value could reference a future
+     * invocation (meaning that the specific invocation of the mock has not yet
+     * occurred).
+     *
+     * Promises for all completed invocations of the mock can be  obtained by
+     * inspecting the [responses]{@link Mock#responses} method.
+     *
+     * &lt;p>
+     * The value of this method is that actions can be be assigned to the
+     * &lt;code>then(...)&lt;/code> callback of the mock even before the mock has
+     * been invoked. The use of the [responses]{@link Mock#responses} array
+     * is retroactive in nature, and cannot be accessed until after the method
+     * has been invoked, which does not always work in asynchronous scenarios.
+     * &lt;/p>
+     *
+     * @param {Number} [callIndex=0] The index of the invocation, with the
+     *        first invocation starting at index 0. Defaults to 0.
+     *
+     * @return {Promise} The promise associated with the specified call index.
+     */
+    promise(callIndex) {
+        if (typeof callIndex !== 'number' || callIndex &lt;= 0) {
+            callIndex = 0;
+        }
+        return this._getPromiseWrapper(callIndex).promise;
+    }
+
+    /**
+     * Rejects the promise associated with a specific invocation of the mock,
+     * identified by the call index. This value could reference a future
+     * invocation (meaning that the specific invocation of the mock has not yet
+     * occurred).
+     *
+     * &lt;p>
+     * The value of this method is that a rejection can be set on a specific
+     * invocation prior to it actually occurring.
+     * &lt;/p>
+     *
+     * @param {*} [error=undefined] The rejection response for the promise.
+     *        This is typically an error, but can be any value.
+     *
+     * @param {Number} [callIndex=0] The index of the invocation, with the
+     *        first invocation starting at index 0. Defaults to 0.
+     *
+     * @return {Promise} The promise associated with the specified call index.
+     */
+    reject(error, callIndex) {
+        if (typeof callIndex !== 'number' || callIndex &lt;= 0) {
+            callIndex = 0;
+        }
+        const wrapper = this._getPromiseWrapper(callIndex);
+        wrapper.reject(error);
+        return wrapper.promise;
+    }
+
+    /**
+     * Resolves the promise associated with a specific invocation of the mock,
+     * identified by the call index. This value could reference a future
+     * invocation (meaning that the specific invocation of the mock has not yet
+     * occurred).
+     *
+     * &lt;p>
+     * The value of this method is that a resolution can be set on a specific
+     * invocation prior to it actually occurring.
+     * &lt;/p>
+     *
+     * @param {*} [response=undefined] The resolution response for the promise.
+     *        This is typically an error, but can be any value.
+     *
+     * @param {Number} [callIndex=0] The index of the invocation, with the
+     *        first invocation starting at index 0. Defaults to 0.
+     *
+     * @return {Promise} The promise associated with the specified call index.
+     */
+    resolve(response, callIndex) {
+        if (typeof callIndex !== 'number' || callIndex &lt;= 0) {
+            callIndex = 0;
+        }
+        const wrapper = this._getPromiseWrapper(callIndex);
+        wrapper.resolve(response);
+        return wrapper.promise;
+    }
+}
+
+module.exports = PromiseMock;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri May 04 2018 11:15:01 GMT-0400 (EDT) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
