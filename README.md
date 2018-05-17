@@ -22,7 +22,10 @@ imported and reused in other projects.
 For example, the `testValues` module exports a collection of functions that can
 be used to generate dummy values for testing. The `ObjectMock` class provides
 a simple way to mock out methods on objects allowing unit tests to be executed
-while having mocks replace dependencies for the entities under test.
+while having mocks replace dependencies for the entities under test. The
+`SuperSpyBuilder` class can be used to apply spy methods on inherited methods,
+including the `super()` constructor call. This enables the creation of tests
+that treat parent classes as black boxes.
 
 ## Installation
 
