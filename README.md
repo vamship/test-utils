@@ -8,6 +8,7 @@ this library has been developed with [mocha](https://mochajs.org/) and
 [chai](http://chaijs.com/) in mind.
 
 ## API Documentation
+
 API documentation can be found [here](https://vamship.github.io/test-utils).
 
 ## Motivation
