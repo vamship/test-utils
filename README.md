@@ -7,6 +7,9 @@ tests easier. While not specific to any given testing library or framework,
 this library has been developed with [mocha](https://mochajs.org/) and
 [chai](http://chaijs.com/) in mind.
 
+## API Documentation
+API documentation can be found [here](https://vamship.github.io/test-utils).
+
 ## Motivation
 
 Testing is an important part of application development, and as well tested
