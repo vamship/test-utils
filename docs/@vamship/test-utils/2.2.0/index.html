@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mock.html">Mock</a><ul class='methods'><li data-type='method'><a href="Mock.html#reset">reset</a></li></ul></li><li><a href="ObjectMock.html">ObjectMock</a><ul class='methods'><li data-type='method'><a href="ObjectMock.html#addMock">addMock</a></li><li data-type='method'><a href="ObjectMock.html#addPromiseMock">addPromiseMock</a></li><li data-type='method'><a href="ObjectMock.html#restore">restore</a></li></ul></li><li><a href="PromiseMock.html">PromiseMock</a><ul class='methods'><li data-type='method'><a href="PromiseMock.html#promise">promise</a></li><li data-type='method'><a href="PromiseMock.html#reject">reject</a></li><li data-type='method'><a href="PromiseMock.html#reset">reset</a></li><li data-type='method'><a href="PromiseMock.html#resolve">resolve</a></li></ul></li><li><a href="SuperSpy.html">SuperSpy</a></li><li><a href="SuperSpyBuilder.html">SuperSpyBuilder</a><ul class='methods'><li data-type='method'><a href="SuperSpyBuilder.html#addMock">addMock</a></li><li data-type='method'><a href="SuperSpyBuilder.html#inject">inject</a></li><li data-type='method'><a href="SuperSpyBuilder.html#restore">restore</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-asyncHelper.html">asyncHelper</a><ul class='methods'><li data-type='method'><a href="module-asyncHelper.html#.wait">wait</a></li></ul></li><li><a href="module-consoleHelper.html">consoleHelper</a><ul class='methods'><li data-type='method'><a href="module-consoleHelper.html#.mute">mute</a></li><li data-type='method'><a href="module-consoleHelper.html#.unmute">unmute</a></li></ul></li><li><a href="module-testValues.html">testValues</a><ul class='methods'><li data-type='method'><a href="module-testValues.html#.allButArray">allButArray</a></li><li data-type='method'><a href="module-testValues.html#.allButBoolean">allButBoolean</a></li><li data-type='method'><a href="module-testValues.html#.allButFunction">allButFunction</a></li><li data-type='method'><a href="module-testValues.html#.allButNull">allButNull</a></li><li data-type='method'><a href="module-testValues.html#.allButNumber">allButNumber</a></li><li data-type='method'><a href="module-testValues.html#.allButObject">allButObject</a></li><li data-type='method'><a href="module-testValues.html#.allButSelected">allButSelected</a></li><li data-type='method'><a href="module-testValues.html#.allButString">allButString</a></li><li data-type='method'><a href="module-testValues.html#.allButUndefined">allButUndefined</a></li><li data-type='method'><a href="module-testValues.html#.getNumber">getNumber</a></li><li data-type='method'><a href="module-testValues.html#.getString">getString</a></li><li data-type='method'><a href="module-testValues.html#.getTimestamp">getTimestamp</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>@vamship/test-lib</h1><p><em>Utility library that provides useful functionality for writing tests</em></p>
+<p>This library exports a collection of classes and modules that makes writing
+tests easier. While not specific to any given testing library or framework,
+this library has been developed with <a href="https://mochajs.org/">mocha</a> and
+<a href="http://chaijs.com/">chai</a> in mind.</p>
+<h2>API Documentation</h2><p>API documentation can be found <a href="https://vamship.github.io/test-utils">here</a>.</p>
+<h2>Motivation</h2><p>Testing is an important part of application development, and as well tested
+applications and libraries grow in size, so do the automated tests that go
+with them. Over time, common test patterns emerge, and one finds oneself
+rewriting the same scaffolding or utility classes to execute these test
+patterns.</p>
+<p>The idea behind this library is to encapsulate these testing patterns, or at
+least the building blocks for these patterns into a single library that can be
+imported and reused in other projects.</p>
+<p>For example, the <code>testValues</code> module exports a collection of functions that can
+be used to generate dummy values for testing. The <code>ObjectMock</code> class provides
+a simple way to mock out methods on objects allowing unit tests to be executed
+while having mocks replace dependencies for the entities under test. The
+<code>SuperSpyBuilder</code> class can be used to apply spy methods on inherited methods,
+including the <code>super()</code> constructor call. This enables the creation of tests
+that treat parent classes as black boxes.</p>
+<h2>Installation</h2><p>This library can be installed using npm:</p>
+<pre class="prettyprint source"><code>npm install @vamship/test-utils</code></pre><h2>Usage</h2><p>The classes and modules exported by this library are independent, and can be
+used by importing them into the source code as follows:</p>
+<pre class="prettyprint source"><code>const _rewire = require('rewire');
+const _testValues = require('@vamship/test-utils').testValues;
+const {ArgError} = require('@vamship/arg-utils').args;
+...
+
+let User = require('../../src/user');
+
+describe('MyClass', () => {
+    beforeEach(() => {
+        // Load up the object under test. Use rewire to load the object
+        // so that mocks can be assigned if necessary.
+        User = _rewire('../../src/user');
+    });
+
+    it('should throw an error if invoked without a valid username', () => {
+        const error = 'Invalid username specified (arg #1)';
+
+        // Create an array of test values containing all types except a string,
+        // and then add an empty string to that list
+        const inputs = _testValues.allButString('');
+
+        inputs.forEach((username) => {
+            const wrapper = () => {
+                return new User(username);
+            };
+
+            expect(wrapper).to.throw(ArgError, error);
+        });
+    });
+});</code></pre><p>The example above is just one of many possible examples of how this library and
+its exported modules and classes may be used. For more information, please
+review the API documentation.</p></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Jan 14 2019 12:35:47 GMT-0500 (EST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>

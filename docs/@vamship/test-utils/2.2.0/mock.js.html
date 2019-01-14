@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>mock.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mock.html">Mock</a><ul class='methods'><li data-type='method'><a href="Mock.html#reset">reset</a></li></ul></li><li><a href="ObjectMock.html">ObjectMock</a><ul class='methods'><li data-type='method'><a href="ObjectMock.html#addMock">addMock</a></li><li data-type='method'><a href="ObjectMock.html#addPromiseMock">addPromiseMock</a></li><li data-type='method'><a href="ObjectMock.html#restore">restore</a></li></ul></li><li><a href="PromiseMock.html">PromiseMock</a><ul class='methods'><li data-type='method'><a href="PromiseMock.html#promise">promise</a></li><li data-type='method'><a href="PromiseMock.html#reject">reject</a></li><li data-type='method'><a href="PromiseMock.html#reset">reset</a></li><li data-type='method'><a href="PromiseMock.html#resolve">resolve</a></li></ul></li><li><a href="SuperSpy.html">SuperSpy</a></li><li><a href="SuperSpyBuilder.html">SuperSpyBuilder</a><ul class='methods'><li data-type='method'><a href="SuperSpyBuilder.html#addMock">addMock</a></li><li data-type='method'><a href="SuperSpyBuilder.html#inject">inject</a></li><li data-type='method'><a href="SuperSpyBuilder.html#restore">restore</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-asyncHelper.html">asyncHelper</a><ul class='methods'><li data-type='method'><a href="module-asyncHelper.html#.wait">wait</a></li></ul></li><li><a href="module-consoleHelper.html">consoleHelper</a><ul class='methods'><li data-type='method'><a href="module-consoleHelper.html#.mute">mute</a></li><li data-type='method'><a href="module-consoleHelper.html#.unmute">unmute</a></li></ul></li><li><a href="module-testValues.html">testValues</a><ul class='methods'><li data-type='method'><a href="module-testValues.html#.allButArray">allButArray</a></li><li data-type='method'><a href="module-testValues.html#.allButBoolean">allButBoolean</a></li><li data-type='method'><a href="module-testValues.html#.allButFunction">allButFunction</a></li><li data-type='method'><a href="module-testValues.html#.allButNull">allButNull</a></li><li data-type='method'><a href="module-testValues.html#.allButNumber">allButNumber</a></li><li data-type='method'><a href="module-testValues.html#.allButObject">allButObject</a></li><li data-type='method'><a href="module-testValues.html#.allButSelected">allButSelected</a></li><li data-type='method'><a href="module-testValues.html#.allButString">allButString</a></li><li data-type='method'><a href="module-testValues.html#.allButUndefined">allButUndefined</a></li><li data-type='method'><a href="module-testValues.html#.getNumber">getNumber</a></li><li data-type='method'><a href="module-testValues.html#.getString">getString</a></li><li data-type='method'><a href="module-testValues.html#.getTimestamp">getTimestamp</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">mock.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const _sinon = require('sinon');
+
+/**
+ * Class that creates a mock method on an object, and provides useful methods
+ * to track the response returned on each call.
+ *
+ * &lt;p>
+ * This class is not meant to be instantiated directly, but is designed for
+ * use within the [ObjectMock]{@link ObjectMock} class.
+ * &lt;/p>
+ */
+class Mock {
+    /**
+     * @param {Object} instance The object instance on which the method will be
+     *        mocked.
+     * @param {String} methodName The name of the method on the object that
+     *        needs to be mocked. If the specified method does not exist, a
+     *        placeholder method will be injected into the instance which will
+     *        then be mocked.
+     * @param {*|Function} returnValue A return value that will be returned by
+     *        the mock method. If a function is passed in, the function will be
+     *        invoked, and ther return value of the function will be returned as
+     *        the response.
+     */
+    constructor(instance, methodName, returnValue) {
+        if (
+            !instance ||
+            instance instanceof Array ||
+            typeof instance !== 'object'
+        ) {
+            throw new Error('Invalid instance specified (arg #1)');
+        }
+        if (typeof methodName !== 'string' || methodName.length &lt;= 0) {
+            throw new Error('Invalid methodName specified (arg #2)');
+        }
+
+        this._instance = instance;
+        this._methodName = methodName;
+        if (typeof instance[methodName] !== 'function') {
+            instance[methodName] = () => {};
+        }
+        this._responses = [];
+        this._stub = _sinon.stub(this._instance, this._methodName);
+        this._stub.callsFake((...args) => {
+            let ret = returnValue;
+            if (typeof returnValue === 'function') {
+                ret = returnValue(...args);
+            }
+            this._responses.push(ret);
+            return ret;
+        });
+    }
+
+    /**
+     * Returns a reference to the instance object that has the mocks applied to
+     * it.
+     *
+     * @type {Object}
+     */
+    get instance() {
+        return this._instance;
+    }
+
+    /**
+     * Returns the name of the mock, which is the name of the method that has
+     * been mocked.
+     *
+     * @type {String}
+     */
+    get methodName() {
+        return this._methodName;
+    }
+
+    /**
+     * Returns a reference to the stub method generated by this class. This
+     * property can be used to examine the call history and parameters of
+     * the mocked method.
+     *
+     * @type {Object}
+     */
+    get stub() {
+        return this._stub;
+    }
+
+    /**
+     * Returns a list of responses returned by the mock up to the current time.
+     * Responses may be promises depending on how the mock has been configured.
+     *
+     * @type {Array}
+     */
+    get responses() {
+        return this._responses;
+    }
+
+    /**
+     * Returns the response from the first mock invocation. If the mock has not
+     * been invoked yet, an Error object will be returned.
+     *
+     * @type {*|Error}
+     */
+    get ret() {
+        if (this.responses.length &lt;= 0) {
+            return new Error('Method has not yet been called');
+        }
+        return this.responses[0];
+    }
+
+    /**
+     * Clears all responses that have been tracked up to this point, and also
+     * resets the mock's call history.
+     */
+    reset() {
+        this.responses.splice(0);
+        this.stub.resetHistory();
+    }
+}
+
+module.exports = Mock;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Jan 14 2019 12:35:47 GMT-0500 (EST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>
