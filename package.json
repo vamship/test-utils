@@ -4,6 +4,7 @@
   "description": "Utility library that provides useful functionality for writing tests",
   "main": "src/index.js",
   "scripts": {
+    "all": "gulp --series clean lint test-unit",
     "test": "gulp test-unit"
   },
   "keywords": [],
