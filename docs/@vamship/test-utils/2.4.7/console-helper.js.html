@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>console-helper.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mock.html">Mock</a><ul class='methods'><li data-type='method'><a href="Mock.html#reset">reset</a></li></ul></li><li><a href="ObjectMock.html">ObjectMock</a><ul class='methods'><li data-type='method'><a href="ObjectMock.html#addMock">addMock</a></li><li data-type='method'><a href="ObjectMock.html#addPromiseMock">addPromiseMock</a></li><li data-type='method'><a href="ObjectMock.html#restore">restore</a></li></ul></li><li><a href="PromiseMock.html">PromiseMock</a><ul class='methods'><li data-type='method'><a href="PromiseMock.html#promise">promise</a></li><li data-type='method'><a href="PromiseMock.html#reject">reject</a></li><li data-type='method'><a href="PromiseMock.html#reset">reset</a></li><li data-type='method'><a href="PromiseMock.html#resolve">resolve</a></li></ul></li><li><a href="SuperSpy.html">SuperSpy</a></li><li><a href="SuperSpyBuilder.html">SuperSpyBuilder</a><ul class='methods'><li data-type='method'><a href="SuperSpyBuilder.html#addMock">addMock</a></li><li data-type='method'><a href="SuperSpyBuilder.html#inject">inject</a></li><li data-type='method'><a href="SuperSpyBuilder.html#restore">restore</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-asyncHelper.html">asyncHelper</a><ul class='methods'><li data-type='method'><a href="module-asyncHelper.html#.wait">wait</a></li></ul></li><li><a href="module-consoleHelper.html">consoleHelper</a><ul class='methods'><li data-type='method'><a href="module-consoleHelper.html#.mute">mute</a></li><li data-type='method'><a href="module-consoleHelper.html#.unmute">unmute</a></li></ul></li><li><a href="module-testValues.html">testValues</a><ul class='methods'><li data-type='method'><a href="module-testValues.html#.allButArray">allButArray</a></li><li data-type='method'><a href="module-testValues.html#.allButBoolean">allButBoolean</a></li><li data-type='method'><a href="module-testValues.html#.allButFunction">allButFunction</a></li><li data-type='method'><a href="module-testValues.html#.allButNull">allButNull</a></li><li data-type='method'><a href="module-testValues.html#.allButNumber">allButNumber</a></li><li data-type='method'><a href="module-testValues.html#.allButObject">allButObject</a></li><li data-type='method'><a href="module-testValues.html#.allButSelected">allButSelected</a></li><li data-type='method'><a href="module-testValues.html#.allButString">allButString</a></li><li data-type='method'><a href="module-testValues.html#.allButUndefined">allButUndefined</a></li><li data-type='method'><a href="module-testValues.html#.getNumber">getNumber</a></li><li data-type='method'><a href="module-testValues.html#.getString">getString</a></li><li data-type='method'><a href="module-testValues.html#.getTimestamp">getTimestamp</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">console-helper.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const _methodNames = ['log', 'info', 'warn', 'error'];
+const _consoleMethods = {};
+let _isMuted = false;
+
+/**
+ * Exposes utility methods to help manipulate console statements during
+ * testing. This will allow test results to appear clean, without being
+ * interrupted by outputs from console.log statements.
+ *
+ * @module consoleHelper
+ */
+module.exports = {
+    /**
+     * Replaces all console messages with dummy implementations, effectively
+     * muting all console related output. This action can be undone by invoking
+     * [unmute()]{@link module:consoleHelper.unmute}
+     */
+    mute: function() {
+        if (_isMuted) {
+            return;
+        }
+        _methodNames.forEach((method) => {
+            // eslint-disable-next-line no-console
+            _consoleMethods[method] = console[method];
+
+            // eslint-disable-next-line no-console
+            console[method] = () => {};
+        });
+        _isMuted = true;
+    },
+
+    /**
+     * Unmutes all console output methods by restoring previously saved
+     * references to the methods.
+     */
+    unmute: function() {
+        if (!_isMuted) {
+            return;
+        }
+        for (let method in _consoleMethods) {
+            // eslint-disable-next-line no-console
+            console[method] = _consoleMethods[method];
+        }
+        _isMuted = false;
+    }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Tue Jan 14 2020 09:33:07 GMT-0500 (Eastern Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>
