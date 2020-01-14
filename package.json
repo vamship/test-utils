@@ -7,12 +7,17 @@
         "all": "gulp --series format lint test-unit clean",
         "test": "gulp test-unit"
     },
-    "files": ["package.json", "LICENSE", "README.md", "src/**/*"],
+    "files": [
+        "package.json",
+        "LICENSE",
+        "README.md",
+        "src/**/*"
+    ],
     "keywords": [],
     "author": "Vamshi K Ponnapalli <vamshi.ponnapalli@gmail.com>",
     "license": "MIT",
     "devDependencies": {
-        "@vamship/build-utils": "0.1.0",
+        "@vamship/build-utils": "0.1.1",
         "ansi-colors": "^4.1.1",
         "chai": "^4.2.0",
         "chai-as-promised": "^7.1.1",
