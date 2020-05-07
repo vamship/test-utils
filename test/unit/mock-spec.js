@@ -9,7 +9,7 @@ const _rewire = require('rewire');
 
 let Mock = null;
 
-describe('Mock', function() {
+describe('Mock', function () {
     beforeEach(() => {
         Mock = _rewire('../../src/mock');
     });
@@ -44,7 +44,7 @@ describe('Mock', function() {
 
         it('should expose the expected properties and functions', () => {
             const instance = {
-                foo: () => {}
+                foo: () => {},
             };
             const methodName = 'foo';
             const mock = new Mock(instance, methodName);

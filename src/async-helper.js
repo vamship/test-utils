@@ -18,7 +18,7 @@ module.exports = {
      * @return {Promise} A promise that will be resolved once the delay
      *         expires.
      */
-    wait: function(delay) {
+    wait: function (delay) {
         if (typeof delay !== 'number' || delay <= 0) {
             throw new Error('Invalid delay specified (arg #1)');
         }
@@ -29,5 +29,5 @@ module.exports = {
                 }, delay);
             });
         };
-    }
+    },
 };

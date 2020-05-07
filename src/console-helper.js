@@ -17,7 +17,7 @@ module.exports = {
      * muting all console related output. This action can be undone by invoking
      * [unmute()]{@link module:consoleHelper.unmute}
      */
-    mute: function() {
+    mute: function () {
         if (_isMuted) {
             return;
         }
@@ -35,7 +35,7 @@ module.exports = {
      * Unmutes all console output methods by restoring previously saved
      * references to the methods.
      */
-    unmute: function() {
+    unmute: function () {
         if (!_isMuted) {
             return;
         }
@@ -44,5 +44,5 @@ module.exports = {
             console[method] = _consoleMethods[method];
         }
         _isMuted = false;
-    }
+    },
 };

@@ -11,7 +11,7 @@ const _rewire = require('rewire');
 const Mock = require('../../src/mock');
 let PromiseMock = null;
 
-describe('PromiseMock', function() {
+describe('PromiseMock', function () {
     beforeEach(() => {
         PromiseMock = _rewire('../../src/promise-mock');
     });
@@ -19,7 +19,7 @@ describe('PromiseMock', function() {
     describe('ctor()', () => {
         it('should expose the expected properties and functions', () => {
             const instance = {
-                foo: () => {}
+                foo: () => {},
             };
             const methodName = 'foo';
             const mock = new PromiseMock(instance, methodName);

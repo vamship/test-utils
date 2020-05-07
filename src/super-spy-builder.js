@@ -35,8 +35,8 @@ class SuperSpyBuilder {
         this._mockDefinitions = {};
         this._mocks = {
             super: {
-                stub: _sinon.spy()
-            }
+                stub: _sinon.spy(),
+            },
         };
         this._ParentClass = ParentClass;
         this._ChildClass = ChildClass;
@@ -97,7 +97,7 @@ class SuperSpyBuilder {
 
         this._mockDefinitions[method] = {
             fake,
-            invokeSuperMethod: !skipSuperMethod
+            invokeSuperMethod: !skipSuperMethod,
         };
 
         return this;
@@ -150,7 +150,7 @@ class SuperSpyBuilder {
             const originalMethod = this._ParentClass.prototype[method];
             const stub = _sinon
                 .stub(this._ParentClass.prototype, method)
-                .callsFake(function(...args) {
+                .callsFake(function (...args) {
                     let ret = fake.call(this, ...args);
                     if (invokeSuperMethod) {
                         ret = originalMethod.call(this, ...args);
@@ -159,7 +159,7 @@ class SuperSpyBuilder {
                 });
 
             this.mocks[method] = {
-                stub
+                stub,
             };
         });
 

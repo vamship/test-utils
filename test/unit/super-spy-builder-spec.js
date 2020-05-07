@@ -293,7 +293,7 @@ describe('SuperSpyBuilder', () => {
             const results = [_shortId.generate(), _shortId.generate()];
 
             methods.forEach((method, index) => {
-                const fake = function() {
+                const fake = function () {
                     this.newProperty = results[index];
                 };
                 builder.addMock(method, fake);
@@ -318,7 +318,7 @@ describe('SuperSpyBuilder', () => {
                 methods.forEach((method) => {
                     const spy = _sinon.spy();
                     parentMethodSpies[method] = spy;
-                    Parent.prototype[method] = function(...args) {
+                    Parent.prototype[method] = function (...args) {
                         spy(...args);
                     };
                 });
@@ -352,7 +352,7 @@ describe('SuperSpyBuilder', () => {
                 const results = [_shortId.generate(), _shortId.generate()];
 
                 methods.forEach((method, index) => {
-                    const fake = function() {
+                    const fake = function () {
                         return results[index];
                     };
                     builder.addMock(method, fake, flag);
@@ -377,7 +377,7 @@ describe('SuperSpyBuilder', () => {
                 methods.forEach((method) => {
                     const spy = _sinon.spy();
                     parentMethodSpies[method] = spy;
-                    Parent.prototype[method] = function(...args) {
+                    Parent.prototype[method] = function (...args) {
                         spy(...args);
                     };
                 });
@@ -413,7 +413,7 @@ describe('SuperSpyBuilder', () => {
                 const methods = ['foo', 'bar'];
                 const results = [_shortId.generate(), _shortId.generate()];
                 methods.forEach((method, index) => {
-                    Parent.prototype[method] = function() {
+                    Parent.prototype[method] = function () {
                         return results[index];
                     };
                 });
@@ -440,7 +440,7 @@ describe('SuperSpyBuilder', () => {
                 const methods = ['foo', 'bar'];
                 const results = [_shortId.generate(), _shortId.generate()];
                 methods.forEach((method, index) => {
-                    Parent.prototype[method] = function() {
+                    Parent.prototype[method] = function () {
                         this.newProperty = results[index];
                     };
                 });

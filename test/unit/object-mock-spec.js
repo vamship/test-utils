@@ -10,23 +10,23 @@ const _rewire = require('rewire');
 
 let ObjectMock = null;
 
-describe('PromiseMock', function() {
+describe('PromiseMock', function () {
     let MockMock = null;
     let PromiseMock = null;
 
     beforeEach(() => {
         const mockInstance = {
             stub: {
-                restore: _sinon.spy()
-            }
+                restore: _sinon.spy(),
+            },
         };
         MockMock = _sinon.stub().returns(mockInstance);
         MockMock._instance = mockInstance;
 
         const promiseMockInstance = {
             stub: {
-                restore: _sinon.spy()
-            }
+                restore: _sinon.spy(),
+            },
         };
         PromiseMock = _sinon.stub().returns(promiseMockInstance);
         PromiseMock._instance = promiseMockInstance;
@@ -88,7 +88,7 @@ describe('PromiseMock', function() {
         it('should return a reference to the mock object', () => {
             const foo = () => {};
             const instance = {
-                foo
+                foo,
             };
             const mock = new ObjectMock(instance);
             const ret = mock.addMock('foo');
@@ -138,7 +138,7 @@ describe('PromiseMock', function() {
         it('should return a reference to the mock object', () => {
             const foo = () => {};
             const instance = {
-                foo
+                foo,
             };
             const mock = new ObjectMock(instance);
             const ret = mock.addPromiseMock('foo');
@@ -182,7 +182,7 @@ describe('PromiseMock', function() {
 
         it('should return a reference to the mock object', () => {
             const instance = {
-                foo: () => {}
+                foo: () => {},
             };
             const mock = new ObjectMock(instance);
             const ret = mock.restore('foo');
@@ -192,7 +192,7 @@ describe('PromiseMock', function() {
 
         it('should do nothing if the specified method has not been mocked', () => {
             const instance = {
-                foo: () => {}
+                foo: () => {},
             };
             const mock = new ObjectMock(instance);
             const mockSnapshot = Object.assign({}, mock.mocks);
@@ -205,7 +205,7 @@ describe('PromiseMock', function() {
         it('should invoke the restore method on the method stub if the method has been mocked', () => {
             const instance = {
                 foo: () => {},
-                bar: () => {}
+                bar: () => {},
             };
 
             const mock = new ObjectMock(instance);
@@ -230,7 +230,7 @@ describe('PromiseMock', function() {
         it('should delete the mock reference for the method stub if the method has been mocked', () => {
             const instance = {
                 foo: () => {},
-                bar: () => {}
+                bar: () => {},
             };
 
             const mock = new ObjectMock(instance);

@@ -30,5 +30,5 @@ module.exports = {
      * Class that can be used to mock out methods on existing objects, or
      * create new objects with mocked methods.
      */
-    ObjectMock: require('./object-mock')
+    ObjectMock: require('./object-mock'),
 };

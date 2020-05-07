@@ -8,11 +8,11 @@ const _rewire = require('rewire');
 
 let _testValues = null;
 
-describe('testValues', function() {
+describe('testValues', function () {
     function _getExpectedValues() {
         return {
             primitives: [undefined, null, 123, 'abc', true],
-            complex: ['object', 'array', 'function']
+            complex: ['object', 'array', 'function'],
         };
     }
 
@@ -47,7 +47,7 @@ describe('testValues', function() {
         _testValues = _rewire('../../src/test-values');
     });
 
-    it('should expose methods required by the interface', function() {
+    it('should expose methods required by the interface', function () {
         expect(_testValues.allButSelected).to.be.a('function');
         expect(_testValues.allButString).to.be.a('function');
         expect(_testValues.allButNumber).to.be.a('function');
@@ -313,7 +313,7 @@ describe('testValues', function() {
         function _split(str) {
             const tokens = str.split('_');
             const result = {
-                tokens: tokens.concat()
+                tokens: tokens.concat(),
             };
 
             result.prefix = tokens[0];

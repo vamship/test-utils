@@ -54,7 +54,7 @@ module.exports = {
      *
      * @return {Array} An array of test values
      */
-    allButSelected: function(...omit) {
+    allButSelected: function (...omit) {
         return _getTestValues(...omit);
     },
 
@@ -66,7 +66,7 @@ module.exports = {
      *        value list.
      * @return {Array} An array of test values
      */
-    allButUndefined: function(...extras) {
+    allButUndefined: function (...extras) {
         return _getTestValues('undefined').concat(extras);
     },
 
@@ -78,7 +78,7 @@ module.exports = {
      *        value list.
      * @return {Array} An array of test values
      */
-    allButNull: function(...extras) {
+    allButNull: function (...extras) {
         return _getTestValues('null').concat(extras);
     },
 
@@ -90,7 +90,7 @@ module.exports = {
      *        value list.
      * @return {Array} An array of test values
      */
-    allButString: function(...extras) {
+    allButString: function (...extras) {
         return _getTestValues('string').concat(extras);
     },
 
@@ -102,7 +102,7 @@ module.exports = {
      *        value list.
      * @return {Array} An array of test values
      */
-    allButNumber: function(...extras) {
+    allButNumber: function (...extras) {
         return _getTestValues('number').concat(extras);
     },
 
@@ -114,7 +114,7 @@ module.exports = {
      *        value list.
      * @return {Array} An array of test values
      */
-    allButObject: function(...extras) {
+    allButObject: function (...extras) {
         return _getTestValues('object').concat(extras);
     },
 
@@ -126,7 +126,7 @@ module.exports = {
      *        value list.
      * @return {Array} An array of test values
      */
-    allButArray: function(...extras) {
+    allButArray: function (...extras) {
         return _getTestValues('array').concat(extras);
     },
 
@@ -138,7 +138,7 @@ module.exports = {
      *        value list.
      * @return {Array} An array of test values
      */
-    allButFunction: function(...extras) {
+    allButFunction: function (...extras) {
         return _getTestValues('function').concat(extras);
     },
 
@@ -150,7 +150,7 @@ module.exports = {
      *        value list.
      * @return {Array} An array of test values
      */
-    allButBoolean: function(...extras) {
+    allButBoolean: function (...extras) {
         return _getTestValues('boolean').concat(extras);
     },
 
@@ -163,7 +163,7 @@ module.exports = {
      *
      * @return {String} The generated string.
      */
-    getString: function(prefix) {
+    getString: function (prefix) {
         if (typeof prefix !== 'string' || prefix.length <= 0) {
             prefix = '';
         } else {
@@ -184,7 +184,7 @@ module.exports = {
      *
      * @return {Number} A timestamp value used for testing.
      */
-    getTimestamp: function(range, start) {
+    getTimestamp: function (range, start) {
         if (typeof start !== 'number' || start <= 0) {
             start = Date.now();
         }
@@ -204,7 +204,7 @@ module.exports = {
      *
      * @return {Number} A random number generated within the range.
      */
-    getNumber: function(range, start) {
+    getNumber: function (range, start) {
         if (typeof start !== 'number') {
             start = 0;
         }
@@ -212,5 +212,5 @@ module.exports = {
             range = 100;
         }
         return start + Math.floor(Math.random() * range);
-    }
+    },
 };

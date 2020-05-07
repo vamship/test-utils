@@ -9,7 +9,7 @@ const _rewire = require('rewire');
 
 let _consoleHelper = null;
 
-describe('consoleHelper', function() {
+describe('consoleHelper', function () {
     const _methodNames = ['log', 'info', 'warn', 'error'];
     const _consoleMethods = [];
     let consoleSpy = null;
@@ -45,7 +45,7 @@ describe('consoleHelper', function() {
         _consoleHelper = _rewire('../../src/console-helper');
     });
 
-    it('should expose methods required by the interface', function() {
+    it('should expose methods required by the interface', function () {
         expect(_consoleHelper.mute).to.be.a('function');
         expect(_consoleHelper.unmute).to.be.a('function');
     });

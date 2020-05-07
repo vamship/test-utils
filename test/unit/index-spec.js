@@ -13,12 +13,12 @@ const _testValues = require('../../src/test-values');
 const _superSpyBuilder = require('../../src/super-spy-builder');
 const ObjectMock = require('../../src/object-mock');
 
-describe('index', function() {
+describe('index', function () {
     beforeEach(() => {
         _index = _rewire('../../src/index');
     });
 
-    it('should implement methods required by the interface', function() {
+    it('should implement methods required by the interface', function () {
         expect(_index.asyncHelper).to.equal(_asyncHelper);
         expect(_index.consoleHelper).to.equal(_consoleHelper);
         expect(_index.testValues).to.equal(_testValues);

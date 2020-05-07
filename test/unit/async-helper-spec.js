@@ -9,12 +9,12 @@ const _rewire = require('rewire');
 let _asyncHelper = null;
 const Promise = require('bluebird').Promise;
 
-describe('asyncHelper', function() {
+describe('asyncHelper', function () {
     beforeEach(() => {
         _asyncHelper = _rewire('../../src/async-helper');
     });
 
-    it('should implement methods required by the interface', function() {
+    it('should implement methods required by the interface', function () {
         expect(_asyncHelper.wait).to.be.a('function');
     });
 
