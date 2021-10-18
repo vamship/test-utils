@@ -17,7 +17,7 @@
     "author": "Vamshi K Ponnapalli <vamshi.ponnapalli@gmail.com>",
     "license": "MIT",
     "devDependencies": {
-        "@vamship/build-utils": "^1.0.1",
+        "@vamship/build-utils": "^1.0.2",
         "chai": "^4.3.4",
         "chai-as-promised": "^7.1.1",
         "rewire": "^5.0.0",
