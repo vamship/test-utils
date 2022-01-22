@@ -7,7 +7,7 @@ const expect = _chai.expect;
 
 const _sinon = require('sinon');
 const _rewire = require('rewire');
-const {customAlphabet} = require('nanoid/non-secure');
+const { customAlphabet } = require('nanoid/non-secure');
 const _generateRandom = customAlphabet(
     '1234567890abcdefghijklmnopqrstuvwxyz',
     5
