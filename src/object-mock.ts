@@ -40,8 +40,6 @@ export default class ObjectMock {
     /**
      * Returns a reference to the constructor of the mocked object. This is
      * a mock constructor that returns a reference to the object being mocked.
-     *
-     * @type {Function}
      */
     get ctor(): (...args) => MockInstance {
         return this._ctor;
@@ -50,11 +48,30 @@ export default class ObjectMock {
     /**
      * Reference to an object containing references to {@link Mock} objects for
      * each method on the instance that has been mocked.
-     *
-     * @type {Object}
      */
     get mocks(): MockMap {
         return this._mocks;
+    }
+
+    /**
+     * Returns a mock object for the specified method.
+     *
+     * @param methodName The name of the method to be mocked. If the method does
+     * not exist, an error will be thrown.
+     *
+     * @return The mock associated with the specified method.
+     */
+    getMock<T>(methodName: string): Mock<T> {
+        if (typeof methodName !== 'string' || methodName.length <= 0) {
+            throw new Error('Invalid methodName (arg #1)');
+        }
+
+        const mock = this._mocks[methodName];
+        if (typeof mock === 'undefined') {
+            throw new Error(`Method has not been mocked [${methodName}]`);
+        }
+
+        return mock as Mock<T>;
     }
 
     /**

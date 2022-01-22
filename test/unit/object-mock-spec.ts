@@ -12,25 +12,33 @@ import _rewire from 'rewire';
 let ObjectMock = _rewire('../../src/object-mock').default;
 
 describe('PromiseMock', () => {
-    let MockMock = null;
-    let PromiseMock = null;
+    let MockMock = _sinon.stub();
+    let PromiseMock = _sinon.stub();
+    let _mockMockInstance = {
+        stub: {
+            restore: _sinon.spy(),
+        },
+    };
+    let _promiseMockInstance = {
+        stub: {
+            restore: _sinon.spy(),
+        },
+    };
 
     beforeEach(() => {
-        const mockInstance = {
+        _mockMockInstance = {
             stub: {
                 restore: _sinon.spy(),
             },
         };
-        MockMock = _sinon.stub().returns(mockInstance);
-        MockMock._instance = mockInstance;
+        MockMock = _sinon.stub().returns(_mockMockInstance);
 
-        const promiseMockInstance = {
+        _promiseMockInstance = {
             stub: {
                 restore: _sinon.spy(),
             },
         };
-        PromiseMock = _sinon.stub().returns(promiseMockInstance);
-        PromiseMock._instance = promiseMockInstance;
+        PromiseMock = _sinon.stub().returns(_promiseMockInstance);
 
         const _objectMockModule = _rewire('../../src/object-mock');
         ObjectMock = _objectMockModule.default;
@@ -57,6 +65,51 @@ describe('PromiseMock', () => {
             const mock = new ObjectMock(instance);
 
             expect(mock.ctor()).to.equal(instance);
+        });
+    });
+
+    describe('getMock()', () => {
+        it('should throw an error if invoked without a valid methodName', () => {
+            const error = 'Invalid methodName (arg #1)';
+            const inputs = [undefined, null, 123, '', true, [], {}, () => {}];
+
+            inputs.forEach((methodName) => {
+                const wrapper = () => {
+                    const mock = new ObjectMock({});
+                    return mock.getMock(methodName);
+                };
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        it('should throw an error if the method has not been mocked', () => {
+            const inputs = ['badMethod', 'anotherBadMethod'];
+
+            const mock = new ObjectMock({});
+            inputs.forEach((methodName) => {
+                const error = `Method has not been mocked [${methodName}]`;
+                const wrapper = () => {
+                    return mock.getMock(methodName);
+                };
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        it('should return the mock for the method name', () => {
+            const instance = {
+                foo: (): string => 'foo',
+                bar: (): string => 'bar',
+            };
+            const inputs = ['foo', 'bar'];
+
+            const mock = new ObjectMock(instance).addMock('foo').addMock('bar');
+            inputs.forEach((methodName) => {
+                const methodMock = mock.getMock(methodName);
+                expect(methodMock).to.be.an('object');
+                expect(methodMock).to.equal(_mockMockInstance);
+            });
         });
     });
 
@@ -106,7 +159,7 @@ describe('PromiseMock', () => {
                 methodName,
                 returnValue
             );
-            expect(mock.mocks[methodName]).to.equal(MockMock._instance);
+            expect(mock.mocks[methodName]).to.equal(_mockMockInstance);
         });
     });
 
@@ -151,7 +204,7 @@ describe('PromiseMock', () => {
             expect(PromiseMock).to.have.been.calledOnce;
             expect(PromiseMock).to.have.been.calledWithNew;
             expect(PromiseMock).to.have.been.calledWith(instance, methodName);
-            expect(mock.mocks[methodName]).to.equal(PromiseMock._instance);
+            expect(mock.mocks[methodName]).to.equal(_promiseMockInstance);
         });
     });
 
@@ -202,8 +255,8 @@ describe('PromiseMock', () => {
             mock.addMock('foo');
             mock.addPromiseMock('bar');
 
-            const mockRestoreStub = MockMock._instance.stub.restore;
-            const promiseMockRestoreStub = PromiseMock._instance.stub.restore;
+            const mockRestoreStub = _mockMockInstance.stub.restore;
+            const promiseMockRestoreStub = _promiseMockInstance.stub.restore;
 
             expect(mockRestoreStub).to.not.have.been.called;
             expect(promiseMockRestoreStub).to.not.have.been.called;
