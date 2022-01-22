@@ -1,20 +1,22 @@
-'use strict';
+import _chai, { expect } from 'chai';
+import _chaiAsPromised from 'chai-as-promised';
+import _sinon, { SinonSpy } from 'sinon';
+import _sinonChai from 'sinon-chai';
+import 'mocha';
 
-const _sinon = require('sinon');
-const _chai = require('chai');
-_chai.use(require('sinon-chai'));
-_chai.use(require('chai-as-promised'));
-const expect = _chai.expect;
-const _rewire = require('rewire');
+_chai.use(_chaiAsPromised);
+_chai.use(_sinonChai);
 
-let _consoleHelper = null;
+import _rewire from 'rewire';
+
+let _consoleHelper = _rewire('../../src/console-helper');
 
 describe('consoleHelper', function () {
     const _methodNames = ['log', 'info', 'warn', 'error'];
     const _consoleMethods = [];
-    let consoleSpy = null;
+    let consoleSpy: SinonSpy<void[], void> = _sinon.spy();
 
-    function _startSpying() {
+    function _startSpying(): void {
         // eslint-disable-next-line no-console
         consoleSpy = _sinon.spy();
         _methodNames.forEach((method) => {
@@ -26,15 +28,14 @@ describe('consoleHelper', function () {
         });
     }
 
-    function _stopSpying() {
+    function _stopSpying(): void {
         _methodNames.forEach((method) => {
             // eslint-disable-next-line no-console
             console[method] = _consoleMethods[method];
         });
     }
 
-    function _invokeConsole(message) {
-        message = message || 'Test';
+    function _invokeConsole(message = 'Test'): void {
         _methodNames.forEach((method) => {
             // eslint-disable-next-line no-console
             console[method](message);
@@ -43,11 +44,6 @@ describe('consoleHelper', function () {
 
     beforeEach(() => {
         _consoleHelper = _rewire('../../src/console-helper');
-    });
-
-    it('should expose methods required by the interface', function () {
-        expect(_consoleHelper.mute).to.be.a('function');
-        expect(_consoleHelper.unmute).to.be.a('function');
     });
 
     describe('mute()', () => {

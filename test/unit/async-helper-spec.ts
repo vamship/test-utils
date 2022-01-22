@@ -9,7 +9,6 @@ _chai.use(_sinonChai);
 import _rewire from 'rewire';
 
 let _asyncHelper = _rewire('../../src/async-helper');
-// const Promise = require('bluebird').Promise;
 
 describe('asyncHelper', () => {
     beforeEach(() => {
