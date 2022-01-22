@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Exposes utility methods to help execution of async tests.
  * @module asyncHelper
