@@ -49,7 +49,15 @@ describe('PromiseMock', () => {
 
     describe('ctor()', () => {
         it('should create a default instance if a valid instance is not specified', () => {
-            const inputs = [undefined, null, 123, 'foo', true, [], () => {}];
+            const inputs = [
+                undefined,
+                null,
+                123,
+                'foo',
+                true,
+                [],
+                () => undefined,
+            ];
 
             inputs.forEach((instance) => {
                 const mock = new ObjectMock(instance);
@@ -71,7 +79,16 @@ describe('PromiseMock', () => {
     describe('getMock()', () => {
         it('should throw an error if invoked without a valid methodName', () => {
             const error = 'Invalid methodName (arg #1)';
-            const inputs = [undefined, null, 123, '', true, [], {}, () => {}];
+            const inputs = [
+                undefined,
+                null,
+                123,
+                '',
+                true,
+                [],
+                {},
+                () => undefined,
+            ];
 
             inputs.forEach((methodName) => {
                 const wrapper = () => {
@@ -116,7 +133,16 @@ describe('PromiseMock', () => {
     describe('addMock()', () => {
         it('should throw an error if invoked without a valid methodName', () => {
             const error = 'Invalid methodName specified (arg #1)';
-            const inputs = [undefined, null, 123, '', true, [], {}, () => {}];
+            const inputs = [
+                undefined,
+                null,
+                123,
+                '',
+                true,
+                [],
+                {},
+                () => undefined,
+            ];
 
             inputs.forEach((methodName) => {
                 const wrapper = () => {
@@ -142,7 +168,7 @@ describe('PromiseMock', () => {
         it('should create a mock object for the specified method', () => {
             const methodName = 'foo';
             const returnValue = 'bar';
-            const method = () => {};
+            const method = () => undefined;
             const instance = {};
             instance[methodName] = method;
             const mock = new ObjectMock(instance);
@@ -166,7 +192,16 @@ describe('PromiseMock', () => {
     describe('addPromiseMock()', () => {
         it('should throw an error if invoked without a valid methodName', () => {
             const error = 'Invalid methodName specified (arg #1)';
-            const inputs = [undefined, null, 123, '', true, [], {}, () => {}];
+            const inputs = [
+                undefined,
+                null,
+                123,
+                '',
+                true,
+                [],
+                {},
+                () => undefined,
+            ];
 
             inputs.forEach((methodName) => {
                 const wrapper = () => {
@@ -179,7 +214,7 @@ describe('PromiseMock', () => {
         });
 
         it('should return a reference to the mock object', () => {
-            const foo = () => {};
+            const foo = () => undefined;
             const instance = {
                 foo,
             };
@@ -191,7 +226,7 @@ describe('PromiseMock', () => {
 
         it('should create a mock object for the specified method', () => {
             const methodName = 'foo';
-            const method = () => {};
+            const method = () => undefined;
             const instance = {};
             instance[methodName] = method;
             const mock = new ObjectMock(instance);
@@ -211,7 +246,16 @@ describe('PromiseMock', () => {
     describe('restore', () => {
         it('should throw an error if invoked without a valid methodName', () => {
             const error = 'Invalid methodName specified (arg #1)';
-            const inputs = [undefined, null, 123, '', true, [], {}, () => {}];
+            const inputs = [
+                undefined,
+                null,
+                123,
+                '',
+                true,
+                [],
+                {},
+                () => undefined,
+            ];
 
             inputs.forEach((methodName) => {
                 const wrapper = () => {
@@ -225,7 +269,7 @@ describe('PromiseMock', () => {
 
         it('should return a reference to the mock object', () => {
             const instance = {
-                foo: () => {},
+                foo: () => undefined,
             };
             const mock = new ObjectMock(instance);
             const ret = mock.restore('foo');
@@ -235,7 +279,7 @@ describe('PromiseMock', () => {
 
         it('should do nothing if the specified method has not been mocked', () => {
             const instance = {
-                foo: () => {},
+                foo: () => undefined,
             };
             const mock = new ObjectMock(instance);
             const mockSnapshot = Object.assign({}, mock.mocks);
@@ -247,8 +291,8 @@ describe('PromiseMock', () => {
 
         it('should invoke the restore method on the method stub if the method has been mocked', () => {
             const instance = {
-                foo: () => {},
-                bar: () => {},
+                foo: () => undefined,
+                bar: () => undefined,
             };
 
             const mock = new ObjectMock(instance);
@@ -272,8 +316,8 @@ describe('PromiseMock', () => {
 
         it('should delete the mock reference for the method stub if the method has been mocked', () => {
             const instance = {
-                foo: () => {},
-                bar: () => {},
+                foo: () => undefined,
+                bar: () => undefined,
             };
 
             const mock = new ObjectMock(instance);
