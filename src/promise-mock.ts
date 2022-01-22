@@ -1,7 +1,35 @@
-'use strict';
+import Mock from './mock';
 
-const Mock = require('./mock');
-const Promise = require('bluebird').Promise;
+// type PromiseWrapper<T> = {
+//     promise: Promise<T>;
+//     resolve: (data: T) => void;
+//     reject: (err: Error) => void;
+// };
+
+type PromiseResolve<T> = (value: T | PromiseLike<T>) => void;
+type PromiseReject = (error?: unknown) => void;
+
+/**
+ * Private class used to wrap a promise and its reject/resolve methods.
+ */
+class PromiseWrapper<T> {
+    public resolve: PromiseResolve<T>;
+    public reject: PromiseReject;
+    public promise: Promise<T>;
+
+    constructor() {
+        let resolveRef: PromiseResolve<T> = (data: T | PromiseLike<T>) =>
+            undefined;
+        let rejectRef: PromiseReject = (err?: unknown) => undefined;
+        this.promise = new Promise<T>(function (resolve, reject) {
+            resolveRef = resolve;
+            rejectRef = reject;
+        });
+
+        this.resolve = resolveRef;
+        this.reject = rejectRef;
+    }
+}
 
 /**
  * Class that creates a mock method on an object, but is specifically designed
@@ -12,21 +40,19 @@ const Promise = require('bluebird').Promise;
  * This class is not meant to be instantiated directly, but is designed for
  * use within the [ObjectMock]{@link ObjectMock} class.
  * </p>
- *
- * @extends {Mock}
  */
-class PromiseMock extends Mock {
+export default class PromiseMock<T> extends Mock<Promise<T>> {
+    private _wrappers: PromiseWrapper<T>[];
+
     /**
-     * @param {Object} instance The object instance on which the method will be
-     *        mocked.
-     * @param {String} methodName The name of the method on the object that
-     *        needs to be mocked. If the specified method does not exist, a
-     *        placeholder method will be injected into the instance which will
-     *        then be mocked.
+     * @param instance The object instance on which the method will be mocked.
+     * @param methodName The name of the method on the object that needs to be
+     * mocked. If the specified method does not exist, a placeholder method will
+     * be injected into the instance which will then be mocked.
      */
-    constructor(instance, methodName) {
+    constructor(instance: Record<string, unknown>, methodName: string) {
         let callIndex = 0;
-        super(instance, methodName, () => {
+        super(instance, methodName, async (): Promise<T> => {
             const wrapper = this._getPromiseWrapper(callIndex);
             callIndex++;
             return wrapper.promise;
@@ -45,20 +71,16 @@ class PromiseMock extends Mock {
      * index.
      *
      * @private
-     * @param {Number} callIndex The invocation index for which to get the
-     *        wrapper.
+     * @param callIndex The invocation index for which to get the wrapper.
      *
-     * @return {Object} A simple object with references to the promise, reject
-     *         and resolve methods.
+     * @return A simple object with references to the promise, reject and
+     * resolve methods.
      */
-    _getPromiseWrapper(callIndex) {
+    _getPromiseWrapper(callIndex: number): PromiseWrapper<T> {
         let wrapper = this._wrappers[callIndex];
+
         if (!wrapper) {
-            wrapper = {};
-            wrapper.promise = new Promise((resolve, reject) => {
-                wrapper.resolve = resolve;
-                wrapper.reject = reject;
-            });
+            wrapper = new PromiseWrapper<T>();
             this._wrappers[callIndex] = wrapper;
         }
         return wrapper;
@@ -81,12 +103,12 @@ class PromiseMock extends Mock {
      * has been invoked, which does not always work in asynchronous scenarios.
      * </p>
      *
-     * @param {Number} [callIndex=0] The index of the invocation, with the
-     *        first invocation starting at index 0. Defaults to 0.
+     * @param callIndex The index of the invocation, with the first
+     * invocation starting at index 0. Defaults to 0.
      *
-     * @return {Promise} The promise associated with the specified call index.
+     * @return The promise associated with the specified call index.
      */
-    promise(callIndex) {
+    promise(callIndex = 0): Promise<T> {
         if (typeof callIndex !== 'number' || callIndex <= 0) {
             callIndex = 0;
         }
@@ -104,15 +126,15 @@ class PromiseMock extends Mock {
      * invocation prior to it actually occurring.
      * </p>
      *
-     * @param {*} [error=undefined] The rejection response for the promise.
-     *        This is typically an error, but can be any value.
+     * @param error The rejection response for the promise.  This is typically
+     * an error, but can be any value.
      *
-     * @param {Number} [callIndex=0] The index of the invocation, with the
-     *        first invocation starting at index 0. Defaults to 0.
+     * @param callIndex The index of the invocation, with the first invocation
+     * starting at index 0. Defaults to 0.
      *
-     * @return {Promise} The promise associated with the specified call index.
+     * @return The promise associated with the specified call index.
      */
-    reject(error, callIndex) {
+    reject(error?: unknown, callIndex = 0): Promise<T> {
         if (typeof callIndex !== 'number' || callIndex <= 0) {
             callIndex = 0;
         }
@@ -132,15 +154,15 @@ class PromiseMock extends Mock {
      * invocation prior to it actually occurring.
      * </p>
      *
-     * @param {*} [response=undefined] The resolution response for the promise.
-     *        This is typically an error, but can be any value.
+     * @param response The resolution response for the promise.  This is
+     * typically an error, but can be any value.
      *
-     * @param {Number} [callIndex=0] The index of the invocation, with the
-     *        first invocation starting at index 0. Defaults to 0.
+     * @param callIndex The index of the invocation, with the first invocation
+     * starting at index 0. Defaults to 0.
      *
-     * @return {Promise} The promise associated with the specified call index.
+     * @return The promise associated with the specified call index.
      */
-    resolve(response, callIndex) {
+    resolve(response: T, callIndex = 0): Promise<T> {
         if (typeof callIndex !== 'number' || callIndex <= 0) {
             callIndex = 0;
         }
@@ -149,5 +171,3 @@ class PromiseMock extends Mock {
         return wrapper.promise;
     }
 }
-
-module.exports = PromiseMock;
