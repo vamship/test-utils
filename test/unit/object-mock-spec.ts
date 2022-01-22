@@ -1,16 +1,17 @@
-'use strict';
+import _chai, { expect } from 'chai';
+import _chaiAsPromised from 'chai-as-promised';
+import _sinon from 'sinon';
+import _sinonChai from 'sinon-chai';
+import 'mocha';
 
-const _sinon = require('sinon');
-const _chai = require('chai');
-_chai.use(require('sinon-chai'));
-_chai.use(require('chai-as-promised'));
-const expect = _chai.expect;
+_chai.use(_chaiAsPromised);
+_chai.use(_sinonChai);
 
-const _rewire = require('rewire');
+import _rewire from 'rewire';
 
-let ObjectMock = null;
+let ObjectMock = _rewire('../../src/object-mock').default;
 
-describe('PromiseMock', function () {
+describe('PromiseMock', () => {
     let MockMock = null;
     let PromiseMock = null;
 
@@ -31,25 +32,14 @@ describe('PromiseMock', function () {
         PromiseMock = _sinon.stub().returns(promiseMockInstance);
         PromiseMock._instance = promiseMockInstance;
 
-        ObjectMock = _rewire('../../src/object-mock');
-        ObjectMock.__set__('Mock', MockMock);
-        ObjectMock.__set__('PromiseMock', PromiseMock);
+        const _objectMockModule = _rewire('../../src/object-mock');
+        ObjectMock = _objectMockModule.default;
+
+        _objectMockModule.__set__('mock_1', { default: MockMock });
+        _objectMockModule.__set__('promise_mock_1', { default: PromiseMock });
     });
 
     describe('ctor()', () => {
-        it('should return an object with the expected methods and properties', () => {
-            const instance = {};
-            const mock = new ObjectMock(instance);
-
-            expect(mock).to.be.an('object');
-            expect(mock.instance).to.equal(instance);
-            expect(mock.ctor).to.be.a('function');
-            expect(mock.mocks).to.be.an('object');
-            expect(mock.addMock).to.be.a('function');
-            expect(mock.addPromiseMock).to.be.a('function');
-            expect(mock.restore).to.be.a('function');
-        });
-
         it('should create a default instance if a valid instance is not specified', () => {
             const inputs = [undefined, null, 123, 'foo', true, [], () => {}];
 
@@ -86,7 +76,7 @@ describe('PromiseMock', function () {
         });
 
         it('should return a reference to the mock object', () => {
-            const foo = () => {};
+            const foo = () => undefined;
             const instance = {
                 foo,
             };

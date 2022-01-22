@@ -1,19 +1,23 @@
-'use strict';
+import _sinon from 'sinon';
+import Mock, { MockResponse } from './mock';
+import PromiseMock from './promise-mock';
 
-const _sinon = require('sinon');
-const Mock = require('./mock');
-const PromiseMock = require('./promise-mock');
+type MockInstance = Record<string, unknown>;
+type MockMap = Record<string, Mock<unknown>>;
 
 /**
  * A mocker object that can be used to selectively mock methods on an existing
  * object, or to create a new object with mock methods for testing.
  */
-class ObjectMock {
+export default class ObjectMock {
+    private _instance: MockInstance;
+    private _ctor: (...args) => MockInstance;
+    private _mocks: MockMap;
     /**
-     * @param {Object} [instance={}] The object instance on which the mocks
-     *        will be created. If omitted, a default empty object will be used.
+     * @param instance The object instance on which the mocks will be created.
+     * If omitted, a default empty object will be used.
      */
-    constructor(instance) {
+    constructor(instance: Record<string, unknown> = {}) {
         if (
             !instance ||
             instance instanceof Array ||
@@ -28,10 +32,8 @@ class ObjectMock {
 
     /**
      * A refence to the object that is being mocked.
-     *
-     * @type {Object}
      */
-    get instance() {
+    get instance(): MockInstance {
         return this._instance;
     }
 
@@ -41,7 +43,7 @@ class ObjectMock {
      *
      * @type {Function}
      */
-    get ctor() {
+    get ctor(): (...args) => MockInstance {
         return this._ctor;
     }
 
@@ -51,28 +53,27 @@ class ObjectMock {
      *
      * @type {Object}
      */
-    get mocks() {
+    get mocks(): MockMap {
         return this._mocks;
     }
 
     /**
      * Adds a mock for the specified method.
      *
-     * @param {String} methodName The name of the method to be mocked. If the
-     *        method does not exist, an empty placeholder method will be creted
-     *        and then mocked.
-     * @param {*} [returnValue=undefined] The return value of the mocked
-     *        method. If this parameter is a function, the function will be
-     *        invoked, and its response will be returned.
+     * @param methodName The name of the method to be mocked. If the method does
+     * not exist, an empty placeholder method will be creted and then mocked.
+     * @param returnValue The return value of the mocked method. If this
+     * parameter is a function, the function will be invoked, and its response
+     * will be returned.
      *
-     * @return {Object} A reference to the mock object (can be used to chain
-     *         method calls)
+     * @return A reference to the mock object (can be used to chain method
+     * calls)
      */
-    addMock(methodName, returnValue) {
+    addMock<T>(methodName: string, returnValue: MockResponse<T>): ObjectMock {
         if (typeof methodName !== 'string' || methodName.length <= 0) {
             throw new Error('Invalid methodName specified (arg #1)');
         }
-        this._mocks[methodName] = new Mock(
+        this._mocks[methodName] = new Mock<T>(
             this.instance,
             methodName,
             returnValue
@@ -84,18 +85,17 @@ class ObjectMock {
      * Adds a mock for the specified method, treating the method as one that
      * returns a promise.
      *
-     * @param {String} methodName The name of the method to be mocked. If the
-     *        method does not exist, an empty placeholder method will be creted
-     *        and then mocked.
+     * @param methodName The name of the method to be mocked. If the method does
+     * not exist, an empty placeholder method will be creted and then mocked.
      *
-     * @return {Object} A reference to the mock object (can be used to chain
-     *         method calls)
+     * @return A reference to the mock object (can be used to chain method
+     * calls)
      */
-    addPromiseMock(methodName) {
+    addPromiseMock<T>(methodName: string): ObjectMock {
         if (typeof methodName !== 'string' || methodName.length <= 0) {
             throw new Error('Invalid methodName specified (arg #1)');
         }
-        this._mocks[methodName] = new PromiseMock(this.instance, methodName);
+        this._mocks[methodName] = new PromiseMock<T>(this.instance, methodName);
         return this;
     }
 
@@ -104,13 +104,12 @@ class ObjectMock {
      * method. If no mocks have been defined for the specified method name,
      * no changes will be made for that method.
      *
-     * @param {String} methodName The name of the method for which mocks will
-     *        be removed.
+     * @param methodName The name of the method for which mocks will be removed.
      *
-     * @return {Object} A reference to the mock object (can be used to chain
-     *         method calls)
+     * @return A reference to the mock object (can be used to chain method
+     * calls)
      */
-    restore(methodName) {
+    restore(methodName: string): ObjectMock {
         if (typeof methodName !== 'string' || methodName.length <= 0) {
             throw new Error('Invalid methodName specified (arg #1)');
         }
@@ -121,5 +120,3 @@ class ObjectMock {
         return this;
     }
 }
-
-module.exports = ObjectMock;
