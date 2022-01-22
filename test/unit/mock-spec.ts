@@ -17,7 +17,7 @@ class TestSubject {
     }
 }
 
-describe('Mock', function () {
+describe('Mock', () => {
     beforeEach(() => {
         Mock = _rewire('../../src/mock');
     });
@@ -64,28 +64,6 @@ describe('Mock', function () {
 
                 expect(wrapper).to.throw(error);
             });
-        });
-
-        it('should expose the expected properties and functions', () => {
-            const instance = {
-                foo: () => undefined,
-            };
-            const methodName = 'foo';
-            const mock = new Mock(instance, methodName);
-
-            expect(mock).to.be.an('object');
-            expect(mock.instance).to.equal(instance);
-            expect(mock.methodName).to.equal(methodName);
-
-            //Duck type verification of a sinon mock.
-            expect(mock.stub).to.be.a('function');
-            expect(mock.stub.args).to.be.an('array');
-            expect(mock.stub.callCount).to.equal(0);
-
-            expect(mock.responses).to.deep.equal([]);
-            expect(mock).to.have.property('ret');
-
-            expect(mock.reset).to.be.a('function');
         });
 
         it('should create a valid stub even if the method does not exist on the instance', () => {
