@@ -9,7 +9,7 @@ _chai.use(_sinonChai);
 
 import _rewire from 'rewire';
 
-let Mock = _rewire('../../src/mock');
+let Mock = _rewire('../../src/mock').default;
 
 class TestSubject {
     public foo(...args): string {
@@ -19,7 +19,7 @@ class TestSubject {
 
 describe('Mock', () => {
     beforeEach(() => {
-        Mock = _rewire('../../src/mock');
+        Mock = _rewire('../../src/mock').default;
     });
 
     describe('ctor()', () => {

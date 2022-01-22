@@ -8,7 +8,7 @@ _chai.use(_sinonChai);
 
 import _rewire from 'rewire';
 
-let PromiseMock = _rewire('../../src/promise-mock');
+let PromiseMock = _rewire('../../src/promise-mock').default;
 
 class TestSubject {
     public async foo(...args): Promise<string> {
@@ -18,7 +18,7 @@ class TestSubject {
 
 describe('PromiseMock', () => {
     beforeEach(() => {
-        PromiseMock = _rewire('../../src/promise-mock');
+        PromiseMock = _rewire('../../src/promise-mock').default;
     });
 
     describe('ctor()', () => {
@@ -54,7 +54,8 @@ describe('PromiseMock', () => {
 
             const promises: Promise<string>[] = [];
             for (let index = 0; index < 10; index++) {
-                promises.push(instance.foo());
+                const promise = instance.foo();
+                promises.push(promise);
             }
 
             promises.forEach((promise, index) => {

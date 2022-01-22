@@ -1,11 +1,5 @@
 import Mock from './mock';
 
-// type PromiseWrapper<T> = {
-//     promise: Promise<T>;
-//     resolve: (data: T) => void;
-//     reject: (err: Error) => void;
-// };
-
 type PromiseResolve<T> = (value: T | PromiseLike<T>) => void;
 type PromiseReject = (error?: unknown) => void;
 
@@ -52,7 +46,7 @@ export default class PromiseMock<T> extends Mock<Promise<T>> {
      */
     constructor(instance: Record<string, unknown>, methodName: string) {
         let callIndex = 0;
-        super(instance, methodName, async (): Promise<T> => {
+        super(instance, methodName, (): Promise<T> => {
             const wrapper = this._getPromiseWrapper(callIndex);
             callIndex++;
             return wrapper.promise;
