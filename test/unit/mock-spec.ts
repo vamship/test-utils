@@ -1,13 +1,21 @@
-'use strict';
+import _chai, { expect } from 'chai';
+import _chaiAsPromised from 'chai-as-promised';
+import _sinon from 'sinon';
+import _sinonChai from 'sinon-chai';
+import 'mocha';
 
-const _sinon = require('sinon');
-const _chai = require('chai');
-_chai.use(require('sinon-chai'));
-_chai.use(require('chai-as-promised'));
-const expect = _chai.expect;
-const _rewire = require('rewire');
+_chai.use(_chaiAsPromised);
+_chai.use(_sinonChai);
 
-let Mock = null;
+import _rewire from 'rewire';
+
+let Mock = _rewire('../../src/mock');
+
+class TestSubject {
+    public foo(...args): string {
+        return '1234';
+    }
+}
 
 describe('Mock', function () {
     beforeEach(() => {
@@ -17,7 +25,15 @@ describe('Mock', function () {
     describe('ctor()', () => {
         it('should throw an error if invoked without a valid instance', () => {
             const error = 'Invalid instance specified (arg #1)';
-            const inputs = [undefined, null, 123, 'foo', true, [], () => {}];
+            const inputs = [
+                undefined,
+                null,
+                123,
+                'foo',
+                true,
+                [],
+                () => undefined,
+            ];
 
             inputs.forEach((instance) => {
                 const wrapper = () => {
@@ -30,7 +46,15 @@ describe('Mock', function () {
 
         it('should throw an error if invoked without a valid method name', () => {
             const error = 'Invalid methodName specified (arg #2)';
-            const inputs = [undefined, null, 123, true, {}, [], () => {}];
+            const inputs = [
+                undefined,
+                null,
+                123,
+                true,
+                {},
+                [],
+                () => undefined,
+            ];
 
             inputs.forEach((methodName) => {
                 const wrapper = () => {
@@ -44,7 +68,7 @@ describe('Mock', function () {
 
         it('should expose the expected properties and functions', () => {
             const instance = {
-                foo: () => {},
+                foo: () => undefined,
             };
             const methodName = 'foo';
             const mock = new Mock(instance, methodName);
@@ -77,7 +101,7 @@ describe('Mock', function () {
 
         it('should configure the mock method to return a non function response', () => {
             const response = 'bar';
-            const instance = {};
+            const instance = new TestSubject();
             new Mock(instance, 'foo', response);
 
             const ret = instance.foo();
@@ -87,7 +111,7 @@ describe('Mock', function () {
         it('should evaluate and return the result if the return value is a function', () => {
             const response = 'bar';
             const spy = _sinon.stub().returns(response);
-            const instance = {};
+            const instance = new TestSubject();
             const args = ['abc', 123, true];
             new Mock(instance, 'foo', spy);
 
@@ -102,7 +126,7 @@ describe('Mock', function () {
 
         it('should push each response into the response array', () => {
             const responses = ['bar', 'baz', 'chaz', 'faz'];
-            const instance = {};
+            const instance = new TestSubject();
 
             let respIndex = 0;
             const mock = new Mock(instance, 'foo', () => {
@@ -132,7 +156,7 @@ describe('Mock', function () {
             const inputs = [response, _sinon.stub().returns(response)];
 
             inputs.forEach((returnValue) => {
-                const instance = {};
+                const instance = new TestSubject();
                 const mock = new Mock(instance, 'foo', returnValue);
                 const ret = instance.foo();
 
@@ -145,7 +169,7 @@ describe('Mock', function () {
     describe('reset()', () => {
         it('should reset the response array for the mock', () => {
             const responses = ['bar', 'baz', 'chaz', 'faz'];
-            const instance = {};
+            const instance = new TestSubject();
 
             let respIndex = 0;
             const mock = new Mock(instance, 'foo', () => {
@@ -163,7 +187,7 @@ describe('Mock', function () {
 
         it('should reset the call history for the mock', () => {
             const responses = ['bar', 'baz', 'chaz', 'faz'];
-            const instance = {};
+            const instance = new TestSubject();
 
             let respIndex = 0;
             const mock = new Mock(instance, 'foo', () => {
