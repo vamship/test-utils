@@ -5,9 +5,13 @@ _chai.use(require('sinon-chai'));
 _chai.use(require('chai-as-promised'));
 const expect = _chai.expect;
 
-const _shortId = require('shortid');
 const _sinon = require('sinon');
 const _rewire = require('rewire');
+const {customAlphabet} = require('nanoid/non-secure');
+const _generateRandom = customAlphabet(
+    '1234567890abcdefghijklmnopqrstuvwxyz',
+    5
+);
 
 const SuperSpyBuilder = _rewire('../../src/super-spy-builder');
 
@@ -290,7 +294,7 @@ describe('SuperSpyBuilder', () => {
         it('should invoke the fake with the correct "this" binding', () => {
             const builder = _createInstance();
             const methods = ['testMethod1', 'testMethod2'];
-            const results = [_shortId.generate(), _shortId.generate()];
+            const results = [_generateRandom(), _generateRandom()];
 
             methods.forEach((method, index) => {
                 const fake = function () {
@@ -349,7 +353,7 @@ describe('SuperSpyBuilder', () => {
             flags.forEach((flag) => {
                 const builder = _createInstance();
                 const methods = ['testMethod1', 'testMethod2'];
-                const results = [_shortId.generate(), _shortId.generate()];
+                const results = [_generateRandom(), _generateRandom()];
 
                 methods.forEach((method, index) => {
                     const fake = function () {
@@ -411,7 +415,7 @@ describe('SuperSpyBuilder', () => {
             flags.forEach((flag) => {
                 const { Parent } = _getParentAndChildClasses();
                 const methods = ['foo', 'bar'];
-                const results = [_shortId.generate(), _shortId.generate()];
+                const results = [_generateRandom(), _generateRandom()];
                 methods.forEach((method, index) => {
                     Parent.prototype[method] = function () {
                         return results[index];
@@ -438,7 +442,7 @@ describe('SuperSpyBuilder', () => {
             flags.forEach((flag) => {
                 const { Parent } = _getParentAndChildClasses();
                 const methods = ['foo', 'bar'];
-                const results = [_shortId.generate(), _shortId.generate()];
+                const results = [_generateRandom(), _generateRandom()];
                 methods.forEach((method, index) => {
                     Parent.prototype[method] = function () {
                         this.newProperty = results[index];

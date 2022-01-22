@@ -1,18 +1,26 @@
-'use strict';
+import _chai, { expect } from 'chai';
+import _chaiAsPromised from 'chai-as-promised';
+import _sinonChai from 'sinon-chai';
+import 'mocha';
 
-const _chai = require('chai');
-_chai.use(require('sinon-chai'));
-_chai.use(require('chai-as-promised'));
-const expect = _chai.expect;
-const _rewire = require('rewire');
+_chai.use(_chaiAsPromised);
+_chai.use(_sinonChai);
 
-let _testValues = null;
+import _rewire from 'rewire';
+
+let _testValues = _rewire('../../src/test-values');
+import { TestValues } from '../../src/test-values';
 
 describe('testValues', function () {
-    function _getExpectedValues() {
+    function _getExpectedValues(): {
+        primitives: TestValues;
+        complex: string[];
+        extra: TestValues;
+    } {
         return {
             primitives: [undefined, null, 123, 'abc', true],
             complex: ['object', 'array', 'function'],
+            extra: [],
         };
     }
 
@@ -312,7 +320,11 @@ describe('testValues', function () {
     describe('getString()', () => {
         function _split(str) {
             const tokens = str.split('_');
-            const result = {
+            const result: {
+                tokens: string;
+                prefix?: string;
+                suffix?: string;
+            } = {
                 tokens: tokens.concat(),
             };
 
@@ -347,7 +359,16 @@ describe('testValues', function () {
         });
 
         it('should return a string without prefix if one was not specified', () => {
-            const inputs = [undefined, null, 12, '', true, {}, [], () => {}];
+            const inputs = [
+                undefined,
+                null,
+                12,
+                '',
+                true,
+                {},
+                [],
+                () => undefined,
+            ];
 
             inputs.forEach((prefix) => {
                 const ret = _testValues.getString(prefix);
@@ -378,7 +399,16 @@ describe('testValues', function () {
         });
 
         it('should default the start time to the current time if a valid number is not provided', () => {
-            const inputs = [undefined, null, 'foo', -1, true, {}, [], () => {}];
+            const inputs = [
+                undefined,
+                null,
+                'foo',
+                -1,
+                true,
+                {},
+                [],
+                () => undefined,
+            ];
 
             inputs.forEach((startTime) => {
                 const range = 1000;
@@ -390,7 +420,15 @@ describe('testValues', function () {
         });
 
         it('should default the range to 10000 if a valid number is not provided', () => {
-            const inputs = [undefined, null, 'foo', true, {}, [], () => {}];
+            const inputs = [
+                undefined,
+                null,
+                'foo',
+                true,
+                {},
+                [],
+                () => undefined,
+            ];
             const defRange = 10000;
 
             inputs.forEach((range) => {
@@ -427,7 +465,15 @@ describe('testValues', function () {
         });
 
         it('should default the start value to 0 if a valid number is not provided', () => {
-            const inputs = [undefined, null, 'foo', true, {}, [], () => {}];
+            const inputs = [
+                undefined,
+                null,
+                'foo',
+                true,
+                {},
+                [],
+                () => undefined,
+            ];
 
             inputs.forEach((start) => {
                 const range = 1000;
@@ -439,7 +485,15 @@ describe('testValues', function () {
         });
 
         it('should default the range to 10000 if a valid number is not provided', () => {
-            const inputs = [undefined, null, 'foo', true, {}, [], () => {}];
+            const inputs = [
+                undefined,
+                null,
+                'foo',
+                true,
+                {},
+                [],
+                () => undefined,
+            ];
             const defRange = 100;
 
             inputs.forEach((range) => {
