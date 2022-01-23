@@ -24,10 +24,10 @@ export * as testValues from './test-values';
  * Class that can be used to create spies on parent methods in class
  * hierarchies.
  */
-export * as SuperSpyBuilder from './super-spy-builder';
+export { SuperSpyBuilder } from './super-spy-builder';
 
 /**
  * Class that can be used to mock out methods on existing objects, or
  * create new objects with mocked methods.
  */
-export * as ObjectMock from './object-mock';
+export { ObjectMock } from './object-mock';

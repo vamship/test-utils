@@ -9,7 +9,7 @@ _chai.use(_sinonChai);
 
 import _rewire from 'rewire';
 
-let ObjectMock = _rewire('../../src/object-mock').default;
+let ObjectMock = _rewire('../../src/object-mock').ObjectMock;
 
 describe('PromiseMock', () => {
     let MockMock = _sinon.stub();
@@ -41,7 +41,7 @@ describe('PromiseMock', () => {
         PromiseMock = _sinon.stub().returns(_promiseMockInstance);
 
         const _objectMockModule = _rewire('../../src/object-mock');
-        ObjectMock = _objectMockModule.default;
+        ObjectMock = _objectMockModule.ObjectMock;
 
         _objectMockModule.__set__('mock_1', { default: MockMock });
         _objectMockModule.__set__('promise_mock_1', { default: PromiseMock });

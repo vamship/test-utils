@@ -188,4 +188,4 @@ class SuperSpyBuilder {
     }
 }
 
-module.exports = SuperSpyBuilder;
+module.exports.SuperSpyBuilder = SuperSpyBuilder;

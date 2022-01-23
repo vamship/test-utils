@@ -9,7 +9,7 @@ type MockMap = Record<string, Mock<unknown>>;
  * A mocker object that can be used to selectively mock methods on an existing
  * object, or to create a new object with mock methods for testing.
  */
-export default class ObjectMock {
+export class ObjectMock {
     private _instance: MockInstance;
     private _ctor: (...args) => MockInstance;
     private _mocks: MockMap;

@@ -13,7 +13,7 @@ const _generateRandom = customAlphabet(
     5
 );
 
-const SuperSpyBuilder = _rewire('../../src/super-spy-builder');
+const SuperSpyBuilder = _rewire('../../src/super-spy-builder').SuperSpyBuilder;
 
 describe('SuperSpyBuilder', () => {
     function _getParentAndChildClasses() {
