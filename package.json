@@ -2,7 +2,7 @@
     "name": "@vamship/test-utils",
     "version": "2.5.8",
     "description": "Utility library that provides useful functionality for writing tests",
-    "main": "src/index.js",
+    "main": "working/src/index.js",
     "scripts": {
         "clean": "gulp clean",
         "format": "gulp format",
