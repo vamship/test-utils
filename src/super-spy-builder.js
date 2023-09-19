@@ -1,6 +1,6 @@
 'use strict';
 
-const _sinon = require('sinon');
+import _sinon from 'sinon';
 
 /**
  * Builder class that can be used to inject an intermediate spy between a parent
@@ -18,7 +18,7 @@ const _sinon = require('sinon');
  * parent class' <strong>super()</strong> method will be called after the spy
  * has been called.
  */
-class SuperSpyBuilder {
+export class SuperSpyBuilder {
     /**
      * @param {Class} ParentClass The parent class
      * @param {Class} ChildClass The child class
@@ -187,5 +187,3 @@ class SuperSpyBuilder {
         });
     }
 }
-
-module.exports.SuperSpyBuilder = SuperSpyBuilder;

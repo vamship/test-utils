@@ -1,6 +1,5 @@
 import _chai, { expect } from 'chai';
 import _chaiAsPromised from 'chai-as-promised';
-import _sinon from 'sinon';
 import _sinonChai from 'sinon-chai';
 import 'mocha';
 
