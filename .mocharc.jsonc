@@ -1,0 +1,8 @@
+{
+    "watch-files": ["src/**/*.js", "test/**/*.js"],
+    "spec": [
+        "test/**/*.js"
+    ],
+    "loader": ["esmock"],
+    "parallel": true
+}
