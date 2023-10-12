@@ -6,17 +6,19 @@ import 'mocha';
 _chai.use(_chaiAsPromised);
 _chai.use(_sinonChai);
 
-import _rewire from 'rewire';
+import * as _testValues from '../../src/test-values.js';
 
-let _testValues = _rewire('../../src/test-values');
-import { TestValues } from '../../src/test-values';
+import { AnyInputList } from '../../src/test-values';
+const NOOP_FUNCTION = () => undefined;
 
-describe('testValues', function () {
-    function _getExpectedValues(): {
-        primitives: TestValues;
+describe('AnyInputList', function () {
+    type ExpectedValue = {
+        primitives: AnyInputList;
         complex: string[];
-        extra: TestValues;
-    } {
+        extra: AnyInputList;
+    };
+
+    function _getExpectedValues(): ExpectedValue {
         return {
             primitives: [undefined, null, 123, 'abc', true],
             complex: ['object', 'array', 'function'],
@@ -24,8 +26,8 @@ describe('testValues', function () {
         };
     }
 
-    function _checkResults(values, expectedValues) {
-        expectedValues.extra = expectedValues.extra || [];
+    function _checkResults(values: any[], expectedValues: ExpectedValue) {
+        expectedValues.extra = expectedValues.extra;
         expectedValues.primitives.forEach((item, index) => {
             const value = values[index];
             if (value === null) {
@@ -51,8 +53,10 @@ describe('testValues', function () {
         });
     }
 
-    beforeEach(() => {
-        _testValues = _rewire('../../src/test-values');
+    // Only introduced to ensure code coverage. Has no other practical value.
+    it('should ensure that dummy functions are tested', () => {
+        expect(NOOP_FUNCTION).to.be.a('function');
+        expect(NOOP_FUNCTION()).to.be.undefined;
     });
 
     it('should expose methods required by the interface', function () {
@@ -318,10 +322,10 @@ describe('testValues', function () {
     });
 
     describe('getString()', () => {
-        function _split(str) {
+        function _split(str: string) {
             const tokens = str.split('_');
             const result: {
-                tokens: string;
+                tokens: string[];
                 prefix?: string;
                 suffix?: string;
             } = {
@@ -359,7 +363,7 @@ describe('testValues', function () {
         });
 
         it('should return a string without prefix if one was not specified', () => {
-            const inputs = [
+            const inputs: AnyInputList = [
                 undefined,
                 null,
                 12,
@@ -367,7 +371,7 @@ describe('testValues', function () {
                 true,
                 {},
                 [],
-                () => undefined,
+                NOOP_FUNCTION,
             ];
 
             inputs.forEach((prefix) => {
@@ -407,7 +411,7 @@ describe('testValues', function () {
                 true,
                 {},
                 [],
-                () => undefined,
+                NOOP_FUNCTION,
             ];
 
             inputs.forEach((startTime) => {
@@ -427,7 +431,7 @@ describe('testValues', function () {
                 true,
                 {},
                 [],
-                () => undefined,
+                NOOP_FUNCTION,
             ];
             const defRange = 10000;
 
@@ -472,7 +476,7 @@ describe('testValues', function () {
                 true,
                 {},
                 [],
-                () => undefined,
+                NOOP_FUNCTION,
             ];
 
             inputs.forEach((start) => {
@@ -492,7 +496,7 @@ describe('testValues', function () {
                 true,
                 {},
                 [],
-                () => undefined,
+                NOOP_FUNCTION,
             ];
             const defRange = 100;
 

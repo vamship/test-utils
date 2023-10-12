@@ -3,18 +3,19 @@
  * Where possible, generated values are suffixed with a property name to allow
  * for easy debugging.
  *
- * @module testValues
+ * @module TestValues
  */
+
 import { customAlphabet } from 'nanoid/non-secure';
 const _generateRandom = customAlphabet(
     '1234567890abcdefghijklmnopqrstuvwxyz',
-    5
+    5,
 );
 
 /**
- * An multi-type array that can be used for testing.
+ * A union of multiple types that can be used for testing.
  */
-export type TestValues = (
+export type AnyInput = (
     | undefined
     | null
     | number
@@ -23,7 +24,12 @@ export type TestValues = (
     | Record<string, unknown>
     | Array<unknown>
     | (() => undefined)
-)[];
+);
+
+/**
+ * An multi-type array that can be used for testing.
+ */
+export type AnyInputList = AnyInput[];
 
 /**
  * Helper method that generates an array of test values, excluding values
@@ -33,19 +39,19 @@ export type TestValues = (
  * @param {...String} omit A list of parameters to omit
  * @return An array of test values
  */
-function _getTestValues(...omit) {
+function _getTestValues(...omit: AnyInputList) {
     const inputs = [undefined, null, 123, 'abc', true, {}, [], () => undefined];
-    return inputs.filter((testValue) => {
+    return inputs.filter((AnyInput) => {
         let include = true;
         omit.forEach((type) => {
-            if (type === 'null' && testValue === null) {
+            if (type === 'null' && AnyInput === null) {
                 include = false;
-            } else if (type === 'array' && testValue instanceof Array) {
+            } else if (type === 'array' && AnyInput instanceof Array) {
                 include = false;
-            } else if (testValue instanceof Array || testValue === null) {
+            } else if (AnyInput instanceof Array || AnyInput === null) {
                 // Do nothing, because typeof Array or typeof null
                 // evaluates to "object"
-            } else if (typeof testValue === type) {
+            } else if (typeof AnyInput === type) {
                 include = false;
             }
         });
@@ -68,7 +74,7 @@ function _getTestValues(...omit) {
  * @param omit Args to be omitted from the test values.
  * @return An array of test values
  */
-export function allButSelected(...omit): TestValues {
+export function allButSelected(...omit: AnyInputList): AnyInputList {
     return _getTestValues(...omit);
 }
 
@@ -79,7 +85,7 @@ export function allButSelected(...omit): TestValues {
  * @param extras Optional extra parameters to append to the test value list.
  * @return An array of test values
  */
-export function allButUndefined(...extras): TestValues {
+export function allButUndefined(...extras: AnyInputList): AnyInputList {
     return _getTestValues('undefined').concat(extras);
 }
 
@@ -90,7 +96,7 @@ export function allButUndefined(...extras): TestValues {
  * @param extras Optional extra parameters to append to the test value list.
  * @return An array of test values
  */
-export function allButNull(...extras): TestValues {
+export function allButNull(...extras: AnyInputList): AnyInputList {
     return _getTestValues('null').concat(extras);
 }
 
@@ -102,7 +108,7 @@ export function allButNull(...extras): TestValues {
  *        value list.
  * @return An array of test values
  */
-export function allButString(...extras): TestValues {
+export function allButString(...extras: AnyInputList): AnyInputList {
     return _getTestValues('string').concat(extras);
 }
 
@@ -114,7 +120,7 @@ export function allButString(...extras): TestValues {
  *        value list.
  * @return An array of test values
  */
-export function allButNumber(...extras): TestValues {
+export function allButNumber(...extras: AnyInputList): AnyInputList {
     return _getTestValues('number').concat(extras);
 }
 
@@ -126,7 +132,7 @@ export function allButNumber(...extras): TestValues {
  *        value list.
  * @return An array of test values
  */
-export function allButObject(...extras): TestValues {
+export function allButObject(...extras: AnyInputList): AnyInputList {
     return _getTestValues('object').concat(extras);
 }
 
@@ -138,7 +144,7 @@ export function allButObject(...extras): TestValues {
  *        value list.
  * @return An array of test values
  */
-export function allButArray(...extras): TestValues {
+export function allButArray(...extras: AnyInputList): AnyInputList {
     return _getTestValues('array').concat(extras);
 }
 
@@ -150,7 +156,7 @@ export function allButArray(...extras): TestValues {
  *        value list.
  * @return An array of test values
  */
-export function allButFunction(...extras): TestValues {
+export function allButFunction(...extras: AnyInputList): AnyInputList {
     return _getTestValues('function').concat(extras);
 }
 
@@ -162,7 +168,7 @@ export function allButFunction(...extras): TestValues {
  *        value list.
  * @return An array of test values
  */
-export function allButBoolean(...extras): TestValues {
+export function allButBoolean(...extras: AnyInputList): AnyInputList {
     return _getTestValues('boolean').concat(extras);
 }
 
@@ -173,9 +179,9 @@ export function allButBoolean(...extras): TestValues {
  * @param {String} [prefix=''] A constant prefix for the generated value.
  *        Useful when debugging tests.
  *
- * @return {String} The generated string.
+ * @return {AnyInput} The generated string.
  */
-export function getString(prefix): string {
+export function getString(prefix: AnyInput): string {
     if (typeof prefix !== 'string' || prefix.length <= 0) {
         prefix = '';
     } else {
@@ -188,15 +194,15 @@ export function getString(prefix): string {
  * Generates and returns a timestamp value based on the current timestamp,
  * shifted up or down by a random value within the specified range.
  *
- * @param {Number} [range=10000] The range (in milliseconds) to use when
+ * @param {AnyInput} [range=10000] The range (in milliseconds) to use when
  *        generating random shifts. Positive values shift up, negative
  *        values shift down.
- * @param {Number} [start=<current time>] An optional start timestamp,
+ * @param {AnyInput} [start=<current time>] An optional start timestamp,
  *        defaults to the current time.
  *
  * @return {Number} A timestamp value used for testing.
  */
-export function getTimestamp(range, start): number {
+export function getTimestamp(range: AnyInput, start: AnyInput): number {
     if (typeof start !== 'number' || start <= 0) {
         start = Date.now();
     }
@@ -210,13 +216,13 @@ export function getTimestamp(range, start): number {
  * Generates and returns a random integer by using the start value, shifted
  * up or down by a random value within the specified range.
  *
- * @param {Number} [range=100] The range from which to choose the number.
+ * @param {AnyInput} [range=100] The range from which to choose the number.
  *        Positive value shift up, negative values shift down.
- * @param {Number} [start=0] An optional start point, defaults to 0.
+ * @param {AnyInput} [start=0] An optional start point, defaults to 0.
  *
  * @return {Number} A random number generated within the range.
  */
-export function getNumber(range, start): number {
+export function getNumber(range: AnyInput, start: AnyInput): number {
     if (typeof start !== 'number') {
         start = 0;
     }
