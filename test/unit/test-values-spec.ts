@@ -1,6 +1,7 @@
 import _chai, { expect } from 'chai';
 import _chaiAsPromised from 'chai-as-promised';
 import _sinonChai from 'sinon-chai';
+import { stub } from 'sinon';
 import 'mocha';
 
 _chai.use(_chaiAsPromised);
@@ -9,7 +10,6 @@ _chai.use(_sinonChai);
 import * as _testValues from '../../src/test-values.js';
 
 import { AnyInputList } from '../../src/test-values';
-const NOOP_FUNCTION = () => undefined;
 
 describe('AnyInputList', function () {
     type ExpectedValue = {
@@ -44,6 +44,9 @@ describe('AnyInputList', function () {
             expect(values[baseIndex + index]).to.be.an(itemType);
             if (itemType !== 'function') {
                 expect(values[index + baseIndex]).to.be.empty;
+            } else {
+                // The dummy function should return undefined
+                expect(values[index + baseIndex]()).to.be.undefined;
             }
         });
 
@@ -52,12 +55,6 @@ describe('AnyInputList', function () {
             expect(values[baseIndex + index]).to.equal(item);
         });
     }
-
-    // Only introduced to ensure code coverage. Has no other practical value.
-    it('should ensure that dummy functions are tested', () => {
-        expect(NOOP_FUNCTION).to.be.a('function');
-        expect(NOOP_FUNCTION()).to.be.undefined;
-    });
 
     it('should expose methods required by the interface', function () {
         expect(_testValues.allButSelected).to.be.a('function');
@@ -371,7 +368,7 @@ describe('AnyInputList', function () {
                 true,
                 {},
                 [],
-                NOOP_FUNCTION,
+                stub(),
             ];
 
             inputs.forEach((prefix) => {
@@ -411,7 +408,7 @@ describe('AnyInputList', function () {
                 true,
                 {},
                 [],
-                NOOP_FUNCTION,
+                stub(),
             ];
 
             inputs.forEach((startTime) => {
@@ -431,7 +428,7 @@ describe('AnyInputList', function () {
                 true,
                 {},
                 [],
-                NOOP_FUNCTION,
+                stub(),
             ];
             const defRange = 10000;
 
@@ -476,7 +473,7 @@ describe('AnyInputList', function () {
                 true,
                 {},
                 [],
-                NOOP_FUNCTION,
+                stub(),
             ];
 
             inputs.forEach((start) => {
@@ -496,7 +493,7 @@ describe('AnyInputList', function () {
                 true,
                 {},
                 [],
-                NOOP_FUNCTION,
+                stub(),
             ];
             const defRange = 100;
 
