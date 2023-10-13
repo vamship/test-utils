@@ -2,19 +2,14 @@ import _chai, { expect } from 'chai';
 import _chaiAsPromised from 'chai-as-promised';
 import _sinonChai from 'sinon-chai';
 import 'mocha';
+import {stub} from 'sinon';
 
 _chai.use(_chaiAsPromised);
 _chai.use(_sinonChai);
 
-import _rewire from 'rewire';
-
-let _asyncHelper = _rewire('../../src/async-helper');
+import * as _asyncHelper from '../../src/async-helper.js';
 
 describe('asyncHelper', () => {
-    beforeEach(() => {
-        _asyncHelper = _rewire('../../src/async-helper');
-    });
-
     describe('wait()', () => {
         it('should throw an error if invoked without a valid delay', () => {
             const error = 'Invalid delay specified (arg #1)';
@@ -25,12 +20,15 @@ describe('asyncHelper', () => {
                 true,
                 {},
                 [],
-                () => undefined,
+                stub(),
                 -1,
             ];
 
             inputs.forEach((delay) => {
                 const wrapper = (): (() => Promise<void>) => {
+                    // @ts-ignore
+                    // We're intentionally passing invalid data to test the
+                    // error.
                     return _asyncHelper.wait(delay);
                 };
 
