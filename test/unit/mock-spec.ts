@@ -7,91 +7,72 @@ import 'mocha';
 _chai.use(_chaiAsPromised);
 _chai.use(_sinonChai);
 
-import _rewire from 'rewire';
+import { createModuleImporter } from '../utils/utils.js';
+import MockModule from '../../src/mock.js';
 
-let Mock = _rewire('../../src/mock').default;
-
-class TestSubject {
-    public foo(...args): string {
-        return '1234';
+describe('Mock', function () {
+    // Dummy class that will be mocked during tests.
+    class Mockable {
+        public foo(...args: unknown[]): string {
+            return '1234';
+        }
     }
-}
 
-describe('Mock', () => {
-    beforeEach(() => {
-        Mock = _rewire('../../src/mock').default;
-    });
+    type MockType = typeof MockModule<Mockable, string>;
+    type CreateResult = {
+        module: MockType;
+    };
 
-    describe('ctor()', () => {
-        it('should throw an error if invoked without a valid instance', () => {
-            const error = 'Invalid instance specified (arg #1)';
-            const inputs = [
-                undefined,
-                null,
-                123,
-                'foo',
-                true,
-                [],
-                () => undefined,
-            ];
+    async function _createInstance(): Promise<CreateResult> {
+        const importModule = createModuleImporter<MockType>('src/mock.js', {});
+        const module = await importModule({});
 
-            inputs.forEach((instance) => {
-                const wrapper = () => {
-                    return new Mock(instance);
-                };
+        return { module };
+    }
 
-                expect(wrapper).to.throw(error);
-            });
-        });
+    describe('ctor()', function () {
+        [undefined, null, 123, 'foo', true, [], () => undefined].forEach(
+            (value) => {
+                it(`should throw an error if invoked without a valid instance (value=${value})`, async function () {
+                    const { module: Mock } = await _createInstance();
+                    const error = 'Invalid instance specified (arg #1)';
 
-        it('should throw an error if invoked without a valid method name', () => {
-            const error = 'Invalid methodName specified (arg #2)';
-            const inputs = [
-                undefined,
-                null,
-                123,
-                true,
-                {},
-                [],
-                () => undefined,
-            ];
+                    const instance = value as any;
+                    const methodName = 'myMethod';
+                    const returnValue = 'myMethodResponse';
+                    const wrapper = () => {
+                        return new Mock(instance, methodName, returnValue);
+                    };
 
-            inputs.forEach((methodName) => {
-                const wrapper = () => {
-                    const instance = {};
-                    return new Mock(instance, methodName);
-                };
+                    expect(wrapper).to.throw(error);
+                });
+            },
+        );
 
-                expect(wrapper).to.throw(error);
-            });
-        });
+        [undefined, null, 123, true, {}, [], () => undefined].forEach(
+            (value) => {
+                it(`should throw an error if invoked without a valid methodName (value=${value})`, async function () {
+                    const { module: Mock } = await _createInstance();
+                    const error = 'Invalid methodName specified (arg #2)';
 
-        it('should expose the expected properties and functions', () => {
-            const instance = {
-                foo: () => {},
-            };
+                    const instance = new Mockable();
+                    const methodName = value as any;
+                    const returnValue = 'myMethodResponse';
+                    const wrapper = () => {
+                        return new Mock(instance, methodName, returnValue);
+                    };
+
+                    expect(wrapper).to.throw(error);
+                });
+            },
+        );
+
+        it('should create a valid stub even if the method does not exist on the instance', async function () {
+            const { module: Mock } = await _createInstance();
+
+            const instance = new Mockable();
             const methodName = 'foo';
-            const mock = new Mock(instance, methodName);
-
-            expect(mock).to.be.an('object');
-            expect(mock.instance).to.equal(instance);
-            expect(mock.methodName).to.equal(methodName);
-
-            //Duck type verification of a sinon mock.
-            expect(mock.stub).to.be.a('function');
-            expect(mock.stub.args).to.be.an('array');
-            expect(mock.stub.callCount).to.equal(0);
-
-            expect(mock.responses).to.deep.equal([]);
-            expect(mock).to.have.property('ret');
-
-            expect(mock.reset).to.be.a('function');
-        });
-
-        it('should create a valid stub even if the method does not exist on the instance', () => {
-            const instance = {};
-            const methodName = 'foo';
-            const mock = new Mock(instance, methodName);
+            const mock = new Mock(instance, methodName, 'bar');
 
             //Duck type verification of a sinon stub.
             expect(mock.stub).to.be.a('function');
@@ -99,19 +80,23 @@ describe('Mock', () => {
             expect(mock.stub.callCount).to.equal(0);
         });
 
-        it('should configure the mock method to return a non function response', () => {
+        it('should configure the mock method to return a non function response', async function () {
+            const { module: Mock } = await _createInstance();
+
             const response = 'bar';
-            const instance = new TestSubject();
+            const instance = new Mockable();
             new Mock(instance, 'foo', response);
 
             const ret = instance.foo();
             expect(ret).to.equal(response);
         });
 
-        it('should evaluate and return the result if the return value is a function', () => {
+        it('should evaluate and return the result if the return value is a function', async function () {
+            const { module: Mock } = await _createInstance();
+
             const response = 'bar';
             const spy = _sinon.stub().returns(response);
-            const instance = new TestSubject();
+            const instance = new Mockable();
             const args = ['abc', 123, true];
             new Mock(instance, 'foo', spy);
 
@@ -124,9 +109,11 @@ describe('Mock', () => {
             expect(ret).to.equal(response);
         });
 
-        it('should push each response into the response array', () => {
+        it('should push each response into the response array', async function () {
+            const { module: Mock } = await _createInstance();
+
             const responses = ['bar', 'baz', 'chaz', 'faz'];
-            const instance = new TestSubject();
+            const instance = new Mockable();
 
             let respIndex = 0;
             const mock = new Mock(instance, 'foo', () => {
@@ -143,20 +130,29 @@ describe('Mock', () => {
         });
     });
 
-    describe('ret', () => {
-        it('should return an Error object if inspected before the mock has been invoked', () => {
-            const mock = new Mock({}, 'foo');
+    describe('ret', function () {
+        it('should return an Error object if inspected before the mock has been invoked', async function () {
+            const { module: Mock } = await _createInstance();
+            const mock = new Mock(new Mockable(), 'foo', '');
 
             const ret = mock.ret;
             expect(ret).to.be.an.instanceof(Error);
         });
 
-        it('should return the actual response if inspected after mock has been invoked', () => {
-            const response = 'bar';
-            const inputs = [response, _sinon.stub().returns(response)];
+        type Input = {
+            returnValue: string | (() => string);
+            response: string;
+        };
+        const inputs: Input[] = [
+            { response: 'bar', returnValue: 'bar' },
+            { response: 'bar', returnValue: _sinon.stub().returns('bar') },
+        ];
 
-            inputs.forEach((returnValue) => {
-                const instance = new TestSubject();
+        inputs.forEach(({ response, returnValue }) => {
+            it(`should return the actual response if inspected after mock has been invoked (value=${returnValue})`, async function () {
+                const { module: Mock } = await _createInstance();
+
+                const instance = new Mockable();
                 const mock = new Mock(instance, 'foo', returnValue);
                 const ret = instance.foo();
 
@@ -166,10 +162,11 @@ describe('Mock', () => {
         });
     });
 
-    describe('reset()', () => {
-        it('should reset the response array for the mock', () => {
+    describe('reset()', function () {
+        it('should reset the response array for the mock', async function () {
             const responses = ['bar', 'baz', 'chaz', 'faz'];
-            const instance = new TestSubject();
+            const { module: Mock } = await _createInstance();
+            const instance = new Mockable();
 
             let respIndex = 0;
             const mock = new Mock(instance, 'foo', () => {
@@ -185,9 +182,10 @@ describe('Mock', () => {
             expect(mock.responses).to.deep.equal([]);
         });
 
-        it('should reset the call history for the mock', () => {
+        it('should reset the call history for the mock', async function () {
             const responses = ['bar', 'baz', 'chaz', 'faz'];
-            const instance = new TestSubject();
+            const { module: Mock } = await _createInstance();
+            const instance = new Mockable();
 
             let respIndex = 0;
             const mock = new Mock(instance, 'foo', () => {

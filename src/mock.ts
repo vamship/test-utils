@@ -4,7 +4,7 @@ import _sinon, { SinonStub } from 'sinon';
  * A type that represents the response of a mock. This could be a value, or a
  * function that in turn returns a value.
  */
-export type MockResponse<T> = T | ((...args) => T);
+export type MockResponse<T> = T | ((...args: unknown[]) => T);
 
 /**
  * Class that creates a mock method on an object, and provides useful methods
@@ -13,13 +13,15 @@ export type MockResponse<T> = T | ((...args) => T);
  * <p>
  * This class is not meant to be instantiated directly, but is designed for
  * use within the [ObjectMock]{@link ObjectMock} class.
- * </p>
+ * </p
+ * @typeparam T The type of instance that is being mocked.
+ * @typeparam U The type of the response returned by the mock.
  */
-export default class Mock<T> {
-    private _instance: Record<string, unknown>;
-    private _methodName: string;
+export default class Mock<T, U> {
+    private _instance: T;
+    private _methodName: keyof T;
     private _stub: SinonStub;
-    private _responses: T[];
+    private _responses: U[];
 
     /**
      * @param instance The object instance on which the method will be mocked.
@@ -31,11 +33,7 @@ export default class Mock<T> {
      * method. If a function is passed in, the function will be invoked, and
      * ther return value of the function will be returned as the response.
      */
-    constructor(
-        instance: Record<string, unknown>,
-        methodName: string,
-        returnValue: MockResponse<T>
-    ) {
+    constructor(instance: T, methodName: string, returnValue: MockResponse<U>) {
         if (
             !instance ||
             instance instanceof Array ||
@@ -48,21 +46,21 @@ export default class Mock<T> {
         }
 
         this._instance = instance;
-        this._methodName = methodName;
-        if (typeof instance[methodName] !== 'function') {
-            instance[methodName] = () => undefined;
+        this._methodName = methodName as keyof T;
+
+        if (typeof instance[this._methodName] !== 'function') {
+            const dummyMethod = (() => undefined) as  (T &object)[keyof T];
+            instance[this._methodName] = dummyMethod;
         }
         this._responses = [];
-        this._stub = _sinon.stub(
-            this._instance,
-            this._methodName as keyof Record<string, unknown>
-        );
+        this._stub = _sinon.stub(this._instance, this._methodName as keyof T);
         this._stub.callsFake((...args) => {
-            const ret: T =
+            const ret: U =
                 typeof returnValue === 'function'
-                    ? (returnValue as (...args) => T)(...args)
+                    ? (returnValue as (...args: unknown[]) => U)(...args)
                     : returnValue;
             this._responses.push(ret);
+            console.log('---', returnValue, typeof returnValue, ret);
             return ret;
         });
     }
@@ -71,7 +69,7 @@ export default class Mock<T> {
      * Returns a reference to the instance object that has the mocks applied to
      * it.
      */
-    get instance(): Record<string, unknown> {
+    get instance(): T {
         return this._instance;
     }
 
@@ -80,7 +78,7 @@ export default class Mock<T> {
      * been mocked.
      */
     get methodName(): string {
-        return this._methodName;
+        return this._methodName as string;
     }
 
     /**
@@ -96,7 +94,7 @@ export default class Mock<T> {
      * Returns a list of responses returned by the mock up to the current time.
      * Responses may be promises depending on how the mock has been configured.
      */
-    get responses(): T[] {
+    get responses(): U[] {
         return this._responses;
     }
 
@@ -104,7 +102,7 @@ export default class Mock<T> {
      * Returns the response from the first mock invocation. If the mock has not
      * been invoked yet, an Error object will be returned.
      */
-    get ret(): T | Error {
+    get ret(): U | Error {
         if (this.responses.length <= 0) {
             return new Error('Method has not yet been called');
         }
