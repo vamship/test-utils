@@ -1,339 +1,362 @@
-// import _chai, { expect } from 'chai';
-// import _chaiAsPromised from 'chai-as-promised';
-// import _sinon from 'sinon';
-// import _sinonChai from 'sinon-chai';
-// import 'mocha';
+import _chai, { expect } from 'chai';
+import _chaiAsPromised from 'chai-as-promised';
+import { stub, spy, SinonSpy, SinonStub } from 'sinon';
+import _sinonChai from 'sinon-chai';
+import 'mocha';
 
-// _chai.use(_chaiAsPromised);
-// _chai.use(_sinonChai);
+_chai.use(_chaiAsPromised);
+_chai.use(_sinonChai);
 
-// import _rewire from 'rewire';
+import { ObjectMock } from '../../src/object-mock.js';
+import { createModuleImporter } from '../utils/utils.js';
 
-// let ObjectMock = _rewire('../../src/object-mock').ObjectMock;
+describe('PromiseMock', () => {
+    // Dummy class that will be mocked during tests.
+    class Mockable {
+        public static RET_VALUE = '1234';
 
-// describe('PromiseMock', () => {
-//     let MockMock = _sinon.stub();
-//     let PromiseMock = _sinon.stub();
-//     let _mockMockInstance = {
-//         stub: {
-//             restore: _sinon.spy(),
-//         },
-//     };
-//     let _promiseMockInstance = {
-//         stub: {
-//             restore: _sinon.spy(),
-//         },
-//     };
+        public foo(...args: unknown[]): string {
+            return Mockable.RET_VALUE;
+        }
+        public bar(...args: unknown[]): Promise<string> {
+            return Promise.resolve(Mockable.RET_VALUE);
+        }
+    }
 
-//     beforeEach(() => {
-//         _mockMockInstance = {
-//             stub: {
-//                 restore: _sinon.spy(),
-//             },
-//         };
-//         MockMock = _sinon.stub().returns(_mockMockInstance);
+    type TargetModuleType = typeof ObjectMock<Mockable>;
+    type FakeMockInstanceType = {
+        stub: { restore: SinonSpy<any, any> };
+    };
+    type FakeMockType = SinonStub<any, FakeMockInstanceType>;
 
-//         _promiseMockInstance = {
-//             stub: {
-//                 restore: _sinon.spy(),
-//             },
-//         };
-//         PromiseMock = _sinon.stub().returns(_promiseMockInstance);
+    type ImportResult = {
+        testTarget: TargetModuleType;
+        mockMock: FakeMockType;
+        mockMockInstance: FakeMockInstanceType;
+        promiseMock: FakeMockType;
+        promiseMockInstance: FakeMockInstanceType;
+    };
 
-//         const _objectMockModule = _rewire('../../src/object-mock');
-//         ObjectMock = _objectMockModule.ObjectMock;
+    async function _importModule(): Promise<ImportResult> {
+        const importModule = createModuleImporter<TargetModuleType>(
+            'src/object-mock.js',
+            {
+                mockMock: 'src/mock.js',
+                promiseMock: 'src/promise-mock.js',
+            },
+            'ObjectMock',
+        );
+        const mockMockInstance = {
+            stub: {
+                restore: spy(),
+            },
+        };
+        const mockMock = stub().returns(mockMockInstance);
 
-//         _objectMockModule.__set__('mock_1', { default: MockMock });
-//         _objectMockModule.__set__('promise_mock_1', { default: PromiseMock });
-//     });
+        const promiseMockInstance = {
+            stub: {
+                restore: spy(),
+            },
+        };
+        const promiseMock = stub().returns(promiseMockInstance);
 
-//     describe('ctor()', () => {
-//         it('should create a default instance if a valid instance is not specified', () => {
-//             const inputs = [
-//                 undefined,
-//                 null,
-//                 123,
-//                 'foo',
-//                 true,
-//                 [],
-//                 () => undefined,
-//             ];
+        const testTarget = await importModule({
+            mockMock,
+            promiseMock,
+        });
 
-//             inputs.forEach((instance) => {
-//                 const mock = new ObjectMock(instance);
+        return await {
+            testTarget,
+            mockMock,
+            mockMockInstance,
+            promiseMock,
+            promiseMockInstance,
+        };
+    }
 
-//                 expect(mock.instance).to.be.an('object').and.to.be.empty;
-//             });
-//         });
-//     });
+    describe('ctor()', function () {
+        [undefined, null, 123, 'foo', true, [], () => undefined].forEach(
+            (value) => {
+                it(`should create a default instance if a valid instance is not specified (value=${value})`, async function () {
+                    const { testTarget: TargetModuleType } =
+                        await _importModule();
+                    const instance = value as any;
 
-//     describe('ctor', () => {
-//         it('should return a reference to the constructor', () => {
-//             const instance = {};
-//             const mock = new ObjectMock(instance);
+                    const mock = new TargetModuleType(instance);
 
-//             expect(mock.ctor()).to.equal(instance);
-//         });
-//     });
+                    expect(mock.instance).to.be.an('object').and.to.be.empty;
+                });
+            },
+        );
 
-//     describe('getMock()', () => {
-//         it('should throw an error if invoked without a valid methodName', () => {
-//             const error = 'Invalid methodName (arg #1)';
-//             const inputs = [
-//                 undefined,
-//                 null,
-//                 123,
-//                 '',
-//                 true,
-//                 [],
-//                 {},
-//                 () => undefined,
-//             ];
+        it('should return a reference to the constructor', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
 
-//             inputs.forEach((methodName) => {
-//                 const wrapper = () => {
-//                     const mock = new ObjectMock({});
-//                     return mock.getMock(methodName);
-//                 };
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
 
-//                 expect(wrapper).to.throw(error);
-//             });
-//         });
+            expect(mock.ctor()).to.equal(instance);
+        });
+    });
 
-//         it('should throw an error if the method has not been mocked', () => {
-//             const inputs = ['badMethod', 'anotherBadMethod'];
+    describe('getMock()', function () {
+        [undefined, null, 123, '', true, [], {}, () => undefined].forEach(
+            (value) => {
+                it(`should throw an error if invoked without a valid methodName (value=${value})`, async function () {
+                    const { testTarget: TargetModuleType } =
+                        await _importModule();
 
-//             const mock = new ObjectMock({});
-//             inputs.forEach((methodName) => {
-//                 const error = `Method has not been mocked [${methodName}]`;
-//                 const wrapper = () => {
-//                     return mock.getMock(methodName);
-//                 };
+                    const error = 'Invalid methodName (arg #1)';
+                    const methodName = value as any;
 
-//                 expect(wrapper).to.throw(error);
-//             });
-//         });
+                    const wrapper = () => {
+                        const mock = new TargetModuleType(new Mockable());
+                        return mock.getMock(methodName);
+                    };
 
-//         it('should return the mock for the method name', () => {
-//             const instance = {
-//                 foo: (): string => 'foo',
-//                 bar: (): string => 'bar',
-//             };
-//             const inputs = ['foo', 'bar'];
+                    expect(wrapper).to.throw(error);
+                });
+            },
+        );
 
-//             const mock = new ObjectMock(instance).addMock('foo').addMock('bar');
-//             inputs.forEach((methodName) => {
-//                 const methodMock = mock.getMock(methodName);
-//                 expect(methodMock).to.be.an('object');
-//                 expect(methodMock).to.equal(_mockMockInstance);
-//             });
-//         });
-//     });
+        ['badMethod', 'anotherBadMethod'].forEach((value: string) => {
+            it(`should throw an error if the method has not been mocked (value=${value})`, async function () {
+                const { testTarget: TargetModuleType } = await _importModule();
 
-//     describe('addMock()', () => {
-//         it('should throw an error if invoked without a valid methodName', () => {
-//             const error = 'Invalid methodName specified (arg #1)';
-//             const inputs = [
-//                 undefined,
-//                 null,
-//                 123,
-//                 '',
-//                 true,
-//                 [],
-//                 {},
-//                 () => undefined,
-//             ];
+                const mock = new TargetModuleType(new Mockable());
+                const methodName = value as string;
 
-//             inputs.forEach((methodName) => {
-//                 const wrapper = () => {
-//                     const mock = new ObjectMock({});
-//                     return mock.addMock(methodName);
-//                 };
+                const error = `Method has not been mocked [${methodName}]`;
+                const wrapper = () => {
+                    return mock.getMock(methodName);
+                };
 
-//                 expect(wrapper).to.throw(error);
-//             });
-//         });
+                expect(wrapper).to.throw(error);
+            });
+        });
 
-//         it('should return a reference to the mock object', () => {
-//             const foo = () => undefined;
-//             const instance = {
-//                 foo,
-//             };
-//             const mock = new ObjectMock(instance);
-//             const ret = mock.addMock('foo');
+        it('should return the mock for the method name', async function () {
+            const { testTarget: TargetModuleType, mockMockInstance } =
+                await _importModule();
 
-//             expect(ret).to.equal(mock);
-//         });
+            const methodNames = ['foo', 'bar'];
+            const mock = methodNames.reduce(
+                (result, methodName) => result.addMock(methodName, undefined),
+                new TargetModuleType(new Mockable()),
+            );
 
-//         it('should create a mock object for the specified method', () => {
-//             const methodName = 'foo';
-//             const returnValue = 'bar';
-//             const method = () => undefined;
-//             const instance = {};
-//             instance[methodName] = method;
-//             const mock = new ObjectMock(instance);
+            methodNames.forEach((methodName) => {
+                const methodMock = mock.getMock(methodName);
+                expect(methodMock).to.be.an('object');
+                expect(methodMock).to.equal(mockMockInstance);
+            });
+        });
+    });
 
-//             expect(mock.mocks).to.deep.equal({});
-//             expect(MockMock).to.not.have.been.called;
+    describe('addMock()', function () {
+        [undefined, null, 123, '', true, [], {}, () => undefined].forEach(
+            (value) => {
+                it(`should throw an error if invoked without a valid methodName (value=${value})`, async function () {
+                    const { testTarget: TargetModuleType } =
+                        await _importModule();
 
-//             mock.addMock(methodName, returnValue);
+                    const error = 'Invalid methodName specified (arg #1)';
+                    const methodName = value as any;
 
-//             expect(MockMock).to.have.been.calledOnce;
-//             expect(MockMock).to.have.been.calledWithNew;
-//             expect(MockMock).to.have.been.calledWith(
-//                 instance,
-//                 methodName,
-//                 returnValue
-//             );
-//             expect(mock.mocks[methodName]).to.equal(_mockMockInstance);
-//         });
-//     });
+                    const wrapper = () => {
+                        const mock = new TargetModuleType(new Mockable());
+                        return mock.addMock(methodName, undefined);
+                    };
 
-//     describe('addPromiseMock()', () => {
-//         it('should throw an error if invoked without a valid methodName', () => {
-//             const error = 'Invalid methodName specified (arg #1)';
-//             const inputs = [
-//                 undefined,
-//                 null,
-//                 123,
-//                 '',
-//                 true,
-//                 [],
-//                 {},
-//                 () => undefined,
-//             ];
+                    expect(wrapper).to.throw(error);
+                });
+            },
+        );
 
-//             inputs.forEach((methodName) => {
-//                 const wrapper = () => {
-//                     const mock = new ObjectMock({});
-//                     return mock.addPromiseMock(methodName);
-//                 };
+        it('should return a reference to the mock object', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
 
-//                 expect(wrapper).to.throw(error);
-//             });
-//         });
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
+            const ret = mock.addMock('foo', undefined);
 
-//         it('should return a reference to the mock object', () => {
-//             const foo = () => undefined;
-//             const instance = {
-//                 foo,
-//             };
-//             const mock = new ObjectMock(instance);
-//             const ret = mock.addPromiseMock('foo');
+            expect(ret).to.equal(mock);
+        });
 
-//             expect(ret).to.equal(mock);
-//         });
+        it('should create a mock object for the specified method', async function () {
+            const {
+                testTarget: TargetModuleType,
+                mockMock,
+                mockMockInstance,
+            } = await _importModule();
 
-//         it('should create a mock object for the specified method', () => {
-//             const methodName = 'foo';
-//             const method = () => undefined;
-//             const instance = {};
-//             instance[methodName] = method;
-//             const mock = new ObjectMock(instance);
+            const newRetValue = 'abcd';
+            const methodName = 'foo';
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
 
-//             expect(mock.mocks).to.deep.equal({});
-//             expect(PromiseMock).to.not.have.been.called;
+            expect(mock.mocks).to.deep.equal({});
+            expect(mockMock).to.not.have.been.called;
 
-//             mock.addPromiseMock(methodName);
+            mock.addMock(methodName, newRetValue);
 
-//             expect(PromiseMock).to.have.been.calledOnce;
-//             expect(PromiseMock).to.have.been.calledWithNew;
-//             expect(PromiseMock).to.have.been.calledWith(instance, methodName);
-//             expect(mock.mocks[methodName]).to.equal(_promiseMockInstance);
-//         });
-//     });
+            expect(mockMock).to.have.been.calledOnce;
+            expect(mockMock).to.have.been.calledWithNew;
+            expect(mockMock).to.have.been.calledWith(
+                instance,
+                methodName,
+                newRetValue,
+            );
+            expect(mock.mocks[methodName]).to.equal(mockMockInstance);
+        });
+    });
 
-//     describe('restore', () => {
-//         it('should throw an error if invoked without a valid methodName', () => {
-//             const error = 'Invalid methodName specified (arg #1)';
-//             const inputs = [
-//                 undefined,
-//                 null,
-//                 123,
-//                 '',
-//                 true,
-//                 [],
-//                 {},
-//                 () => undefined,
-//             ];
+    describe('addPromiseMock()', function () {
+        [undefined, null, 123, '', true, [], {}, () => undefined].forEach(
+            (value) => {
+                it(`should throw an error if invoked without a valid methodName`, async function () {
+                    const { testTarget: TargetModuleType } =
+                        await _importModule();
 
-//             inputs.forEach((methodName) => {
-//                 const wrapper = () => {
-//                     const mock = new ObjectMock({});
-//                     return mock.restore(methodName);
-//                 };
+                    const error = 'Invalid methodName specified (arg #1)';
 
-//                 expect(wrapper).to.throw(error);
-//             });
-//         });
+                    const methodName = value as any;
+                    const wrapper = () => {
+                        const mock = new TargetModuleType(new Mockable());
+                        return mock.addPromiseMock(methodName);
+                    };
 
-//         it('should return a reference to the mock object', () => {
-//             const instance = {
-//                 foo: () => undefined,
-//             };
-//             const mock = new ObjectMock(instance);
-//             const ret = mock.restore('foo');
+                    expect(wrapper).to.throw(error);
+                });
+            },
+        );
 
-//             expect(ret).to.equal(mock);
-//         });
+        it('should return a reference to the mock object', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
 
-//         it('should do nothing if the specified method has not been mocked', () => {
-//             const instance = {
-//                 foo: () => undefined,
-//             };
-//             const mock = new ObjectMock(instance);
-//             const mockSnapshot = Object.assign({}, mock.mocks);
+            const mock = new TargetModuleType(new Mockable());
+            const ret = mock.addPromiseMock('foo');
 
-//             mock.restore('foo');
+            expect(ret).to.equal(mock);
+        });
 
-//             expect(mock.mocks).to.deep.equal(mockSnapshot);
-//         });
+        it('should create a mock object for the specified method', async function () {
+            const {
+                testTarget: TargetModuleType,
+                promiseMock,
+                promiseMockInstance,
+            } = await _importModule();
 
-//         it('should invoke the restore method on the method stub if the method has been mocked', () => {
-//             const instance = {
-//                 foo: () => undefined,
-//                 bar: () => undefined,
-//             };
+            const newRetValue = 'abcd';
+            const methodName = 'bar';
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
 
-//             const mock = new ObjectMock(instance);
-//             mock.addMock('foo');
-//             mock.addPromiseMock('bar');
+            expect(mock.mocks).to.deep.equal({});
+            expect(promiseMock).to.not.have.been.called;
 
-//             const mockRestoreStub = _mockMockInstance.stub.restore;
-//             const promiseMockRestoreStub = _promiseMockInstance.stub.restore;
+            mock.addPromiseMock(methodName);
 
-//             expect(mockRestoreStub).to.not.have.been.called;
-//             expect(promiseMockRestoreStub).to.not.have.been.called;
+            expect(promiseMock).to.have.been.calledOnce;
+            expect(promiseMock).to.have.been.calledWithNew;
+            expect(promiseMock).to.have.been.calledWith(instance, methodName);
+            expect(mock.mocks[methodName]).to.equal(promiseMockInstance);
+        });
+    });
 
-//             mock.restore('foo');
+    describe('restore', function () {
+        [undefined, null, 123, '', true, [], {}, () => undefined].forEach(
+            (value) => {
+                it(`should throw an error if invoked without a valid methodName (value=${value})`, async function () {
+                    const error = 'Invalid methodName specified (arg #1)';
+                    const { testTarget: TargetModuleType } =
+                        await _importModule();
 
-//             expect(mockRestoreStub).to.have.been.calledOnce;
-//             expect(promiseMockRestoreStub).to.not.have.been.called;
+                    const methodName = value as any;
+                    const wrapper = () => {
+                        const mock = new TargetModuleType(new Mockable());
+                        return mock.restore(methodName);
+                    };
 
-//             mock.restore('bar');
-//             expect(promiseMockRestoreStub).to.have.been.calledOnce;
-//         });
+                    expect(wrapper).to.throw(error);
+                });
+            },
+        );
 
-//         it('should delete the mock reference for the method stub if the method has been mocked', () => {
-//             const instance = {
-//                 foo: () => undefined,
-//                 bar: () => undefined,
-//             };
+        it('should return a reference to the mock object', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
 
-//             const mock = new ObjectMock(instance);
-//             mock.addMock('foo');
-//             mock.addPromiseMock('bar');
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
+            const ret = mock.restore('foo');
 
-//             const mockSnapshot = Object.assign({}, mock.mocks);
+            expect(ret).to.equal(mock);
+        });
 
-//             mock.restore('foo');
+        it('should do nothing if the specified method has not been mocked', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
 
-//             delete mockSnapshot.foo;
-//             expect(mock.mocks).to.deep.equal(mockSnapshot);
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
+            const mockSnapshot = Object.assign({}, mock.mocks);
 
-//             mock.restore('bar');
-//             delete mockSnapshot.bar;
-//             expect(mock.mocks).to.deep.equal(mockSnapshot);
-//         });
-//     });
-// });
+            mock.restore('foo');
+
+            expect(mock.mocks).to.deep.equal(mockSnapshot);
+        });
+
+        it('should invoke the restore method on the method stub if the method has been mocked', async function () {
+            const {
+                testTarget: TargetModuleType,
+                mockMockInstance,
+                promiseMockInstance,
+            } = await _importModule();
+
+            const instance = new Mockable();
+
+            const mock = new TargetModuleType(instance);
+            mock.addMock('foo', undefined);
+            mock.addPromiseMock('bar');
+
+            const mockRestoreStub = mockMockInstance.stub.restore;
+            const promiseMockRestoreStub = promiseMockInstance.stub.restore;
+
+            expect(mockRestoreStub).to.not.have.been.called;
+            expect(promiseMockRestoreStub).to.not.have.been.called;
+
+            mock.restore('foo');
+
+            expect(mockRestoreStub).to.have.been.calledOnce;
+            expect(promiseMockRestoreStub).to.not.have.been.called;
+
+            mock.restore('bar');
+
+            expect(promiseMockRestoreStub).to.have.been.calledOnce;
+        });
+
+        it('should delete the mock reference for the method stub if the method has been mocked', async function () {
+            const {
+                testTarget: TargetModuleType,
+                mockMockInstance,
+                promiseMockInstance,
+            } = await _importModule();
+
+            const instance = new Mockable();
+
+            const mock = new TargetModuleType(instance);
+            mock.addMock('foo', undefined);
+            mock.addPromiseMock('bar');
+
+            const mockSnapshot = Object.assign({}, mock.mocks);
+
+            mock.restore('foo');
+
+            delete mockSnapshot.foo;
+            expect(mock.mocks).to.deep.equal(mockSnapshot);
+
+            mock.restore('bar');
+            delete mockSnapshot.bar;
+            expect(mock.mocks).to.deep.equal(mockSnapshot);
+        });
+    });
+});

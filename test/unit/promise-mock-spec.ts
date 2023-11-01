@@ -9,7 +9,7 @@ _chai.use(_sinonChai);
 import { createModuleImporter } from '../utils/utils.js';
 import MockModule from '../../src/promise-mock.js';
 
-describe.only('PromiseMock', function () {
+describe('PromiseMock', function () {
     // Dummy class that will be mocked during tests.
     class Mockable {
         public foo(...args: unknown[]): Promise<string> {
