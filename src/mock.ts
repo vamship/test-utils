@@ -20,7 +20,7 @@ export type MockResponse<T> = T | ((...args: unknown[]) => T);
 export default class Mock<T, U> {
     private _instance: T;
     private _methodName: keyof T;
-    private _stub: SinonStub;
+    private _stub: SinonStub<unknown[], U>;
     private _responses: U[];
 
     /**
@@ -47,13 +47,18 @@ export default class Mock<T, U> {
 
         this._instance = instance;
         this._methodName = methodName as keyof T;
+        this._responses = [];
 
         if (typeof instance[this._methodName] !== 'function') {
-            const dummyMethod = (() => undefined) as  (T &object)[keyof T];
+            const dummyMethod = (() => undefined) as (T & object)[keyof T];
             instance[this._methodName] = dummyMethod;
         }
-        this._responses = [];
-        this._stub = _sinon.stub(this._instance, this._methodName as keyof T);
+
+        this._stub = _sinon.stub(
+            this._instance,
+            this._methodName as keyof T,
+        ) as SinonStub<unknown[], U>;
+
         this._stub.callsFake((...args) => {
             const ret: U =
                 typeof retValue === 'function'
@@ -85,7 +90,7 @@ export default class Mock<T, U> {
      * property can be used to examine the call history and parameters of
      * the mocked method.
      */
-    get stub(): SinonStub {
+    get stub(): SinonStub<unknown[], U> {
         return this._stub;
     }
 
