@@ -6,7 +6,7 @@
         "moduleResolution": "NodeNext",
         "lib": ["es2022"],
         "target": "es2022",
-        "module": "es6",
+        "module": "es2022",
         "esModuleInterop": true,
 
         "strictNullChecks": true,
