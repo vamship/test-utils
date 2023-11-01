@@ -17,13 +17,13 @@ describe('PromiseMock', function () {
         }
     }
 
-    type MockType = typeof MockModule<Mockable, string>;
-    type CreateResult = {
-        module: MockType;
+    type TargetModuleType = typeof MockModule<Mockable, string>;
+    type ImportResult = {
+        module: TargetModuleType;
     };
 
-    async function _createInstance(): Promise<CreateResult> {
-        const importModule = createModuleImporter<MockType>(
+    async function _importModule(): Promise<ImportResult> {
+        const importModule = createModuleImporter<TargetModuleType>(
             'src/promise-mock.js',
             {},
         );
@@ -35,7 +35,7 @@ describe('PromiseMock', function () {
     describe('ctor()', function () {
         it('should return a promise when the mock is invoked', async function () {
             const instance = new Mockable();
-            const { module: PromiseMock } = await _createInstance();
+            const { module: PromiseMock } = await _importModule();
 
             new PromiseMock(instance, 'foo');
 
@@ -46,7 +46,7 @@ describe('PromiseMock', function () {
 
         it('should return a different promise on subsequent invocations', async function () {
             const instance = new Mockable();
-            const { module: PromiseMock } = await _createInstance();
+            const { module: PromiseMock } = await _importModule();
 
             new PromiseMock(instance, 'foo');
 
@@ -65,7 +65,7 @@ describe('PromiseMock', function () {
     describe('promise()', function () {
         it('should return the promise linked to a specific invocation', async function () {
             const instance = new Mockable();
-            const { module: PromiseMock } = await _createInstance();
+            const { module: PromiseMock } = await _importModule();
 
             const mock = new PromiseMock(instance, 'foo');
 
@@ -83,7 +83,7 @@ describe('PromiseMock', function () {
 
         it('should return pre generate the promise if invoked before invocation', async function () {
             const instance = new Mockable();
-            const { module: PromiseMock } = await _createInstance();
+            const { module: PromiseMock } = await _importModule();
 
             const mock = new PromiseMock(instance, 'foo');
 
@@ -102,7 +102,7 @@ describe('PromiseMock', function () {
             (value) => {
                 it(`should default the call index to 0 if a valid number is not specified (value=${value})`, async function () {
                     const instance = new Mockable();
-                    const { module: PromiseMock } = await _createInstance();
+                    const { module: PromiseMock } = await _importModule();
 
                     const mock = new PromiseMock(instance, 'foo');
                     const promise = instance.foo();
@@ -119,7 +119,7 @@ describe('PromiseMock', function () {
         it('should reject the promise linked to a specific invocation', async function () {
             const error = 'something went wrong!';
             const instance = new Mockable();
-            const { module: PromiseMock } = await _createInstance();
+            const { module: PromiseMock } = await _importModule();
 
             const mock = new PromiseMock(instance, 'foo');
 
@@ -140,7 +140,7 @@ describe('PromiseMock', function () {
         it('should pre reject the promise if invoked before invocation', async function () {
             const error = 'something went wrong!';
             const instance = new Mockable();
-            const { module: PromiseMock } = await _createInstance();
+            const { module: PromiseMock } = await _importModule();
 
             const mock = new PromiseMock(instance, 'foo');
 
@@ -161,7 +161,7 @@ describe('PromiseMock', function () {
                 it(`should default the call index to 0 if a valid number is not specified (value=${value})`, async function () {
                     const error = 'something went wrong!';
                     const instance = new Mockable();
-                    const { module: PromiseMock } = await _createInstance();
+                    const { module: PromiseMock } = await _importModule();
 
                     const mock = new PromiseMock(instance, 'foo');
                     const promise = instance.foo();
@@ -180,7 +180,7 @@ describe('PromiseMock', function () {
         it('should resolve the promise linked to a specific invocation', async function () {
             const data = 'bar';
             const instance = new Mockable();
-            const { module: PromiseMock } = await _createInstance();
+            const { module: PromiseMock } = await _importModule();
 
             const mock = new PromiseMock(instance, 'foo');
 
@@ -203,7 +203,7 @@ describe('PromiseMock', function () {
         it('should pre resolve the promise if invoked before invocation', async function () {
             const data = 'bar';
             const instance = new Mockable();
-            const { module: PromiseMock } = await _createInstance();
+            const { module: PromiseMock } = await _importModule();
 
             const mock = new PromiseMock(instance, 'foo');
 
@@ -227,7 +227,7 @@ describe('PromiseMock', function () {
                 it(`should default the call index to 0 if a valid number is not specified (value=${value})`, async function () {
                     const data = 'bar!';
                     const instance = new Mockable();
-                    const { module: PromiseMock } = await _createInstance();
+                    const { module: PromiseMock } = await _importModule();
 
                     const mock = new PromiseMock(instance, 'foo');
 
