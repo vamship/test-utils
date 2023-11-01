@@ -6,24 +6,37 @@ import 'mocha';
 _chai.use(_chaiAsPromised);
 _chai.use(_sinonChai);
 
-import _rewire from 'rewire';
+import { createModuleImporter } from '../utils/utils.js';
+import MockModule from '../../src/promise-mock.js';
 
-let PromiseMock = _rewire('../../src/promise-mock').default;
-
-class TestSubject {
-    public async foo(...args): Promise<string> {
-        return '1234';
+describe.only('PromiseMock', function () {
+    // Dummy class that will be mocked during tests.
+    class Mockable {
+        public foo(...args: unknown[]): Promise<string> {
+            return Promise.resolve('1234');
+        }
     }
-}
 
-describe('PromiseMock', () => {
-    beforeEach(() => {
-        PromiseMock = _rewire('../../src/promise-mock').default;
-    });
+    type MockType = typeof MockModule<Mockable, string>;
+    type CreateResult = {
+        module: MockType;
+    };
 
-    describe('ctor()', () => {
-        it('should return a promise when the mock is invoked', () => {
-            const instance = new TestSubject();
+    async function _createInstance(): Promise<CreateResult> {
+        const importModule = createModuleImporter<MockType>(
+            'src/promise-mock.js',
+            {},
+        );
+        const module = await importModule({});
+
+        return { module };
+    }
+
+    describe('ctor()', function () {
+        it('should return a promise when the mock is invoked', async function () {
+            const instance = new Mockable();
+            const { module: PromiseMock } = await _createInstance();
+
             new PromiseMock(instance, 'foo');
 
             const ret = instance.foo();
@@ -31,8 +44,10 @@ describe('PromiseMock', () => {
             expect(ret).to.be.an.instanceof(Promise);
         });
 
-        it('should return a different promise on subsequent invocations', () => {
-            const instance = new TestSubject();
+        it('should return a different promise on subsequent invocations', async function () {
+            const instance = new Mockable();
+            const { module: PromiseMock } = await _createInstance();
+
             new PromiseMock(instance, 'foo');
 
             let oldPromise: Promise<string> | undefined = undefined;
@@ -47,9 +62,11 @@ describe('PromiseMock', () => {
         });
     });
 
-    describe('promise()', () => {
-        it('should return the promise linked to a specific invocation', () => {
-            const instance = new TestSubject();
+    describe('promise()', function () {
+        it('should return the promise linked to a specific invocation', async function () {
+            const instance = new Mockable();
+            const { module: PromiseMock } = await _createInstance();
+
             const mock = new PromiseMock(instance, 'foo');
 
             const promises: Promise<string>[] = [];
@@ -64,8 +81,10 @@ describe('PromiseMock', () => {
             });
         });
 
-        it('should return pre generate the promise if invoked before invocation', () => {
-            const instance = new TestSubject();
+        it('should return pre generate the promise if invoked before invocation', async function () {
+            const instance = new Mockable();
+            const { module: PromiseMock } = await _createInstance();
+
             const mock = new PromiseMock(instance, 'foo');
 
             const promises: Promise<string>[] = [];
@@ -79,32 +98,29 @@ describe('PromiseMock', () => {
             });
         });
 
-        it('should default the call index to 0 if a valid number is not specified', () => {
-            const instance = new TestSubject();
-            const mock = new PromiseMock(instance, 'foo');
-            const promise = instance.foo();
-            const inputs = [
-                undefined,
-                null,
-                0,
-                -1,
-                'foo',
-                true,
-                [],
-                () => undefined,
-            ];
+        [undefined, null, 'abc', true, {}, [], () => undefined].forEach(
+            (value) => {
+                it(`should default the call index to 0 if a valid number is not specified (value=${value})`, async function () {
+                    const instance = new Mockable();
+                    const { module: PromiseMock } = await _createInstance();
 
-            inputs.forEach((callIndex) => {
-                const ret = mock.promise(callIndex);
-                expect(ret).to.equal(promise);
-            });
-        });
+                    const mock = new PromiseMock(instance, 'foo');
+                    const promise = instance.foo();
+                    const callIndex = value as any;
+
+                    const ret = mock.promise(callIndex);
+                    expect(ret).to.equal(promise);
+                });
+            },
+        );
     });
 
-    describe('reject()', () => {
-        it('should reject the promise linked to a specific invocation', (done) => {
+    describe('reject()', function () {
+        it('should reject the promise linked to a specific invocation', async function () {
             const error = 'something went wrong!';
-            const instance = new TestSubject();
+            const instance = new Mockable();
+            const { module: PromiseMock } = await _createInstance();
+
             const mock = new PromiseMock(instance, 'foo');
 
             const promises: Promise<string>[] = [];
@@ -118,12 +134,14 @@ describe('PromiseMock', () => {
                 return expect(promise).to.be.rejectedWith(error);
             });
 
-            expect(Promise.all(result)).to.be.fulfilled.and.notify(done);
+            await expect(Promise.all(result)).to.be.fulfilled;
         });
 
-        it('should pre reject the promise if invoked before invocation', (done) => {
+        it('should pre reject the promise if invoked before invocation', async function () {
             const error = 'something went wrong!';
-            const instance = new TestSubject();
+            const instance = new Mockable();
+            const { module: PromiseMock } = await _createInstance();
+
             const mock = new PromiseMock(instance, 'foo');
 
             const promises: Promise<string>[] = [];
@@ -136,38 +154,34 @@ describe('PromiseMock', () => {
                 return expect(promise).to.be.rejectedWith(error);
             });
 
-            expect(Promise.all(result)).to.be.fulfilled.and.notify(done);
+            await expect(Promise.all(result)).to.be.fulfilled;
         });
+        [undefined, null, 0, -1, 'foo', true, [], () => undefined].forEach(
+            (value) => {
+                it(`should default the call index to 0 if a valid number is not specified (value=${value})`, async function () {
+                    const error = 'something went wrong!';
+                    const instance = new Mockable();
+                    const { module: PromiseMock } = await _createInstance();
 
-        it('should default the call index to 0 if a valid number is not specified', () => {
-            const error = 'something went wrong!';
-            const instance = new TestSubject();
-            const mock = new PromiseMock(instance, 'foo');
-            const promise = instance.foo();
-            promise.catch((ex) => undefined);
+                    const mock = new PromiseMock(instance, 'foo');
+                    const promise = instance.foo();
+                    promise.catch((ex) => undefined);
 
-            const inputs = [
-                undefined,
-                null,
-                0,
-                -1,
-                'foo',
-                true,
-                [],
-                () => undefined,
-            ];
+                    const callIndex = value as any;
 
-            inputs.forEach((callIndex) => {
-                const ret = mock.reject(error, callIndex);
-                expect(ret).to.equal(promise);
-            });
-        });
+                    const ret = mock.reject(error, callIndex);
+                    expect(ret).to.equal(promise);
+                });
+            },
+        );
     });
 
-    describe('resolve()', () => {
-        it('should resolve the promise linked to a specific invocation', (done) => {
+    describe('resolve()', function () {
+        it('should resolve the promise linked to a specific invocation', async function () {
             const data = 'bar';
-            const instance = new TestSubject();
+            const instance = new Mockable();
+            const { module: PromiseMock } = await _createInstance();
+
             const mock = new PromiseMock(instance, 'foo');
 
             const promises: Promise<string>[] = [];
@@ -183,12 +197,14 @@ describe('PromiseMock', () => {
                 });
             });
 
-            expect(Promise.all(result)).to.be.fulfilled.and.notify(done);
+            await expect(Promise.all(result)).to.be.fulfilled;
         });
 
-        it('should pre resolve the promise if invoked before invocation', (done) => {
+        it('should pre resolve the promise if invoked before invocation', async function () {
             const data = 'bar';
-            const instance = new TestSubject();
+            const instance = new Mockable();
+            const { module: PromiseMock } = await _createInstance();
+
             const mock = new PromiseMock(instance, 'foo');
 
             const promises: Promise<string>[] = [];
@@ -203,30 +219,25 @@ describe('PromiseMock', () => {
                 });
             });
 
-            expect(Promise.all(result)).to.be.fulfilled.and.notify(done);
+            await expect(Promise.all(result)).to.be.fulfilled;
         });
 
-        it('should default the call index to 0 if a valid number is not specified', () => {
-            const data = 'bar!';
-            const instance = new TestSubject();
-            const mock = new PromiseMock(instance, 'foo');
-            const promise = instance.foo();
+        [undefined, null, 0, -1, 'foo', true, [], () => undefined].forEach(
+            (value) => {
+                it(`should default the call index to 0 if a valid number is not specified (value=${value})`, async function () {
+                    const data = 'bar!';
+                    const instance = new Mockable();
+                    const { module: PromiseMock } = await _createInstance();
 
-            const inputs = [
-                undefined,
-                null,
-                0,
-                -1,
-                'foo',
-                true,
-                [],
-                () => undefined,
-            ];
+                    const mock = new PromiseMock(instance, 'foo');
 
-            inputs.forEach((callIndex) => {
-                const ret = mock.resolve(data, callIndex);
-                expect(ret).to.equal(promise);
-            });
-        });
+                    const promise = instance.foo();
+
+                    const callIndex = value as any;
+                    const ret = mock.resolve(data, callIndex);
+                    expect(ret).to.equal(promise);
+                });
+            },
+        );
     });
 });

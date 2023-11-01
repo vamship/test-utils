@@ -1,4 +1,4 @@
-import Mock from './mock';
+import Mock from './mock.js';
 
 type PromiseResolve<T> = (value: T | PromiseLike<T>) => void;
 type PromiseReject = (error?: unknown) => void;
@@ -34,9 +34,11 @@ class PromiseWrapper<T> {
  * This class is not meant to be instantiated directly, but is designed for
  * use within the [ObjectMock]{@link ObjectMock} class.
  * </p>
+ * @typeparam T The type of instance that is being mocked.
+ * @typeparam U The type of the response returned by the mock.
  */
-export default class PromiseMock<T> extends Mock<Promise<T>> {
-    private _wrappers: PromiseWrapper<T>[];
+export default class PromiseMock<T, U> extends Mock<T, Promise<U>> {
+    private _wrappers: PromiseWrapper<U>[];
 
     /**
      * @param instance The object instance on which the method will be mocked.
@@ -44,14 +46,15 @@ export default class PromiseMock<T> extends Mock<Promise<T>> {
      * mocked. If the specified method does not exist, a placeholder method will
      * be injected into the instance which will then be mocked.
      */
-    constructor(instance: Record<string, unknown>, methodName: string) {
+    constructor(instance: T, methodName: string) {
         let callIndex = 0;
-        super(instance, methodName, (): Promise<T> => {
+        const retValue = (): Promise<U> => {
             const wrapper = this._getPromiseWrapper(callIndex);
             callIndex++;
             return wrapper.promise;
-        });
+        };
 
+        super(instance, methodName, retValue);
         this._wrappers = [];
     }
 
@@ -70,11 +73,11 @@ export default class PromiseMock<T> extends Mock<Promise<T>> {
      * @return A simple object with references to the promise, reject and
      * resolve methods.
      */
-    _getPromiseWrapper(callIndex: number): PromiseWrapper<T> {
+    _getPromiseWrapper(callIndex: number): PromiseWrapper<U> {
         let wrapper = this._wrappers[callIndex];
 
         if (!wrapper) {
-            wrapper = new PromiseWrapper<T>();
+            wrapper = new PromiseWrapper<U>();
             this._wrappers[callIndex] = wrapper;
         }
         return wrapper;
@@ -102,7 +105,7 @@ export default class PromiseMock<T> extends Mock<Promise<T>> {
      *
      * @return The promise associated with the specified call index.
      */
-    promise(callIndex = 0): Promise<T> {
+    promise(callIndex = 0): Promise<U> {
         if (typeof callIndex !== 'number' || callIndex <= 0) {
             callIndex = 0;
         }
@@ -128,7 +131,7 @@ export default class PromiseMock<T> extends Mock<Promise<T>> {
      *
      * @return The promise associated with the specified call index.
      */
-    reject(error?: unknown, callIndex = 0): Promise<T> {
+    reject(error?: unknown, callIndex = 0): Promise<U> {
         if (typeof callIndex !== 'number' || callIndex <= 0) {
             callIndex = 0;
         }
@@ -156,7 +159,7 @@ export default class PromiseMock<T> extends Mock<Promise<T>> {
      *
      * @return The promise associated with the specified call index.
      */
-    resolve(response: T, callIndex = 0): Promise<T> {
+    resolve(response: U, callIndex = 0): Promise<U> {
         if (typeof callIndex !== 'number' || callIndex <= 0) {
             callIndex = 0;
         }
