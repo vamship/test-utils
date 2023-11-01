@@ -36,10 +36,10 @@ export type AnyInputList = AnyInput[];
  * of specific types as requested.
  *
  * @private
- * @param {...String} omit A list of parameters to omit
+ * @param omit A list of parameters to omit
  * @return An array of test values
  */
-function _getTestValues(...omit: AnyInputList) {
+function _getTestValues(...omit: AnyInputList): AnyInputList {
     const inputs = [undefined, null, 123, 'abc', true, {}, [], () => undefined];
     return inputs.filter((AnyInput) => {
         let include = true;
