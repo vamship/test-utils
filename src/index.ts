@@ -7,27 +7,15 @@
 /**
  * Helper module that provides utilities for testing of async methods.
  */
-export * as asyncHelper from './async-helper';
-
-/**
- * Helper module that provides utilities for manipulating the behavior of
- * console statements.
- */
-export * as consoleHelper from './console-helper';
+export * as asyncHelper from './async-helper.js';
 
 /**
  * Helper module that generates random values to be used during testing.
  */
-export * as testValues from './test-values';
-
-/**
- * Class that can be used to create spies on parent methods in class
- * hierarchies.
- */
-export { SuperSpyBuilder } from './super-spy-builder';
+export * as testValues from './test-values.js';
 
 /**
  * Class that can be used to mock out methods on existing objects, or
  * create new objects with mocked methods.
  */
-export { ObjectMock } from './object-mock';
+export { ObjectMock } from './object-mock.js';

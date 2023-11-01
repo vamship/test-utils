@@ -6,25 +6,17 @@ import 'mocha';
 _chai.use(_chaiAsPromised);
 _chai.use(_sinonChai);
 
-import _rewire from 'rewire';
-let _index = _rewire('../../src/index');
+import * as _asyncHelper from '../../src/async-helper.js';
+import * as _testValues from '../../src/test-values.js';
+import { ObjectMock } from '../../src/object-mock.js';
+import * as _index from '../../src/index.js';
 
-import * as _asyncHelper from '../../src/async-helper';
-import * as _consoleHelper from '../../src/console-helper';
-import * as _testValues from '../../src/test-values';
-import { SuperSpyBuilder } from '../../src/super-spy-builder';
-import { ObjectMock } from '../../src/object-mock';
+import MockModule from '../../src/promise-mock.js';
 
 describe('index', function () {
-    beforeEach(() => {
-        _index = _rewire('../../src/index');
-    });
-
-    it('should implement methods required by the interface', function () {
+    it('should implement methods required by the interface', async function () {
         expect(_index.asyncHelper).to.equal(_asyncHelper);
-        expect(_index.consoleHelper).to.equal(_consoleHelper);
         expect(_index.testValues).to.equal(_testValues);
-        expect(_index.SuperSpyBuilder).to.equal(SuperSpyBuilder);
         expect(_index.ObjectMock).to.equal(ObjectMock);
     });
 });

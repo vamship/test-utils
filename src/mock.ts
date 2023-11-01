@@ -29,11 +29,11 @@ export default class Mock<T, U> {
      * mocked. If the specified method does not exist, a placeholder method will
      * be injected into the instance which will then be mocked.
      *
-     * @param returnValue A return value that will be returned by the mock
+     * @param retValue A return value that will be returned by the mock
      * method. If a function is passed in, the function will be invoked, and
      * ther return value of the function will be returned as the response.
      */
-    constructor(instance: T, methodName: string, returnValue: MockResponse<U>) {
+    constructor(instance: T, methodName: string, retValue: MockResponse<U>) {
         if (
             !instance ||
             instance instanceof Array ||
@@ -56,11 +56,10 @@ export default class Mock<T, U> {
         this._stub = _sinon.stub(this._instance, this._methodName as keyof T);
         this._stub.callsFake((...args) => {
             const ret: U =
-                typeof returnValue === 'function'
-                    ? (returnValue as (...args: unknown[]) => U)(...args)
-                    : returnValue;
+                typeof retValue === 'function'
+                    ? (retValue as (...args: unknown[]) => U)(...args)
+                    : retValue;
             this._responses.push(ret);
-            console.log('---', returnValue, typeof returnValue, ret);
             return ret;
         });
     }
