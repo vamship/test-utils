@@ -12,16 +12,14 @@ class PromiseWrapper<T> {
     public promise: Promise<T>;
 
     constructor() {
-        let resolveRef: PromiseResolve<T> = (data: T | PromiseLike<T>) =>
-            undefined;
-        let rejectRef: PromiseReject = (err?: unknown) => undefined;
+        let resolveRef: PromiseResolve<T>|undefined;
+        let rejectRef: PromiseReject|undefined;
         this.promise = new Promise<T>(function (resolve, reject) {
             resolveRef = resolve;
             rejectRef = reject;
         });
-
-        this.resolve = resolveRef;
-        this.reject = rejectRef;
+        this.resolve = resolveRef as PromiseResolve<T>;
+        this.reject = rejectRef as PromiseReject;
     }
 }
 
