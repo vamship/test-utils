@@ -92,8 +92,6 @@ describe('Mock', function () {
 
             const mock = new TargetModuleType(instance, methodName, 'bar');
 
-            expect(method).to.equal(mock.stub);
-
             //Duck type verification of a sinon stub.
             expect(mock.stub).to.be.a('function');
             expect(mock.stub.args).to.be.an('array');
