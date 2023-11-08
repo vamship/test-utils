@@ -8,6 +8,7 @@
         "clean": "gulp clean",
         "format": "gulp format",
         "lint": "gulp lint",
+        "lint-fix": "gulp lint-fix",
         "build": "gulp build",
         "test": "cross-env NODE_ENV=test dotenv-load gulp --series clean build test-unit",
         "package": "cross-env NODE_ENV=test dotenv-load gulp --series clean format lint build test-unit package",
