@@ -91,7 +91,7 @@ export class ObjectMock<T> {
      */
     addMock<U>(
         methodName: string,
-        returnValue: MockResponse<U>,
+        returnValue: MockResponse<U>
     ): ObjectMock<T> {
         if (typeof methodName !== 'string' || methodName.length <= 0) {
             throw new Error('Invalid methodName specified (arg #1)');
@@ -100,7 +100,7 @@ export class ObjectMock<T> {
         this._mocks[methodName] = new Mock<T, U>(
             this.instance,
             methodName,
-            returnValue,
+            returnValue
         );
         return this;
     }
@@ -121,7 +121,7 @@ export class ObjectMock<T> {
         }
         this._mocks[methodName] = new PromiseMock<T, U>(
             this.instance,
-            methodName,
+            methodName
         );
         return this;
     }

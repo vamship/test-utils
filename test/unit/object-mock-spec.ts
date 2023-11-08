@@ -47,7 +47,7 @@ describe('PromiseMock', () => {
                 mockMock: 'src/mock.js',
                 promiseMock: 'src/promise-mock.js',
             },
-            'ObjectMock',
+            'ObjectMock'
         );
         const mockMockInstance = {
             stub: {
@@ -89,7 +89,7 @@ describe('PromiseMock', () => {
 
                     expect(mock.instance).to.be.an('object').and.to.be.empty;
                 });
-            },
+            }
         );
 
         it('should return a reference to the constructor', async function () {
@@ -119,7 +119,7 @@ describe('PromiseMock', () => {
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         ['badMethod', 'anotherBadMethod'].forEach((value: string) => {
@@ -145,7 +145,7 @@ describe('PromiseMock', () => {
             const methodNames = ['foo', 'bar'];
             const mock = methodNames.reduce(
                 (result, methodName) => result.addMock(methodName, undefined),
-                new TargetModuleType(new Mockable()),
+                new TargetModuleType(new Mockable())
             );
 
             methodNames.forEach((methodName) => {
@@ -173,7 +173,7 @@ describe('PromiseMock', () => {
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         it('should return a reference to the mock object', async function () {
@@ -208,7 +208,7 @@ describe('PromiseMock', () => {
             expect(mockMock).to.have.been.calledWith(
                 instance,
                 methodName,
-                newRetValue,
+                newRetValue
             );
             expect(mock.mocks[methodName]).to.equal(mockMockInstance);
         });
@@ -231,7 +231,7 @@ describe('PromiseMock', () => {
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         it('should return a reference to the mock object', async function () {
@@ -282,7 +282,7 @@ describe('PromiseMock', () => {
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         it('should return a reference to the mock object', async function () {

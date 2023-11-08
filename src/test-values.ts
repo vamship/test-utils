@@ -9,13 +9,13 @@
 import { customAlphabet } from 'nanoid/non-secure';
 const _generateRandom = customAlphabet(
     '1234567890abcdefghijklmnopqrstuvwxyz',
-    5,
+    5
 );
 
 /**
  * A union of multiple types that can be used for testing.
  */
-export type AnyInput = (
+export type AnyInput =
     | undefined
     | null
     | number
@@ -23,8 +23,7 @@ export type AnyInput = (
     | boolean
     | Record<string, unknown>
     | Array<unknown>
-    | (() => undefined)
-);
+    | (() => undefined);
 
 /**
  * An multi-type array that can be used for testing.

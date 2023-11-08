@@ -27,7 +27,7 @@ describe('AnyInputList', function () {
     }
 
     function _checkResults(values: unknown[], expectedValues: ExpectedValue) {
-        expectedValues.extra = expectedValues.extra||[];
+        expectedValues.extra = expectedValues.extra || [];
         expectedValues.primitives.forEach((item, index) => {
             const value = values[index];
             if (value === null) {
@@ -401,16 +401,7 @@ describe('AnyInputList', function () {
         });
 
         it('should default the start time to the current time if a valid number is not provided', () => {
-            const inputs = [
-                undefined,
-                null,
-                'foo',
-                -1,
-                true,
-                {},
-                [],
-                stub(),
-            ];
+            const inputs = [undefined, null, 'foo', -1, true, {}, [], stub()];
 
             inputs.forEach((startTime) => {
                 const range = 1000;
@@ -422,15 +413,7 @@ describe('AnyInputList', function () {
         });
 
         it('should default the range to 10000 if a valid number is not provided', () => {
-            const inputs = [
-                undefined,
-                null,
-                'foo',
-                true,
-                {},
-                [],
-                stub(),
-            ];
+            const inputs = [undefined, null, 'foo', true, {}, [], stub()];
             const defRange = 10000;
 
             inputs.forEach((range) => {
@@ -467,15 +450,7 @@ describe('AnyInputList', function () {
         });
 
         it('should default the start value to 0 if a valid number is not provided', () => {
-            const inputs = [
-                undefined,
-                null,
-                'foo',
-                true,
-                {},
-                [],
-                stub(),
-            ];
+            const inputs = [undefined, null, 'foo', true, {}, [], stub()];
 
             inputs.forEach((start) => {
                 const range = 1000;
@@ -487,15 +462,7 @@ describe('AnyInputList', function () {
         });
 
         it('should default the range to 10000 if a valid number is not provided', () => {
-            const inputs = [
-                undefined,
-                null,
-                'foo',
-                true,
-                {},
-                [],
-                stub(),
-            ];
+            const inputs = [undefined, null, 'foo', true, {}, [], stub()];
             const defRange = 100;
 
             inputs.forEach((range) => {

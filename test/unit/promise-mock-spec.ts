@@ -25,7 +25,7 @@ describe('PromiseMock', function () {
     async function _importModule(): Promise<ImportResult> {
         const importModule = createModuleImporter<TargetModuleType>(
             'src/promise-mock.js',
-            {},
+            {}
         );
         const module = await importModule({});
 
@@ -112,7 +112,7 @@ describe('PromiseMock', function () {
                     const ret = mock.promise(callIndex);
                     expect(ret).to.equal(promise);
                 });
-            },
+            }
         );
     });
 
@@ -174,7 +174,7 @@ describe('PromiseMock', function () {
                     const ret = mock.reject(error, callIndex);
                     expect(ret).to.equal(promise);
                 });
-            },
+            }
         );
     });
 
@@ -240,7 +240,7 @@ describe('PromiseMock', function () {
                     const ret = mock.resolve(data, callIndex);
                     expect(ret).to.equal(promise);
                 });
-            },
+            }
         );
     });
 });

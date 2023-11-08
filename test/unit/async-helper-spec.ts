@@ -2,7 +2,7 @@ import _chai, { expect } from 'chai';
 import _chaiAsPromised from 'chai-as-promised';
 import _sinonChai from 'sinon-chai';
 import 'mocha';
-import {stub} from 'sinon';
+import { stub } from 'sinon';
 
 _chai.use(_chaiAsPromised);
 _chai.use(_sinonChai);
@@ -13,16 +13,7 @@ describe('asyncHelper', () => {
     describe('wait()', () => {
         it('should throw an error if invoked without a valid delay', () => {
             const error = 'Invalid delay specified (arg #1)';
-            const inputs = [
-                undefined,
-                null,
-                'foo',
-                true,
-                {},
-                [],
-                stub(),
-                -1,
-            ];
+            const inputs = [undefined, null, 'foo', true, {}, [], stub(), -1];
 
             inputs.forEach((delay) => {
                 const wrapper = (): (() => Promise<void>) => {

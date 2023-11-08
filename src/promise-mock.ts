@@ -12,8 +12,8 @@ class PromiseWrapper<T> {
     public promise: Promise<T>;
 
     constructor() {
-        let resolveRef: PromiseResolve<T>|undefined;
-        let rejectRef: PromiseReject|undefined;
+        let resolveRef: PromiseResolve<T> | undefined;
+        let rejectRef: PromiseReject | undefined;
         this.promise = new Promise<T>(function (resolve, reject) {
             resolveRef = resolve;
             rejectRef = reject;
