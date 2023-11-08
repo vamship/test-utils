@@ -26,10 +26,8 @@ describe('asyncHelper', () => {
 
             inputs.forEach((delay) => {
                 const wrapper = (): (() => Promise<void>) => {
-                    // @ts-ignore
-                    // We're intentionally passing invalid data to test the
-                    // error.
-                    return _asyncHelper.wait(delay);
+                    /* eslint-disable tsel/no-explicit-any */
+                    return _asyncHelper.wait(delay as any);
                 };
 
                 expect(wrapper).to.throw(error);

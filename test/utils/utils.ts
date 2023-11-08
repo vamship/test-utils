@@ -2,6 +2,7 @@ import _path from 'path';
 import { fileURLToPath } from 'url';
 import _esmock from 'esmock';
 
+/* eslint-disable tsel/no-explicit-any */
 type MockDefinitions = Record<string, any>;
 type Importer<T> = (mocks: MockDefinitions) => Promise<T>;
 

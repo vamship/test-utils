@@ -12,7 +12,7 @@ type MockMap<T> = Record<string, Mock<T, unknown>>;
  */
 export class ObjectMock<T> {
     private _instance: T;
-    private _ctor: (...args: any) => T;
+    private _ctor: (...args: unknown[]) => T;
     private _mocks: MockMap<T>;
     /**
      * @param instance The object instance on which the mocks will be created.
@@ -42,7 +42,7 @@ export class ObjectMock<T> {
      * Returns a reference to the constructor of the mocked object. This is
      * a mock constructor that returns a reference to the object being mocked.
      */
-    get ctor(): (...args: any) => T {
+    get ctor(): (...args: unknown[]) => T {
         return this._ctor;
     }
 

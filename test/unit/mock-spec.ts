@@ -40,6 +40,7 @@ describe('Mock', function () {
                     const { module: TargetModuleType } = await _importModule();
                     const error = 'Invalid instance specified (arg #1)';
 
+                    /* eslint-disable tsel/no-explicit-any */
                     const instance = value as any;
                     const methodName = 'myMethod';
                     const returnValue = 'myMethodResponse';
@@ -63,6 +64,7 @@ describe('Mock', function () {
                     const error = 'Invalid methodName specified (arg #2)';
 
                     const instance = new Mockable();
+                    /* eslint-disable tsel/no-explicit-any */
                     const methodName = value as any;
                     const returnValue = 'myMethodResponse';
                     const wrapper = () => {
@@ -83,18 +85,19 @@ describe('Mock', function () {
 
             const instance = new Mockable();
             const methodName = 'nonExistentMethod';
+            /* eslint-disable tsel/no-explicit-any */
+            const method = (instance as any)[methodName];
 
-            expect((instance as any)[methodName]).to.be.undefined;
+            expect(method).to.be.undefined;
 
             const mock = new TargetModuleType(instance, methodName, 'bar');
 
-            expect((instance as any)[methodName]).to.equal(mock.stub);
+            expect(method).to.equal(mock.stub);
 
             //Duck type verification of a sinon stub.
             expect(mock.stub).to.be.a('function');
             expect(mock.stub.args).to.be.an('array');
             expect(mock.stub.callCount).to.equal(0);
-
 
             // Hacky method to ensure that the dummy method is invoked for test
             // coverage purposes.

@@ -26,8 +26,8 @@ describe('AnyInputList', function () {
         };
     }
 
-    function _checkResults(values: any[], expectedValues: ExpectedValue) {
-        expectedValues.extra = expectedValues.extra;
+    function _checkResults(values: unknown[], expectedValues: ExpectedValue) {
+        expectedValues.extra = expectedValues.extra||[];
         expectedValues.primitives.forEach((item, index) => {
             const value = values[index];
             if (value === null) {
@@ -46,7 +46,8 @@ describe('AnyInputList', function () {
                 expect(values[index + baseIndex]).to.be.empty;
             } else {
                 // The dummy function should return undefined
-                expect(values[index + baseIndex]()).to.be.undefined;
+                const dummy = values[index + baseIndex] as () => unknown;
+                expect(dummy()).to.be.undefined;
             }
         });
 

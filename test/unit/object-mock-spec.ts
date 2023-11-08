@@ -25,8 +25,11 @@ describe('PromiseMock', () => {
 
     type TargetModuleType = typeof ObjectMock<Mockable>;
     type FakeMockInstanceType = {
+        /* eslint-disable tsel/no-explicit-any */
         stub: { restore: SinonSpy<any, any> };
     };
+
+    /* eslint-disable tsel/no-explicit-any */
     type FakeMockType = SinonStub<any, FakeMockInstanceType>;
 
     type ImportResult = {
@@ -247,7 +250,6 @@ describe('PromiseMock', () => {
                 promiseMockInstance,
             } = await _importModule();
 
-            const newRetValue = 'abcd';
             const methodName = 'bar';
             const instance = new Mockable();
             const mock = new TargetModuleType(instance);
@@ -335,11 +337,7 @@ describe('PromiseMock', () => {
         });
 
         it('should delete the mock reference for the method stub if the method has been mocked', async function () {
-            const {
-                testTarget: TargetModuleType,
-                mockMockInstance,
-                promiseMockInstance,
-            } = await _importModule();
+            const { testTarget: TargetModuleType } = await _importModule();
 
             const instance = new Mockable();
 

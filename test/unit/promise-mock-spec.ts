@@ -106,6 +106,7 @@ describe('PromiseMock', function () {
 
                     const mock = new PromiseMock(instance, 'foo');
                     const promise = instance.foo();
+                    /* eslint-disable tsel/no-explicit-any */
                     const callIndex = value as any;
 
                     const ret = mock.promise(callIndex);
@@ -167,6 +168,7 @@ describe('PromiseMock', function () {
                     const promise = instance.foo();
                     promise.catch((ex) => undefined);
 
+                    /* eslint-disable tsel/no-explicit-any */
                     const callIndex = value as any;
 
                     const ret = mock.reject(error, callIndex);
@@ -233,6 +235,7 @@ describe('PromiseMock', function () {
 
                     const promise = instance.foo();
 
+                    /* eslint-disable tsel/no-explicit-any */
                     const callIndex = value as any;
                     const ret = mock.resolve(data, callIndex);
                     expect(ret).to.equal(promise);

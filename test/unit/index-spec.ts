@@ -11,8 +11,6 @@ import * as _testValues from '../../src/test-values.js';
 import { ObjectMock } from '../../src/object-mock.js';
 import * as _index from '../../src/index.js';
 
-import MockModule from '../../src/promise-mock.js';
-
 describe('index', function () {
     it('should implement methods required by the interface', async function () {
         expect(_index.asyncHelper).to.equal(_asyncHelper);
