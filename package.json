@@ -13,6 +13,7 @@
         "test": "cross-env NODE_ENV=test dotenv-load gulp --series clean build test-unit",
         "package": "cross-env NODE_ENV=test dotenv-load gulp --series clean format lint build test-unit package",
         "publish": "gulp publish",
+        "docs": "gulp docs",
         "all": "cross-env NODE_ENV=test dotenv-load gulp --series clean format lint build test-unit clean",
         "watch:build": "gulp watch-build",
         "watch:test": "cross-env NODE_ENV=development dotenv-load gulp watch-test-unit",
@@ -46,7 +47,8 @@
         "gulp": "^4.0.2",
         "mocha": "^10.2.0",
         "sinon": "^16.0.0",
-        "sinon-chai": "^3.7.0"
+        "sinon-chai": "^3.7.0",
+        "typedoc": "^0.25.3"
     },
     "dependencies": {
         "bluebird": "^3.7.2",
