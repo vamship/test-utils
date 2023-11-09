@@ -9,7 +9,7 @@ _chai.use(_sinonChai);
 
 import * as _testValues from '../../src/test-values.js';
 
-import { AnyInputList } from '../../src/test-values';
+import { AnyInputList } from '../../src/test-values.js';
 
 describe('AnyInputList', function () {
     type ExpectedValue = {
