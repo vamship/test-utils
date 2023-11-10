@@ -10,7 +10,7 @@ _chai.use(_sinonChai);
 import { ObjectMock } from '../../src/object-mock.js';
 import { createModuleImporter } from '../utils/utils.js';
 
-describe('PromiseMock', () => {
+describe('ObjectMock', () => {
     // Dummy class that will be mocked during tests.
     class Mockable {
         public static RET_VALUE = '1234';

@@ -8,7 +8,7 @@ _chai.use(_chaiAsPromised);
 _chai.use(_sinonChai);
 
 import { createModuleImporter } from '../utils/utils.js';
-import {Mock} from '../../src/mock.js';
+import { Mock } from '../../src/mock.js';
 
 describe('Mock', function () {
     // Dummy class that will be mocked during tests.
