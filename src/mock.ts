@@ -14,8 +14,8 @@ export type MockResponse<T> = T | ((...args: unknown[]) => T);
  *
  * <p>
  * This class is not meant to be instantiated directly, but is designed for
- * use within the [ObjectMock]{@link ObjectMock} class.
- * </p
+ * use within the {@link ObjectMock} class.
+ * </p>
  * @typeparam T The type of instance that is being mocked.
  * @typeparam U The type of the response returned by the mock.
  */
