@@ -3,7 +3,7 @@
     "display": "Recommended",
 
     "compilerOptions": {
-        "moduleResolution": "NodeNext",
+        "moduleResolution": "bundler",
         "lib": ["es2022"],
         "target": "es2022",
         "module": "es2022",

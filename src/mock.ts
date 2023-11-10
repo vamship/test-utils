@@ -3,6 +3,8 @@ import _sinon, { SinonStub } from 'sinon';
 /**
  * A type that represents the response of a mock. This could be a value, or a
  * function that in turn returns a value.
+ *
+ * @typeparam T The type of the response.
  */
 export type MockResponse<T> = T | ((...args: unknown[]) => T);
 
@@ -17,7 +19,7 @@ export type MockResponse<T> = T | ((...args: unknown[]) => T);
  * @typeparam T The type of instance that is being mocked.
  * @typeparam U The type of the response returned by the mock.
  */
-export default class Mock<T, U> {
+export class Mock<T, U> {
     private _instance: T;
     private _methodName: keyof T;
     private _stub: SinonStub<unknown[], U>;

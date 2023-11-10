@@ -1,4 +1,4 @@
-import Mock from './mock.js';
+import { Mock } from './mock.js';
 
 type PromiseResolve<T> = (value: T | PromiseLike<T>) => void;
 type PromiseReject = (error?: unknown) => void;

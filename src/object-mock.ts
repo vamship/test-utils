@@ -1,8 +1,12 @@
 import _sinon from 'sinon';
-import Mock, { MockResponse } from './mock.js';
+import { Mock, MockResponse } from './mock.js';
 import PromiseMock from './promise-mock.js';
 
-type MockMap<T> = Record<string, Mock<T, unknown>>;
+/**
+ * A map of mock objects, keyed by the method name.
+ * @typeparam T The type of the object being mocked.
+ */
+export type MockMap<T> = Record<string, Mock<T, unknown>>;
 
 /**
  * A mocker object that can be used to selectively mock methods on an existing
@@ -91,7 +95,7 @@ export class ObjectMock<T> {
      */
     addMock<U>(
         methodName: string,
-        returnValue: MockResponse<U>
+        returnValue: MockResponse<U>,
     ): ObjectMock<T> {
         if (typeof methodName !== 'string' || methodName.length <= 0) {
             throw new Error('Invalid methodName specified (arg #1)');
@@ -100,7 +104,7 @@ export class ObjectMock<T> {
         this._mocks[methodName] = new Mock<T, U>(
             this.instance,
             methodName,
-            returnValue
+            returnValue,
         );
         return this;
     }
@@ -121,7 +125,7 @@ export class ObjectMock<T> {
         }
         this._mocks[methodName] = new PromiseMock<T, U>(
             this.instance,
-            methodName
+            methodName,
         );
         return this;
     }

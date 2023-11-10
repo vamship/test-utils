@@ -8,7 +8,7 @@ _chai.use(_chaiAsPromised);
 _chai.use(_sinonChai);
 
 import { createModuleImporter } from '../utils/utils.js';
-import MockModule from '../../src/mock.js';
+import {Mock} from '../../src/mock.js';
 
 describe('Mock', function () {
     // Dummy class that will be mocked during tests.
@@ -18,7 +18,7 @@ describe('Mock', function () {
         }
     }
 
-    type TargetModuleType = typeof MockModule<Mockable, string>;
+    type TargetModuleType = typeof Mock<Mockable, string>;
     type ImportResult = {
         module: TargetModuleType;
     };
@@ -26,7 +26,8 @@ describe('Mock', function () {
     async function _importModule(): Promise<ImportResult> {
         const importModule = createModuleImporter<TargetModuleType>(
             'src/mock.js',
-            {}
+            {},
+            'Mock'
         );
         const module = await importModule({});
 
