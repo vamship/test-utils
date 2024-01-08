@@ -11,24 +11,27 @@ _chai.use(_sinonChai);
 import { createModuleImporter } from '../utils/utils.js';
 import { MockDeclarations, MockImporter } from '../../src/mock-importer.js';
 
-describe.only('MockImporter', function () {
+describe('MockImporter', function () {
     class Mockable {}
     type TargetModuleType = typeof MockImporter<Mockable>;
     type ImportResult = {
         testTarget: TargetModuleType;
         esmockMock: SinonSpy;
+        mockResult: Record<string, any>;
     };
 
     async function _importModule(): Promise<ImportResult> {
         const importModule = createModuleImporter<TargetModuleType>(
-            'src/mock-importer.js',
+            'project://mock-importer.js',
             {
-                esmock: 'src/esmock-wrapper.js',
+                esmock: 'project://esmock-wrapper.js',
             },
             'MockImporter',
         );
 
-        const esmockMock = _sinon.spy();
+        const mockResult = {};
+        const esmockMock = _sinon.stub().resolves(mockResult);
+
         const esmockModule = {
             default: esmockMock,
         };
@@ -40,6 +43,7 @@ describe.only('MockImporter', function () {
         return await {
             testTarget,
             esmockMock,
+            mockResult,
         };
     }
 
@@ -47,8 +51,16 @@ describe.only('MockImporter', function () {
         importPath = '/path/to/module',
         mockDeclarations: MockDeclarations = {},
         memberName = '',
-    ): Promise<{ instance: MockImporter<Mockable>; esmockMock: SinonSpy }> {
-        const { testTarget: ModuleType, esmockMock } = await _importModule();
+    ): Promise<{
+        instance: MockImporter<Mockable>;
+        esmockMock: SinonSpy;
+        mockResult: Record<string, any>;
+    }> {
+        const {
+            testTarget: ModuleType,
+            esmockMock,
+            mockResult,
+        } = await _importModule();
 
         const instance = new ModuleType(
             importPath,
@@ -56,7 +68,7 @@ describe.only('MockImporter', function () {
             memberName,
         );
 
-        return { instance, esmockMock };
+        return { instance, esmockMock, mockResult };
     }
 
     describe('ctor()', function () {
@@ -225,11 +237,16 @@ describe.only('MockImporter', function () {
                 baz: 'path/to/baz',
             },
             memberName = '',
+            srcRoot: string | undefined = undefined,
         ) {
             const { instance, esmockMock } = await _createInstance(
                 importPath,
                 mockDeclarations,
             );
+
+            if (srcRoot) {
+                instance.srcRoot = srcRoot;
+            }
 
             expect(esmockMock).to.not.have.been.called;
 
@@ -265,7 +282,19 @@ describe.only('MockImporter', function () {
             },
         );
 
-        it('should throw an error if the ')
+        it('should throw an error if the mock definition was not previously defined', async function () {
+            const { instance } = await _createInstance(undefined, {
+                foo: 'path/to/foo',
+            });
+            const badMockKey = 'bar';
+
+            const mockDefinitions = {
+                [badMockKey]: {},
+            };
+
+            const error = `Mock was not declared for import [${badMockKey} ]`;
+            expect(instance.import(mockDefinitions)).to.be.rejectedWith(error);
+        });
 
         it('should invoke esmock to import the module specified by the import path', async function () {
             const importPath = 'path/to/module';
@@ -280,9 +309,10 @@ describe.only('MockImporter', function () {
             expect(esmockMock.firstCall.args[2]).to.be.an('object');
         });
 
-        xit('should properly include all mocked library dependencies', async function () {
+        it('should properly include all mocked library dependencies', async function () {
             const importPath = 'path/to/module';
-            const mockDeclarations = {
+            const srcRoot = 'path/to/src/root';
+            const mockDeclarations: MockDeclarations = {
                 foo: 'path/to/foo',
                 bar: 'path/to/bar',
                 baz: 'path/to/baz',
@@ -291,42 +321,109 @@ describe.only('MockImporter', function () {
             const { esmockMock, mockDefinitions } = await _doImport(
                 importPath,
                 mockDeclarations,
+                undefined,
+                srcRoot,
             );
 
             const libs = esmockMock.firstCall.args[1];
             const mockPaths = Object.values(mockDeclarations);
-            const mockKeys = Object.keys(mockDeclarations);
 
             expect(libs).to.contain.all.keys(mockPaths);
-            mockPaths.forEach((path: string) => {
-                const expectedMock = mockDefinitions[path];
+
+            Object.keys(mockDefinitions).forEach((key: string) => {
+                const path = mockDeclarations[key];
+                const expectedMock = mockDefinitions[key];
                 const actualMock = libs[path];
+
+                expect(actualMock).to.equal(expectedMock);
             });
+        });
 
-            // Object.keys(mockDeclarations).forEach((key) => {
-            //     const libPath = mockDeclarations[key];
-            //     expect(libs[libPath]).to.equal(mockDefinitions[`${key}Mock`]);
-            // }
-            //     const { instance, esmockMock } = await _createInstance(
-            //         importPath,
-            //         mockDeclarations,
-            //     );
+        it('should properly resolve import paths for project local imports', async function () {
+            const srcRoot = 'path/to/src/root';
+            const importPath = 'path/to/module';
+            const mockDeclarations: MockDeclarations = {
+                foo: 'project://path/to/foo',
+                bar: 'project://path/to/bar',
+                baz: 'project://path/to/baz',
+            };
+            const resolvePath = (path: string): string =>
+                _path.resolve(srcRoot, path.replace(/^project:\/\//, ''));
 
-            //     const fooMock = {};
-            //     const barMock = {};
-            //     const bazMock = {};
+            const { esmockMock, mockDefinitions } = await _doImport(
+                importPath,
+                mockDeclarations,
+                undefined,
+                srcRoot,
+            );
 
-            //     const result = await instance.import({
-            //         foo: fooMock,
-            //         bar: barMock,
-            //         baz: bazMock,
-            //     });
+            const libs = esmockMock.firstCall.args[1];
+            const mockPaths = Object.values(mockDeclarations).map(resolvePath);
 
-            //     expect(esmockMock.args[0]).to.have.lengthOf(3);
+            expect(libs).to.contain.all.keys(mockPaths);
 
-            //     expect(esmockMock.firstCall.args[0]).to.equal(importPath);
-            //     expect(esmockMock.firstCall.args[1]).to.be.an('object');
-            //     expect(esmockMock.firstCall.args[2]).to.be.an('object');
+            Object.keys(mockDefinitions).forEach((key: string) => {
+                const path = resolvePath(mockDeclarations[key]);
+                const expectedMock = mockDefinitions[key];
+                const actualMock = libs[path];
+
+                expect(actualMock).to.equal(expectedMock);
+            });
+        });
+
+        it('should properly resolve import paths for global imports', async function () {
+            const srcRoot = 'path/to/src/root';
+            const importPath = 'path/to/module';
+            const mockDeclarations: MockDeclarations = {
+                foo: 'global://foo',
+                bar: 'global://bar',
+                baz: 'global://baz',
+            };
+            const resolvePath = (path: string): string =>
+                path.replace(/^global:\/\//, '');
+
+            const { esmockMock, mockDefinitions } = await _doImport(
+                importPath,
+                mockDeclarations,
+                undefined,
+                srcRoot,
+            );
+
+            const globals = esmockMock.firstCall.args[2];
+            const mockPaths = Object.values(mockDeclarations).map(resolvePath);
+
+            expect(globals).to.contain.all.keys(mockPaths);
+
+            Object.keys(mockDefinitions).forEach((key: string) => {
+                const path = resolvePath(mockDeclarations[key]);
+                const expectedMock = mockDefinitions[key];
+                const actualMock = globals[path];
+
+                expect(actualMock).to.equal(expectedMock);
+            });
+        });
+
+        it('should return the default import if no member name was specified', async function () {
+            const { instance, mockResult } = await _createInstance(
+                undefined,
+                undefined, 
+                '',
+            );
+
+            const mockedModule = await instance.import({});
+            expect(mockedModule).to.equal(mockResult);
+        });
+
+        it('should return the specified member if a member name was specified', async function () {
+            const memberName = 'foo';
+            const { instance, mockResult } = await _createInstance(
+                undefined,
+                undefined,
+                memberName,
+            );
+
+            const mockedModule = await instance.import({});
+            expect(mockedModule).to.equal(mockResult[memberName]);
         });
     });
 });

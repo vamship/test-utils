@@ -13,9 +13,9 @@ import _esmock from './esmock-wrapper.js';
  * The `import path` is the path to the dependency that needs to be mocked. It
  * is a non-empty string that supports special prefixes:
  *
- * - `src::` The path is assumed to be relative to the source root of the
+ * - `project://` The path is assumed to be relative to the source root of the
  * project, and can be used to mock modules defined within the project.
- * - `global::` The path is assumed to be a node js global (such as console).
+ * - `global://` The path is assumed to be a node js global (such as console).
  * - All other non prefixed paths are treated as external modules from
  * node_modules.
  */
@@ -146,9 +146,72 @@ export class MockImporter<T> {
             throw new Error('Invalid mockDefinitions (arg #1)');
         }
 
-        const module = _esmock(this._importPath, {
-        }, {});
+        type MockDefinitionMap = {
+            mockKey: string;
+            importPath: string;
+            mockDefinition: any;
+            isSrc: boolean;
+            isGlobal: boolean;
+        };
 
-        return undefined as T;
+        const getActualPath = (path: string): string => {
+            if (path.startsWith('global://')) {
+                return path.replace(/^global:\/\//, '');
+            } else if (path.startsWith('project://')) {
+                return _path.resolve(
+                    this._srcRoot,
+                    path.replace(/^project:\/\//, ''),
+                );
+            } else {
+                return path;
+            }
+        };
+
+        const definitionMap = Object.keys(mockDefinitions).map(
+            (mockKey: string): MockDefinitionMap => {
+                const mockDefinition = mockDefinitions[mockKey];
+                const importPath = this._mockDeclarations[mockKey];
+                if (typeof importPath === 'undefined') {
+                    throw new Error(
+                        `Mock was not declared for import [${mockKey}]`,
+                    );
+                }
+                return {
+                    mockKey,
+                    importPath: getActualPath(importPath),
+                    mockDefinition,
+                    isSrc: importPath.startsWith('project://'),
+                    isGlobal: importPath.startsWith('global://'),
+                };
+            },
+        );
+
+        const libs = definitionMap
+            .filter((mockInfo) => !mockInfo.isGlobal)
+            .reduce(
+                (result: Record<string, any>, mockInfo: MockDefinitionMap) => {
+                    result[mockInfo.importPath] = mockInfo.mockDefinition;
+                    return result;
+                },
+                {},
+            );
+
+        const globals = definitionMap
+            .filter((mockInfo) => mockInfo.isGlobal)
+            .reduce(
+                (result: Record<string, any>, mockInfo: MockDefinitionMap) => {
+                    result[mockInfo.importPath] = mockInfo.mockDefinition;
+                    return result;
+                },
+                {},
+            );
+
+        const importResult = _esmock(this._importPath, libs, globals);
+
+        return (
+            this._memberName === ''
+                ? importResult
+                : importResult[this._memberName]
+        ) as T;
     }
 }
