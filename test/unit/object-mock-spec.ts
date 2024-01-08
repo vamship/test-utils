@@ -42,10 +42,10 @@ describe('ObjectMock', () => {
 
     async function _importModule(): Promise<ImportResult> {
         const importModule = createModuleImporter<TargetModuleType>(
-            'src/object-mock.js',
+            'project://object-mock.js',
             {
-                mockMock: 'src/mock.js',
-                promiseMock: 'src/promise-mock.js',
+                mockMock: 'project://mock.js',
+                promiseMock: 'project://promise-mock.js',
             },
             'ObjectMock'
         );

@@ -24,7 +24,7 @@ describe('PromiseMock', function () {
 
     async function _importModule(): Promise<ImportResult> {
         const importModule = createModuleImporter<TargetModuleType>(
-            'src/promise-mock.js',
+            'project://promise-mock.js',
             {}
         );
         const module = await importModule({});

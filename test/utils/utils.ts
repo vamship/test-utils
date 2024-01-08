@@ -26,12 +26,12 @@ export function createModuleImporter<T>(
     importPaths: Record<string, string>,
     memberName?: string
 ): Importer<T> {
-    const basePath = _path.resolve(fileURLToPath(import.meta.url), '../../../');
+    const basePath = _path.resolve(fileURLToPath(import.meta.url), '../../../src');
     const getActualPath = (path: string): string => {
         if (path.startsWith('global::')) {
             return path.replace(/global::/, '');
-        } else if (path.startsWith('src/')) {
-            return _path.resolve(basePath, path);
+        } else if (path.startsWith('project://')) {
+            return _path.resolve(basePath, path.replace(/^project:\/\//, ''));
         } else {
             return path;
         }
