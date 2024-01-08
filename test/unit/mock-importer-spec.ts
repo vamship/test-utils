@@ -309,6 +309,29 @@ describe('MockImporter', function () {
             expect(esmockMock.firstCall.args[2]).to.be.an('object');
         });
 
+        it('should modify the import path when the project prefix is used', async function () {
+            const importPath = 'project://path/to/module';
+            const srcRoot = 'path/to/src/root';
+            const expectedPath = _path.resolve(
+                srcRoot,
+                importPath.replace(/^project:\/\//, ''),
+            );
+
+            const { esmockMock } = await _doImport(
+                importPath,
+                {},
+                undefined,
+                srcRoot,
+            );
+
+            expect(esmockMock).to.have.been.calledOnce;
+            expect(esmockMock.args[0]).to.have.lengthOf(3);
+
+            expect(esmockMock.firstCall.args[0]).to.equal(expectedPath);
+            expect(esmockMock.firstCall.args[1]).to.be.an('object');
+            expect(esmockMock.firstCall.args[2]).to.be.an('object');
+        });
+
         it('should properly include all mocked library dependencies', async function () {
             const importPath = 'path/to/module';
             const srcRoot = 'path/to/src/root';
@@ -406,7 +429,7 @@ describe('MockImporter', function () {
         it('should return the default import if no member name was specified', async function () {
             const { instance, mockResult } = await _createInstance(
                 undefined,
-                undefined, 
+                undefined,
                 '',
             );
 

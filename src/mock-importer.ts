@@ -88,6 +88,19 @@ export class MockImporter<T> {
         );
     }
 
+    private _getActualPath(path: string): string {
+        if (path.startsWith('global://')) {
+            return path.replace(/^global:\/\//, '');
+        } else if (path.startsWith('project://')) {
+            return _path.resolve(
+                this._srcRoot,
+                path.replace(/^project:\/\//, ''),
+            );
+        } else {
+            return path;
+        }
+    }
+
     /**
      * The path to the root of the project's source files.
      */
@@ -154,19 +167,6 @@ export class MockImporter<T> {
             isGlobal: boolean;
         };
 
-        const getActualPath = (path: string): string => {
-            if (path.startsWith('global://')) {
-                return path.replace(/^global:\/\//, '');
-            } else if (path.startsWith('project://')) {
-                return _path.resolve(
-                    this._srcRoot,
-                    path.replace(/^project:\/\//, ''),
-                );
-            } else {
-                return path;
-            }
-        };
-
         const definitionMap = Object.keys(mockDefinitions).map(
             (mockKey: string): MockDefinitionMap => {
                 const mockDefinition = mockDefinitions[mockKey];
@@ -178,7 +178,7 @@ export class MockImporter<T> {
                 }
                 return {
                     mockKey,
-                    importPath: getActualPath(importPath),
+                    importPath: this._getActualPath(importPath),
                     mockDefinition,
                     isSrc: importPath.startsWith('project://'),
                     isGlobal: importPath.startsWith('global://'),
@@ -206,7 +206,8 @@ export class MockImporter<T> {
                 {},
             );
 
-        const importResult = _esmock(this._importPath, libs, globals);
+        const importPath = this._getActualPath(this._importPath);
+        const importResult = _esmock(importPath, libs, globals);
 
         return (
             this._memberName === ''
