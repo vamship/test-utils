@@ -3,11 +3,16 @@ import { wait } from './async-helper.js';
 /**
  * Interface definition for an enumeration of method steps.
  */
-interface ISteps {
+interface IStep {
     /**
-     * Enumeration value.
+     * The name of the step.
      */
-    [key: string]: () => unknown;
+    stepName: string;
+
+    /**
+     * The resolver function that resolves the step.
+     */
+    resolver: (iteration: number) => Promise<unknown>;
 }
 
 /**
@@ -32,22 +37,25 @@ interface ISteps {
  *  4. Repeat steps 1 - 3
  */
 export class AsyncResolver {
-    // private _resolver: (step: number) => IterableIterator<unknown>;
-    private _steps: ISteps;
+    private _steps: Array<IStep>;
 
     /**
      * Creates a new instance. Individual resolver steps must be registered
      * with the instance before it can be used effectively.
      */
     constructor() {
-        this._steps = {};
+        this._steps = [];
+    }
+
+    private _hasStep(stepName: string): boolean {
+        return !!this._steps.find((step) => step.stepName === stepName);
     }
 
     /**
      * Returns a list of steps available to the controller.
      */
     public get steps(): string[] {
-        return Object.keys(this._steps);
+        return this._steps.map((step) => step.stepName);
     }
 
     /**
@@ -58,39 +66,60 @@ export class AsyncResolver {
      * @param resolver The resolver function that resolves the step.
      * @return The current instance.
      */
-    public registerStep(name: string, resolver: () => unknown): AsyncResolver {
-        this._steps[name] = resolver;
+    public registerStep(
+        stepName: string,
+        resolver: (iteration: number) => Promise<unknown>,
+    ): AsyncResolver {
+        if (!stepName || typeof stepName !== 'string') {
+            throw new Error(`Invalid stepName (arg #1)`);
+        }
+        if (!resolver || typeof resolver !== 'function') {
+            throw new Error(`Invalid resolver (arg #2)`);
+        }
+        if (this._hasStep(stepName)) {
+            throw new Error(`Step is already registered: [${stepName}]`);
+        }
+
+        this._steps.push({ stepName, resolver });
         return this;
     }
 
-    // /**
-    //  * Steps execution forward until the specified step. Will execute actions,
-    //  * chaining them togehter until the specified step is reached. A promise
-    //  * that represents the completion of the final step is returned.
-    //  *
-    //  * @param step The index of the step to execute until.
-    //  * @param iteration An optional iteration value that is indicative of the
-    //  *        test iteration, when the same function is invoked multiple times
-    //  *        within a single test case.
-    //  *
-    //  * @return A promise that represents execution until the specified
-    //  *         step.
-    //  */
-    // public async resolveUntil(
-    //     step: number,
-    //     iteration = 0
-    // ): Promise<unknown | undefined> {
-    //     let index = 0;
-    //     const iterator = this._resolver(iteration);
+    /**
+     * Steps execution forward until the specified step. Will execute actions,
+     * chaining them togehter until the specified step is reached. A promise
+     * that represents the completion of the final step is returned.
+     *
+     * @param stepName The name of the step to resolve until.
+     * @param iteration An optional iteration value that is indicative of the
+     * test iteration, when the same function is invoked multiple times within a
+     * single test case.
+     *
+     * @return A promise that represents execution until the specified step.
+     */
+    public async resolveUntil<T>(stepName: string, iteration = 0): Promise<T> {
+        if (!stepName || typeof stepName !== 'string') {
+            throw new Error(`Invalid stepName (arg #1)`);
+        }
+        if (typeof iteration !== 'number' || iteration < 0) {
+            throw new Error(`Invalid iteration (arg #2)`);
+        }
+        if(this._steps.length === 0) {
+            throw new Error('No steps have been registered');
+        }
+        if (!this._hasStep(stepName)) {
+            throw new Error(`Step is not registered: [${stepName}]`);
+        }
 
-    //     while (index < step) {
-    //         const result = iterator.next();
-    //         await _asyncHelper.wait(1)();
-    //         index++;
-    //         if (result.done) {
-    //             return result.value;
-    //         }
-    //     }
-    //     return undefined;
-    // }
+        let ret: unknown;
+        for(let index = 0; index < this._steps.length; index++) {
+            const step = this._steps[index];
+
+            if (step.stepName !== stepName) {
+                ret = step.resolver(iteration);
+                await wait(1)(undefined);
+            }
+        }
+
+        return ret as Promise<T>;
+    }
 }
