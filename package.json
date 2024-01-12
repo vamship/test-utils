@@ -3,7 +3,7 @@
     "version": "2.5.8",
     "description": "Utility library that provides useful functionality for writing tests",
     "type": "module",
-    "exports": "working/src/index.js",
+    "exports": "./src/index.js",
     "scripts": {
         "clean": "gulp clean",
         "format": "gulp format",
