@@ -3,3 +3,4 @@ export * as testValues from './test-values.js';
 export * from './mock.js';
 export * from './object-mock.js';
 export * from './mock-importer.js';
+export * from './async-resolver.js';

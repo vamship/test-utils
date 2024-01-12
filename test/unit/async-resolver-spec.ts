@@ -11,7 +11,7 @@ _chai.use(_sinonChai);
 import { createModuleImporter } from '../utils/utils.js';
 import { AsyncResolver } from '../../src/async-resolver.js';
 
-describe.only('AsyncResolver', function () {
+describe('AsyncResolver', function () {
     type TargetModuleType = typeof AsyncResolver;
     type ImportResult = {
         testTarget: TargetModuleType;
