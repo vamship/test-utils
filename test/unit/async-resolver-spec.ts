@@ -1,8 +1,7 @@
 import _chai, { expect } from 'chai';
 import _chaiAsPromised from 'chai-as-promised';
-import _sinon, { SinonSpy } from 'sinon';
+import _sinon from 'sinon';
 import _sinonChai from 'sinon-chai';
-import _path from 'path';
 import 'mocha';
 
 _chai.use(_chaiAsPromised);
@@ -21,7 +20,7 @@ describe('AsyncResolver', function () {
         const importModule = createModuleImporter<TargetModuleType>(
             'project://async-resolver.js',
             {},
-            'AsyncResolver'
+            'AsyncResolver',
         );
 
         const testTarget = await importModule({});
@@ -67,10 +66,11 @@ describe('AsyncResolver', function () {
                     const resolver = () => Promise.resolve();
 
                     expect(() => {
+                        /* eslint-disable  tsel/no-explicit-any */
                         instance.registerStep(stepName as any, resolver);
                     }).to.throw(`Invalid stepName (arg #1)`);
                 });
-            }
+            },
         );
 
         [undefined, null, 123, true, [], 'abc', {}].forEach((resolver) => {
@@ -105,7 +105,7 @@ describe('AsyncResolver', function () {
             const stepName = 'step1';
 
             const result = instance.registerStep(stepName, () =>
-                Promise.resolve()
+                Promise.resolve(),
             );
 
             expect(result).to.equal(instance);
@@ -123,10 +123,10 @@ describe('AsyncResolver', function () {
 
                     const iteration = 0;
                     await expect(
-                        instance.resolveUntil(stepName as any, iteration)
+                        instance.resolveUntil(stepName as any, iteration),
                     ).to.be.rejectedWith(`Invalid stepName (arg #1)`);
                 });
-            }
+            },
         );
 
         [null, true, [], 'abc', {}, () => undefined, -1].forEach(
@@ -139,10 +139,10 @@ describe('AsyncResolver', function () {
 
                     instance.registerStep(stepName, () => Promise.resolve());
                     await expect(
-                        instance.resolveUntil(stepName, iteration as any)
+                        instance.resolveUntil(stepName, iteration as any),
                     ).to.be.rejectedWith(`Invalid iteration (arg #2)`);
                 });
-            }
+            },
         );
 
         it('should throw an error if the stepName name is not registered', async function () {
@@ -153,7 +153,7 @@ describe('AsyncResolver', function () {
             instance.registerStep('step0', () => Promise.resolve());
 
             await expect(instance.resolveUntil(stepName, 0)).to.be.rejectedWith(
-                `Step is not registered: [${stepName}]`
+                `Step is not registered: [${stepName}]`,
             );
         });
 
@@ -164,7 +164,7 @@ describe('AsyncResolver', function () {
             const stepName = 'step1';
 
             await expect(instance.resolveUntil(stepName, 0)).to.be.rejectedWith(
-                'No steps have been registered'
+                'No steps have been registered',
             );
         });
 

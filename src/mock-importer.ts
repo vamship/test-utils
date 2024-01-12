@@ -26,6 +26,7 @@ export type MockDeclarations = Record<string, string>;
  * that maps a `mock key` to a mock definition, which is a mock object that
  * replaces the module that would be imported.
  */
+/* eslint-disable  tsel/no-explicit-any */
 export type MockDefinitions = Record<string, any>;
 
 /**
