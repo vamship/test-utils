@@ -68,7 +68,7 @@ export class AsyncResolver {
      */
     public registerStep(
         stepName: string,
-        resolver: (iteration: number) => Promise<unknown>,
+        resolver: (iteration: number) => Promise<unknown>
     ): AsyncResolver {
         if (!stepName || typeof stepName !== 'string') {
             throw new Error(`Invalid stepName (arg #1)`);
@@ -103,7 +103,7 @@ export class AsyncResolver {
         if (typeof iteration !== 'number' || iteration < 0) {
             throw new Error(`Invalid iteration (arg #2)`);
         }
-        if(this._steps.length === 0) {
+        if (this._steps.length === 0) {
             throw new Error('No steps have been registered');
         }
         if (!this._hasStep(stepName)) {
@@ -111,7 +111,7 @@ export class AsyncResolver {
         }
 
         let ret: unknown;
-        for(let index = 0; index < this._steps.length; index++) {
+        for (let index = 0; index < this._steps.length; index++) {
             const step = this._steps[index];
 
             if (step.stepName !== stepName) {

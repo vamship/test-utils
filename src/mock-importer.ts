@@ -61,7 +61,7 @@ export class MockImporter<T> {
     constructor(
         importPath: string,
         mockDeclarations: MockDeclarations,
-        memberName: string = '',
+        memberName: string = ''
     ) {
         if (typeof importPath !== 'string' || importPath.length <= 0) {
             throw new Error('Invalid importPath (arg #1)');
@@ -84,7 +84,7 @@ export class MockImporter<T> {
         this._memberName = memberName;
         this._srcRoot = _path.resolve(
             fileURLToPath(import.meta.url),
-            '../../../',
+            '../../../'
         );
     }
 
@@ -94,7 +94,7 @@ export class MockImporter<T> {
         } else if (path.startsWith('project://')) {
             return _path.resolve(
                 this._srcRoot,
-                path.replace(/^project:\/\//, ''),
+                path.replace(/^project:\/\//, '')
             );
         } else {
             return path;
@@ -173,7 +173,7 @@ export class MockImporter<T> {
                 const importPath = this._mockDeclarations[mockKey];
                 if (typeof importPath === 'undefined') {
                     throw new Error(
-                        `Mock was not declared for import [${mockKey}]`,
+                        `Mock was not declared for import [${mockKey}]`
                     );
                 }
                 return {
@@ -183,7 +183,7 @@ export class MockImporter<T> {
                     isSrc: importPath.startsWith('project://'),
                     isGlobal: importPath.startsWith('global://'),
                 };
-            },
+            }
         );
 
         const libs = definitionMap
@@ -193,7 +193,7 @@ export class MockImporter<T> {
                     result[mockInfo.importPath] = mockInfo.mockDefinition;
                     return result;
                 },
-                {},
+                {}
             );
 
         const globals = definitionMap
@@ -203,7 +203,7 @@ export class MockImporter<T> {
                     result[mockInfo.importPath] = mockInfo.mockDefinition;
                     return result;
                 },
-                {},
+                {}
             );
 
         const importPath = this._getActualPath(this._importPath);

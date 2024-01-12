@@ -26,7 +26,7 @@ describe('MockImporter', function () {
             {
                 esmock: 'project://esmock-wrapper.js',
             },
-            'MockImporter',
+            'MockImporter'
         );
 
         const mockResult = {};
@@ -50,7 +50,7 @@ describe('MockImporter', function () {
     async function _createInstance(
         importPath = '/path/to/module',
         mockDeclarations: MockDeclarations = {},
-        memberName = '',
+        memberName = ''
     ): Promise<{
         instance: MockImporter<Mockable>;
         esmockMock: SinonSpy;
@@ -65,7 +65,7 @@ describe('MockImporter', function () {
         const instance = new ModuleType(
             importPath,
             mockDeclarations,
-            memberName,
+            memberName
         );
 
         return { instance, esmockMock, mockResult };
@@ -88,12 +88,12 @@ describe('MockImporter', function () {
                         new MockImporter(
                             importPath,
                             mockDeclarations,
-                            memberName,
+                            memberName
                         );
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         [undefined, null, 123, true, [], 'foo', () => undefined].forEach(
@@ -112,12 +112,12 @@ describe('MockImporter', function () {
                         new MockImporter(
                             importPath,
                             mockDeclarations,
-                            memberName,
+                            memberName
                         );
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         [null, 123, true, [], {}, () => undefined].forEach((value) => {
@@ -191,11 +191,11 @@ describe('MockImporter', function () {
                 };
                 const { instance } = await _createInstance(
                     '/path/to/module',
-                    mockDeclarations,
+                    mockDeclarations
                 );
 
                 expect(instance.mockDeclarations).to.deep.equal(
-                    mockDeclarations,
+                    mockDeclarations
                 );
             });
 
@@ -205,11 +205,11 @@ describe('MockImporter', function () {
                 };
                 const { instance } = await _createInstance(
                     '/path/to/module',
-                    mockDeclarations,
+                    mockDeclarations
                 );
 
                 expect(instance.mockDeclarations).to.not.equal(
-                    mockDeclarations,
+                    mockDeclarations
                 );
             });
         });
@@ -220,7 +220,7 @@ describe('MockImporter', function () {
                 const { instance } = await _createInstance(
                     '/path/to/module',
                     {},
-                    memberName,
+                    memberName
                 );
 
                 expect(instance.memberName).to.equal(memberName);
@@ -237,11 +237,11 @@ describe('MockImporter', function () {
                 baz: 'path/to/baz',
             },
             memberName = '',
-            srcRoot: string | undefined = undefined,
+            srcRoot: string | undefined = undefined
         ) {
             const { instance, esmockMock } = await _createInstance(
                 importPath,
-                mockDeclarations,
+                mockDeclarations
             );
 
             if (srcRoot) {
@@ -255,7 +255,7 @@ describe('MockImporter', function () {
                     result[key] = _sinon.spy();
                     return result;
                 },
-                {},
+                {}
             );
 
             const importResult = await instance.import(mockDefinitions);
@@ -276,10 +276,10 @@ describe('MockImporter', function () {
                     const mockDefinitions = value as any;
 
                     expect(instance.import(mockDefinitions)).to.be.rejectedWith(
-                        error,
+                        error
                     );
                 });
-            },
+            }
         );
 
         it('should throw an error if the mock definition was not previously defined', async function () {
@@ -314,14 +314,14 @@ describe('MockImporter', function () {
             const srcRoot = 'path/to/src/root';
             const expectedPath = _path.resolve(
                 srcRoot,
-                importPath.replace(/^project:\/\//, ''),
+                importPath.replace(/^project:\/\//, '')
             );
 
             const { esmockMock } = await _doImport(
                 importPath,
                 {},
                 undefined,
-                srcRoot,
+                srcRoot
             );
 
             expect(esmockMock).to.have.been.calledOnce;
@@ -345,7 +345,7 @@ describe('MockImporter', function () {
                 importPath,
                 mockDeclarations,
                 undefined,
-                srcRoot,
+                srcRoot
             );
 
             const libs = esmockMock.firstCall.args[1];
@@ -377,7 +377,7 @@ describe('MockImporter', function () {
                 importPath,
                 mockDeclarations,
                 undefined,
-                srcRoot,
+                srcRoot
             );
 
             const libs = esmockMock.firstCall.args[1];
@@ -409,7 +409,7 @@ describe('MockImporter', function () {
                 importPath,
                 mockDeclarations,
                 undefined,
-                srcRoot,
+                srcRoot
             );
 
             const globals = esmockMock.firstCall.args[2];
@@ -430,7 +430,7 @@ describe('MockImporter', function () {
             const { instance, mockResult } = await _createInstance(
                 undefined,
                 undefined,
-                '',
+                ''
             );
 
             const mockedModule = await instance.import({});
@@ -442,7 +442,7 @@ describe('MockImporter', function () {
             const { instance, mockResult } = await _createInstance(
                 undefined,
                 undefined,
-                memberName,
+                memberName
             );
 
             const mockedModule = await instance.import({});

@@ -49,7 +49,7 @@ describe('ObjectMock', () => {
                 mockMock: 'project://mock.js',
                 promiseMock: 'project://promise-mock.js',
             },
-            'ObjectMock',
+            'ObjectMock'
         );
 
         const mockMockInstance = {
@@ -94,7 +94,7 @@ describe('ObjectMock', () => {
 
                     expect(mock.instance).to.be.an('object').and.to.be.empty;
                 });
-            },
+            }
         );
 
         it('should return a reference to the constructor', async function () {
@@ -124,7 +124,7 @@ describe('ObjectMock', () => {
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         ['badMethod', 'anotherBadMethod'].forEach((value: string) => {
@@ -150,7 +150,7 @@ describe('ObjectMock', () => {
             const methodNames = ['foo', 'bar'];
             const mock = methodNames.reduce(
                 (result, methodName) => result.addMock(methodName, undefined),
-                new TargetModuleType(new Mockable()),
+                new TargetModuleType(new Mockable())
             );
 
             methodNames.forEach((methodName) => {
@@ -178,7 +178,7 @@ describe('ObjectMock', () => {
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         it('should return a reference to the mock object', async function () {
@@ -213,7 +213,7 @@ describe('ObjectMock', () => {
             expect(mockMock).to.have.been.calledWith(
                 instance,
                 methodName,
-                newRetValue,
+                newRetValue
             );
             expect(mock.mocks[methodName]).to.equal(mockMockInstance);
         });
@@ -236,7 +236,7 @@ describe('ObjectMock', () => {
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         it('should return a reference to the mock object', async function () {
@@ -287,7 +287,7 @@ describe('ObjectMock', () => {
 
                     expect(wrapper).to.throw(error);
                 });
-            },
+            }
         );
 
         it('should return a reference to the mock object', async function () {

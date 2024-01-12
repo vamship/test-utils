@@ -21,7 +21,7 @@ describe('AsyncResolver', function () {
         const importModule = createModuleImporter<TargetModuleType>(
             'project://async-resolver.js',
             {},
-            'AsyncResolver',
+            'AsyncResolver'
         );
 
         const testTarget = await importModule({});
@@ -70,7 +70,7 @@ describe('AsyncResolver', function () {
                         instance.registerStep(stepName as any, resolver);
                     }).to.throw(`Invalid stepName (arg #1)`);
                 });
-            },
+            }
         );
 
         [undefined, null, 123, true, [], 'abc', {}].forEach((resolver) => {
@@ -104,7 +104,9 @@ describe('AsyncResolver', function () {
 
             const stepName = 'step1';
 
-            const result = instance.registerStep(stepName, () => Promise.resolve());
+            const result = instance.registerStep(stepName, () =>
+                Promise.resolve()
+            );
 
             expect(result).to.equal(instance);
         });
@@ -121,10 +123,10 @@ describe('AsyncResolver', function () {
 
                     const iteration = 0;
                     await expect(
-                        instance.resolveUntil(stepName as any, iteration),
+                        instance.resolveUntil(stepName as any, iteration)
                     ).to.be.rejectedWith(`Invalid stepName (arg #1)`);
                 });
-            },
+            }
         );
 
         [null, true, [], 'abc', {}, () => undefined, -1].forEach(
@@ -137,10 +139,10 @@ describe('AsyncResolver', function () {
 
                     instance.registerStep(stepName, () => Promise.resolve());
                     await expect(
-                        instance.resolveUntil(stepName, iteration as any),
+                        instance.resolveUntil(stepName, iteration as any)
                     ).to.be.rejectedWith(`Invalid iteration (arg #2)`);
                 });
-            },
+            }
         );
 
         it('should throw an error if the stepName name is not registered', async function () {
@@ -150,9 +152,9 @@ describe('AsyncResolver', function () {
             const stepName = 'step1';
             instance.registerStep('step0', () => Promise.resolve());
 
-            await expect(
-                instance.resolveUntil(stepName, 0)
-            ).to.be.rejectedWith(`Step is not registered: [${stepName}]`);
+            await expect(instance.resolveUntil(stepName, 0)).to.be.rejectedWith(
+                `Step is not registered: [${stepName}]`
+            );
         });
 
         it('should throw an error if no steps have been registered', async function () {
@@ -161,9 +163,9 @@ describe('AsyncResolver', function () {
 
             const stepName = 'step1';
 
-            await expect(
-                instance.resolveUntil(stepName, 0)
-            ).to.be.rejectedWith('No steps have been registered');
+            await expect(instance.resolveUntil(stepName, 0)).to.be.rejectedWith(
+                'No steps have been registered'
+            );
         });
 
         it('should invoke all resolvers up to, but not including the specified stepName', async function () {

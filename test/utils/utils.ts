@@ -26,7 +26,10 @@ export function createModuleImporter<T>(
     importPaths: Record<string, string>,
     memberName?: string
 ): Importer<T> {
-    const basePath = _path.resolve(fileURLToPath(import.meta.url), '../../../src');
+    const basePath = _path.resolve(
+        fileURLToPath(import.meta.url),
+        '../../../src'
+    );
     const getActualPath = (path: string): string => {
         if (path.startsWith('global::')) {
             return path.replace(/global::/, '');
