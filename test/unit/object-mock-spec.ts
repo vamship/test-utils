@@ -1,11 +1,11 @@
-import _chai, { expect } from 'chai';
+import { expect, use as _useWithChai } from 'chai';
 import _chaiAsPromised from 'chai-as-promised';
 import { stub, spy, SinonSpy, SinonStub } from 'sinon';
 import _sinonChai from 'sinon-chai';
 import 'mocha';
 
-_chai.use(_chaiAsPromised);
-_chai.use(_sinonChai);
+_useWithChai(_sinonChai);
+_useWithChai(_chaiAsPromised);
 
 import { ObjectMock } from '../../src/object-mock.js';
 import { createModuleImporter } from '../utils/utils.js';

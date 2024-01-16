@@ -1,4 +1,4 @@
-import _chai, { expect } from 'chai';
+import { expect, use as _useWithChai } from 'chai';
 import _chaiAsPromised from 'chai-as-promised';
 import _sinon, { SinonSpy } from 'sinon';
 import _sinonChai from 'sinon-chai';
@@ -6,8 +6,8 @@ import _path from 'path';
 import _process from 'process';
 import 'mocha';
 
-_chai.use(_chaiAsPromised);
-_chai.use(_sinonChai);
+_useWithChai(_sinonChai);
+_useWithChai(_chaiAsPromised);
 
 import { createModuleImporter } from '../utils/utils.js';
 import { MockDeclarations, MockImporter } from '../../src/mock-importer.js';

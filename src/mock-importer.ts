@@ -208,7 +208,7 @@ export class MockImporter<T> {
             );
 
         const importPath = this._getActualPath(this._importPath);
-        const importResult = _esmock(importPath, libs, globals);
+        const importResult = await _esmock(importPath, libs, globals);
 
         return (
             this._memberName === ''

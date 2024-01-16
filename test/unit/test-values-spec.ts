@@ -1,11 +1,11 @@
-import _chai, { expect } from 'chai';
+import { expect, use as _useWithChai } from 'chai';
 import _chaiAsPromised from 'chai-as-promised';
 import _sinonChai from 'sinon-chai';
 import { stub } from 'sinon';
 import 'mocha';
 
-_chai.use(_chaiAsPromised);
-_chai.use(_sinonChai);
+_useWithChai(_sinonChai);
+_useWithChai(_chaiAsPromised);
 
 import * as _testValues from '../../src/test-values.js';
 
