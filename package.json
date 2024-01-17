@@ -39,7 +39,7 @@
         "@typescript-eslint/parser": "^6.19.0",
         "@vamship/build-utils": "file:../build-utils",
         "c8": "^9.1.0",
-        "chai": "^5.0.0",
+        "chai": "^4.4.1",
         "chai-as-promised": "^7.1.1",
         "cross-env": "^7.0.3",
         "dotenv-load": "^3.0.0",
