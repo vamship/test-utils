@@ -24,11 +24,11 @@ type Importer<T> = (mocks: MockDefinitions) => Promise<T>;
 export function createModuleImporter<T>(
     modulePath: string,
     importPaths: Record<string, string>,
-    memberName?: string
+    memberName?: string,
 ): Importer<T> {
     const basePath = _path.resolve(
         fileURLToPath(import.meta.url),
-        '../../../src'
+        '../../../src',
     );
     const getActualPath = (path: string): string => {
         if (path.startsWith('global::')) {
@@ -46,7 +46,7 @@ export function createModuleImporter<T>(
                 const importPath = importPaths[key];
                 if (!importPath) {
                     throw new Error(
-                        `[Module Importer] Import path not defined for module: ${key}`
+                        `[Module Importer] Import path not defined for module: ${key}`,
                     );
                 }
                 let target = importPath.startsWith('global::')
@@ -57,13 +57,13 @@ export function createModuleImporter<T>(
                 result[target][actualPath] = mockDefs[key];
                 return result;
             },
-            { libs: {}, globals: {} }
+            { libs: {}, globals: {} },
         );
 
         const module = await _esmock(
             _path.resolve(basePath, getActualPath(modulePath)),
             libs,
-            globals
+            globals,
         );
 
         return typeof memberName !== 'string' ? module : module[memberName];

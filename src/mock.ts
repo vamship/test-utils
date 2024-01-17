@@ -58,7 +58,7 @@ export class Mock<T, U> {
 
         this._stub = _sinon.stub(
             this._instance,
-            this._methodName as keyof T
+            this._methodName as keyof T,
         ) as SinonStub<unknown[], U>;
 
         this._stub.callsFake((...args) => {

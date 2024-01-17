@@ -68,7 +68,7 @@ export class AsyncResolver {
      */
     public registerStep(
         stepName: string,
-        resolver: (iteration: number) => Promise<unknown>
+        resolver: (iteration: number) => Promise<unknown>,
     ): AsyncResolver {
         if (!stepName || typeof stepName !== 'string') {
             throw new Error(`Invalid stepName (arg #1)`);

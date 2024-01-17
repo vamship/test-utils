@@ -27,7 +27,7 @@ describe('Mock', function () {
         const importModule = createModuleImporter<TargetModuleType>(
             'project://mock.js',
             {},
-            'Mock'
+            'Mock',
         );
         const module = await importModule({});
 
@@ -49,13 +49,13 @@ describe('Mock', function () {
                         return new TargetModuleType(
                             instance,
                             methodName,
-                            returnValue
+                            returnValue,
                         );
                     };
 
                     expect(wrapper).to.throw(error);
                 });
-            }
+            },
         );
 
         [undefined, null, 123, true, {}, [], () => undefined].forEach(
@@ -72,13 +72,13 @@ describe('Mock', function () {
                         return new TargetModuleType(
                             instance,
                             methodName,
-                            returnValue
+                            returnValue,
                         );
                     };
 
                     expect(wrapper).to.throw(error);
                 });
-            }
+            },
         );
 
         it('should create a dummy method and stub it if the specified method does not exist on the instance', async function () {
@@ -190,7 +190,7 @@ describe('Mock', function () {
                 const mock = new TargetModuleType(
                     new Mockable(),
                     methodName,
-                    ''
+                    '',
                 );
 
                 expect(mock.methodName).to.equal(methodName);
@@ -227,7 +227,7 @@ describe('Mock', function () {
                 const { module: TargetModuleType } = await _importModule();
 
                 const expectedResponses = [1, 2, 3, 4, 5].map((value) =>
-                    value.toString()
+                    value.toString(),
                 );
                 const instance = new Mockable();
                 let counter = 0;
@@ -266,7 +266,7 @@ describe('Mock', function () {
                     const mock = new TargetModuleType(
                         instance,
                         'foo',
-                        returnValue
+                        returnValue,
                     );
                     const ret = instance.foo();
 
