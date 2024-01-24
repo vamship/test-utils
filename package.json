@@ -19,6 +19,10 @@
         "watch:test": "cross-env NODE_ENV=development dotenv-load gulp watch-test-unit",
         "watch:lint": "gulp watch-lint"
     },
+    "engines": {
+        "node": ">= 20.11.0",
+        "npm": ">= 10.2.4"
+    },
     "files": [
         "package.json",
         "LICENSE",
