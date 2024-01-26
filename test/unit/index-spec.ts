@@ -9,7 +9,7 @@ _useWithChai(_chaiAsPromised);
 import * as _asyncHelper from '../../src/async-helper.js';
 import * as _testValues from '../../src/test-values.js';
 import { Mock } from '../../src/mock.js';
-import { MockImporter } from '../../src/mock-importer.js';
+import { MockImportHelper } from '../../src/mock-import-helper.js';
 import { AsyncResolver } from '../../src/async-resolver.js';
 import { ObjectMock } from '../../src/object-mock.js';
 import * as _index from '../../src/index.js';
@@ -20,7 +20,7 @@ describe('index', function () {
         expect(_index.testValues).to.equal(_testValues);
         expect(_index.ObjectMock).to.equal(ObjectMock);
         expect(_index.Mock).to.equal(Mock);
-        expect(_index.MockImporter).to.equal(MockImporter);
+        expect(_index.MockImportHelper).to.equal(MockImportHelper);
         expect(_index.AsyncResolver).to.equal(AsyncResolver);
     });
 });

@@ -116,6 +116,11 @@ describe('MockImportHelper', function () {
                     expected: _path.resolve('path/to/module'),
                 },
                 {
+                    srcRoot: 'file:///src',
+                    importPath: './path/to/module',
+                    expected: '/src/path/to/module',
+                },
+                {
                     srcRoot: 'src',
                     importPath: '/path/to/module',
                     expected: '/path/to/module',

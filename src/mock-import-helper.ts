@@ -1,4 +1,5 @@
 import _path from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * Declarations of dependencies that need to be mocked. These are specified by
@@ -85,7 +86,9 @@ export class MockImportHelper<T> {
 
         this._importPath = importPath;
         this._mockDeclarations = mockDeclarations;
-        this._srcRoot = srcRoot;
+        this._srcRoot = srcRoot.startsWith('file://')
+            ? fileURLToPath(srcRoot)
+            : srcRoot;
     }
 
     private _getActualPath(path: string): string {
