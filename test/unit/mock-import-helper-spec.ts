@@ -256,6 +256,47 @@ describe('MockImportHelper', function () {
         });
     });
 
+    describe('clearAllMocks()', function () {
+        it('should do nothing if there are no mock registrations', async function () {
+            const instance = _createInstance();
+
+            /// WARNING: This is a private member access. Should be used for
+            //testing only.
+            expect(Object.keys(instance['_mockDefinitions']))
+                .to.be.an('array')
+                .of.length(0);
+
+            instance.clearAllMocks();
+
+            /// WARNING: This is a private member access. Should be used for
+            //testing only.
+            expect(Object.keys(instance['_mockDefinitions']))
+                .to.be.an('array')
+                .of.length(0);
+        });
+
+        it('should clear all mock registrations', async function () {
+            const instance = _createInstance();
+
+            instance.setMock('foo', {}).setMock('bar', {}).setMock('baz', {});
+            instance.clearAllMocks();
+
+            /// WARNING: This is a private member access. Should be used for
+            //testing only.
+            expect(Object.keys(instance['_mockDefinitions']))
+                .to.be.an('array')
+                .of.length(0);
+        });
+
+        it('should return an instance of the helper if the mock key was valid', async function () {
+            const instance = _createInstance();
+
+            const ret = instance.clearAllMocks();
+
+            expect(ret).to.equal(instance);
+        });
+    });
+
     describe('getLibs()', function () {
         it('should return an empty object if no mocks were registered', async function () {
             const srcRoot = 'src';

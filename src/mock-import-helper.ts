@@ -172,6 +172,17 @@ export class MockImportHelper<T> {
     }
 
     /**
+     * Clears all mocks that are currently set on the importer. Returns the
+     * helper object to allow chaining of calls.
+     */
+    public clearAllMocks(): MockImportHelper<T> {
+        Object.keys(this._mockDefinitions).forEach((mockKey: string) => {
+            delete this._mockDefinitions[mockKey];
+        });
+        return this;
+    }
+
+    /**
      * Gets mock definitions for libraries and local modules. These definitions
      * will only include mocks that were set using the `setMock` method.
      */
