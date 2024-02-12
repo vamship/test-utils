@@ -22,7 +22,7 @@ export class ObjectMock<T> {
      * @param instance The object instance on which the mocks will be created.
      * If omitted, a default empty object will be used.
      */
-    constructor(instance: T) {
+    constructor(instance?: T) {
         if (
             !instance ||
             instance instanceof Array ||
