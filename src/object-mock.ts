@@ -1,6 +1,7 @@
 import _sinon from 'sinon';
 import { Mock, MockResponse } from './mock.js';
 import PromiseMock from './promise-mock.js';
+import { SinonStub } from 'sinon';
 
 /**
  * A map of mock objects, keyed by the method name.
@@ -16,7 +17,7 @@ export type MockMap<T> = Record<string, Mock<T, unknown>>;
  */
 export class ObjectMock<T> {
     private _instance: T;
-    private _ctor: (...args: unknown[]) => T;
+    private _ctor: SinonStub<unknown[], T>;
     private _mocks: MockMap<T>;
     /**
      * @param instance The object instance on which the mocks will be created.
@@ -46,7 +47,7 @@ export class ObjectMock<T> {
      * Returns a reference to the constructor of the mocked object. This is
      * a mock constructor that returns a reference to the object being mocked.
      */
-    get ctor(): (...args: unknown[]) => T {
+    get ctor(): SinonStub<unknown[], T> {
         return this._ctor;
     }
 
