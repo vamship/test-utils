@@ -161,6 +161,60 @@ describe('ObjectMock', () => {
         });
     });
 
+    describe('getPromiseMock()', function () {
+        [undefined, null, 123, '', true, [], {}, () => undefined].forEach(
+            (value) => {
+                it(`should throw an error if invoked without a valid methodName (value=${value})`, async function () {
+                    const { testTarget: TargetModuleType } =
+                        await _importModule();
+
+                    const error = 'Invalid methodName (arg #1)';
+                    const methodName = value as any;
+
+                    const wrapper = () => {
+                        const mock = new TargetModuleType(new Mockable());
+                        return mock.getPromiseMock(methodName);
+                    };
+
+                    expect(wrapper).to.throw(error);
+                });
+            },
+        );
+
+        ['badMethod', 'anotherBadMethod'].forEach((value: string) => {
+            it(`should throw an error if the method has not been mocked (value=${value})`, async function () {
+                const { testTarget: TargetModuleType } = await _importModule();
+
+                const mock = new TargetModuleType(new Mockable());
+                const methodName = value as string;
+
+                const error = `Method has not been mocked [${methodName}]`;
+                const wrapper = () => {
+                    return mock.getPromiseMock(methodName);
+                };
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        it('should return the mock for the method name', async function () {
+            const { testTarget: TargetModuleType, mockMockInstance } =
+                await _importModule();
+
+            const methodNames = ['foo', 'bar'];
+            const mock = methodNames.reduce(
+                (result, methodName) => result.addMock(methodName, undefined),
+                new TargetModuleType(new Mockable()),
+            );
+
+            methodNames.forEach((methodName) => {
+                const methodMock = mock.getPromiseMock(methodName);
+                expect(methodMock).to.be.an('object');
+                expect(methodMock).to.equal(mockMockInstance);
+            });
+        });
+    });
+
     describe('addMock()', function () {
         [undefined, null, 123, '', true, [], {}, () => undefined].forEach(
             (value) => {

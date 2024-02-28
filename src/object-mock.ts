@@ -83,6 +83,22 @@ export class ObjectMock<T> {
     }
 
     /**
+     * Utility method that returns a mock object for the specified method, type
+     * cast to a promise mock.
+     *
+     * @param methodName The name of the method to be mocked. If the method does
+     * not exist, an error will be thrown.
+     *
+     * @typeparam U The return type of the mocked method.
+     *
+     * @return The mock associated with the specified method, type cast to a
+     * promise mock.
+     */
+    getPromiseMock<U>(methodName: string): PromiseMock<T, U> {
+        return this.getMock(methodName) as PromiseMock<T, U>;
+    }
+
+    /**
      * Adds a mock for the specified method.
      *
      * @param methodName The name of the method to be mocked. If the method does
