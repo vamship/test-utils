@@ -23,6 +23,12 @@ describe('ObjectMock', () => {
         }
     }
 
+    class MultiArgMockable extends Mockable {
+        constructor(arg1: string, arg2: string) {
+            super();
+        }
+    }
+
     type TargetModuleType = typeof ObjectMock<Mockable>;
     type FakeMockInstanceType = {
         /* eslint-disable tsel/no-explicit-any */
@@ -104,6 +110,79 @@ describe('ObjectMock', () => {
             const mock = new TargetModuleType(instance);
 
             expect(mock.ctor()).to.equal(instance);
+        });
+    });
+
+    describe('classDef', function () {
+        it('should return a constructor function', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
+
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
+
+            expect(mock.classDef).to.be.a('function');
+        });
+
+        it('should invoke the constructor stub with new when a new instance is created', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
+
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
+
+            expect(mock.classDef.stub).to.not.have.been.called;
+
+            const MockCtor = mock.classDef as unknown as typeof Mockable;
+            new MockCtor();
+
+            expect(mock.classDef.stub).to.have.been.calledWithExactly();
+            expect(mock.classDef.stub).to.have.been.calledWithNew;
+        });
+
+        it('should invoke the constructor stub without new when the function is created without new', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
+
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
+
+            expect(mock.classDef.stub).to.not.have.been.called;
+
+            mock.classDef();
+
+            expect(mock.classDef.stub).to.have.been.calledWithExactly();
+            expect(mock.classDef.stub).to.not.have.been.calledWithNew;
+        });
+
+        it('should pass through arguments to the constructor stub', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
+
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
+
+            expect(mock.classDef.stub).to.not.have.been.called;
+
+            const MockCtor =
+                mock.classDef as unknown as typeof MultiArgMockable;
+            new MockCtor('foo', 'bar');
+
+            expect(mock.classDef.stub).to.have.been.calledOnceWithExactly(
+                'foo',
+                'bar',
+            );
+            expect(mock.classDef.stub).to.have.been.calledWithNew;
+        });
+
+        it('should allow the creation of an object that uses the prototype of the mocked object', async function () {
+            const { testTarget: TargetModuleType } = await _importModule();
+
+            const instance = new Mockable();
+            const mock = new TargetModuleType(instance);
+
+            const MockCtor = mock.classDef as unknown as typeof Mockable;
+            const newInstance = new MockCtor();
+
+            expect(newInstance).to.be.an('object');
+            expect(newInstance.foo).to.be.a('function');
+            expect(newInstance.bar).to.be.a('function');
         });
     });
 

@@ -10,6 +10,27 @@ import { SinonStub } from 'sinon';
 export type MockMap<T> = Record<string, Mock<T, unknown>>;
 
 /**
+ * Interface for mocked class types.
+ */
+export interface MockedClass<T> {
+    /**
+     * The constructor of the mocked class.
+     */
+    (...args: unknown[]): void;
+
+    /**
+     * The prototype of the mocked class.
+     */
+    prototype: T;
+
+    /**
+     * Reference to a stub that can be used to check if the constructor was
+     * invoked.
+     */
+    stub: SinonStub<unknown[], T>;
+}
+
+/**
  * A mocker object that can be used to selectively mock methods on an existing
  * object, or to create a new object with mock methods for testing.
  *
@@ -19,6 +40,8 @@ export class ObjectMock<T> {
     private _instance: T;
     private _ctor: SinonStub<unknown[], T>;
     private _mocks: MockMap<T>;
+    private _classDef: MockedClass<T>;
+
     /**
      * @param instance The object instance on which the mocks will be created.
      * If omitted, a default empty object will be used.
@@ -31,9 +54,30 @@ export class ObjectMock<T> {
         ) {
             instance = {} as T;
         }
+        const ctorStub = _sinon.stub().returns(instance);
+        const classDef: MockedClass<T> = function (...args: unknown[]): void {
+            if (!new.target) {
+                ctorStub(...args);
+            } else {
+                /* eslint-disable-next-line tsel/no-explicit-any */
+                new (ctorStub as any)(...args);
+            }
+        };
+        classDef.prototype = instance;
+        classDef.stub = ctorStub;
+
         this._instance = instance;
-        this._ctor = _sinon.stub().returns(this._instance);
+        this._ctor = ctorStub;
         this._mocks = {};
+        this._classDef = classDef;
+    }
+
+    /**
+     * Gets a reference to the constructor of the mocked object. This method
+     * should be preferred over {@link ctor}.
+     */
+    get classDef(): MockedClass<T> {
+        return this._classDef;
     }
 
     /**
@@ -46,6 +90,8 @@ export class ObjectMock<T> {
     /**
      * Returns a reference to the constructor of the mocked object. This is
      * a mock constructor that returns a reference to the object being mocked.
+     *
+     * @deprecated Use {@link classDef} instead.
      */
     get ctor(): SinonStub<unknown[], T> {
         return this._ctor;
