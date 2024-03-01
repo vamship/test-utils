@@ -116,7 +116,9 @@ export class AsyncResolver {
 
             if (step.stepName !== stepName) {
                 ret = step.resolver(iteration);
-                await wait(1)(undefined);
+                await wait(1);
+            } else {
+                break;
             }
         }
 

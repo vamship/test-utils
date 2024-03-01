@@ -176,20 +176,24 @@ describe('AsyncResolver', function () {
             const step1 = 'step1';
             const step2 = 'step2';
             const step3 = 'step3';
+            const step4 = 'step4';
 
             const resolver1 = _sinon.spy(() => Promise.resolve());
             const resolver2 = _sinon.spy(() => Promise.resolve());
             const resolver3 = _sinon.spy(() => Promise.resolve());
+            const resolver4 = _sinon.spy(() => Promise.resolve());
 
             instance.registerStep(step1, resolver1);
             instance.registerStep(step2, resolver2);
             instance.registerStep(step3, resolver3);
+            instance.registerStep(step4, resolver4);
 
             await instance.resolveUntil(step3, iteration);
 
             expect(resolver1).to.have.been.calledOnceWithExactly(iteration);
             expect(resolver2).to.have.been.calledOnceWithExactly(iteration);
             expect(resolver3).to.not.have.been.called;
+            expect(resolver4).to.not.have.been.called;
         });
 
         it('should default the iteration to 0 if omitted', async function () {
