@@ -31,7 +31,9 @@ describe('asyncHelper', () => {
         });
 
         describe('[response]', () => {
-            function _initWaiter<T>(delay = 10): (data: T) => Promise<T> {
+            function _initWaiter<T>(
+                delay = 10,
+            ): (data?: T) => Promise<T | void> {
                 return _asyncHelper.wait(delay);
             }
 

@@ -18,11 +18,11 @@
  * @return A function that returns a romise that will be resolved once the delay
  *         expires.
  */
-export function wait<T>(delay: number): (data: T) => Promise<T> {
+export function wait<T>(delay: number): (data?: T) => Promise<T | void> {
     if (typeof delay !== 'number' || delay <= 0) {
         throw new Error('Invalid delay specified (arg #1)');
     }
-    return (data: T) => {
+    return (data?: T): Promise<T | void> => {
         return new Promise((resolve) => setTimeout(() => resolve(data), delay));
     };
 }
