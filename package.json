@@ -33,30 +33,29 @@
     "author": "Vamshi K Ponnapalli <vamshi.ponnapalli@gmail.com>",
     "license": "MIT",
     "devDependencies": {
-        "@types/chai": "^4.3.11",
+        "@types/chai": "^4.3.14",
         "@types/chai-as-promised": "^7.1.8",
         "@types/mocha": "^10.0.6",
-        "@types/node": "^20.11.6",
+        "@types/node": "^20.12.4",
         "@types/sinon": "^17.0.3",
         "@types/sinon-chai": "^3.2.12",
-        "@typescript-eslint/eslint-plugin": "^6.19.1",
-        "@typescript-eslint/parser": "^6.19.1",
+        "@typescript-eslint/eslint-plugin": "^7.5.0",
+        "@typescript-eslint/parser": "^7.5.0",
         "@vamship/build-utils": "file:../build-utils",
         "c8": "^9.1.0",
         "chai": "^4.4.1",
         "chai-as-promised": "^7.1.1",
         "cross-env": "^7.0.3",
         "dotenv-load": "^3.0.0",
-        "esmock": "^2.6.3",
-        "gulp": "^4.0.2",
-        "mocha": "^10.2.0",
+        "esmock": "^2.6.4",
+        "gulp": "^5.0.0",
+        "mocha": "^10.4.0",
         "sinon": "^17.0.1",
         "sinon-chai": "^3.7.0",
-        "typedoc": "^0.25.7"
+        "typedoc": "^0.25.12"
     },
     "dependencies": {
-        "bluebird": "^3.7.2",
-        "nanoid": "^5.0.4"
+        "nanoid": "^5.0.6"
     },
     "repository": {
         "type": "git",
