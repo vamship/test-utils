@@ -89,6 +89,7 @@ describe('Mock', function () {
             /* eslint-disable tsel/no-explicit-any */
             const method = (instance as any)[methodName];
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(method).to.be.undefined;
 
             const mock = new TargetModuleType(instance, methodName, 'bar');
@@ -102,6 +103,7 @@ describe('Mock', function () {
             // coverage purposes.
             _sinon.restore();
             const dummy = (instance as any)[methodName] as () => void;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(dummy()).to.be.undefined;
         });
 
@@ -140,10 +142,12 @@ describe('Mock', function () {
             const args = ['abc', 123, true];
             new TargetModuleType(instance, 'foo', spy);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(spy).to.not.have.been.called;
 
             const ret = instance.foo(...args);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(spy).to.have.been.calledOnce;
             expect(spy).to.have.been.calledWith(...args);
             expect(ret).to.equal(response);

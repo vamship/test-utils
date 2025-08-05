@@ -243,6 +243,7 @@ describe('MockImportHelper', function () {
 
             /// WARNING: This is a private member access. Should be used for
             //testing only.
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(instance['_mockDefinitions'][mockKey]).to.be.undefined;
         });
 
@@ -308,6 +309,7 @@ describe('MockImportHelper', function () {
             const instance = _createInstance(undefined, declarations, srcRoot);
             const ret = instance.getLibs();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(ret).to.be.an('object').that.is.empty;
         });
 
@@ -322,6 +324,7 @@ describe('MockImportHelper', function () {
             instance.setMock('baz', {});
             const ret = instance.getLibs();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(ret).to.be.an('object').that.is.empty;
         });
 
@@ -363,6 +366,7 @@ describe('MockImportHelper', function () {
             const instance = _createInstance(undefined, declarations, srcRoot);
             const ret = instance.getGlobals();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(ret).to.be.an('object').that.is.empty;
         });
 
@@ -378,6 +382,7 @@ describe('MockImportHelper', function () {
             instance.setMock('bar', {});
             const ret = instance.getGlobals();
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(ret).to.be.an('object').that.is.empty;
         });
 

@@ -23,6 +23,7 @@ describe('ObjectMock', () => {
         }
     }
 
+    //eslint-disable-next-line tsel/no-unused-vars
     class MultiArgMockable extends Mockable {
         constructor(arg1: string, arg2: string) {
             super();
@@ -98,6 +99,7 @@ describe('ObjectMock', () => {
 
                     const mock = new TargetModuleType(instance);
 
+                    //eslint-disable-next-line tsel/no-unused-expressions
                     expect(mock.instance).to.be.an('object').and.to.be.empty;
                 });
             },
@@ -129,12 +131,14 @@ describe('ObjectMock', () => {
             const instance = new Mockable();
             const mock = new TargetModuleType(instance);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mock.classDef.stub).to.not.have.been.called;
 
             const MockCtor = mock.classDef as unknown as typeof Mockable;
             new MockCtor();
 
             expect(mock.classDef.stub).to.have.been.calledWithExactly();
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mock.classDef.stub).to.have.been.calledWithNew;
         });
 
@@ -144,11 +148,13 @@ describe('ObjectMock', () => {
             const instance = new Mockable();
             const mock = new TargetModuleType(instance);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mock.classDef.stub).to.not.have.been.called;
 
             mock.classDef();
 
             expect(mock.classDef.stub).to.have.been.calledWithExactly();
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mock.classDef.stub).to.not.have.been.calledWithNew;
         });
 
@@ -158,6 +164,7 @@ describe('ObjectMock', () => {
             const instance = new Mockable();
             const mock = new TargetModuleType(instance);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mock.classDef.stub).to.not.have.been.called;
 
             const MockCtor =
@@ -168,6 +175,7 @@ describe('ObjectMock', () => {
                 'foo',
                 'bar',
             );
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mock.classDef.stub).to.have.been.calledWithNew;
         });
 
@@ -337,11 +345,14 @@ describe('ObjectMock', () => {
             const mock = new TargetModuleType(instance);
 
             expect(mock.mocks).to.deep.equal({});
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mockMock).to.not.have.been.called;
 
             mock.addMock(methodName, newRetValue);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mockMock).to.have.been.calledOnce;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mockMock).to.have.been.calledWithNew;
             expect(mockMock).to.have.been.calledWith(
                 instance,
@@ -393,11 +404,14 @@ describe('ObjectMock', () => {
             const mock = new TargetModuleType(instance);
 
             expect(mock.mocks).to.deep.equal({});
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(promiseMock).to.not.have.been.called;
 
             mock.addPromiseMock(methodName);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(promiseMock).to.have.been.calledOnce;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(promiseMock).to.have.been.calledWithNew;
             expect(promiseMock).to.have.been.calledWith(instance, methodName);
             expect(mock.mocks[methodName]).to.equal(promiseMockInstance);
@@ -461,16 +475,21 @@ describe('ObjectMock', () => {
             const mockRestoreStub = mockMockInstance.stub.restore;
             const promiseMockRestoreStub = promiseMockInstance.stub.restore;
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mockRestoreStub).to.not.have.been.called;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(promiseMockRestoreStub).to.not.have.been.called;
 
             mock.restore('foo');
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(mockRestoreStub).to.have.been.calledOnce;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(promiseMockRestoreStub).to.not.have.been.called;
 
             mock.restore('bar');
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(promiseMockRestoreStub).to.have.been.calledOnce;
         });
 

@@ -37,6 +37,7 @@ describe('AsyncResolver', function () {
                 const instance = new TargetModuleType();
 
                 expect(instance.steps).to.be.an('array');
+                //eslint-disable-next-line tsel/no-unused-expressions
                 expect(instance.steps).to.be.empty;
             });
 
@@ -192,7 +193,9 @@ describe('AsyncResolver', function () {
 
             expect(resolver1).to.have.been.calledOnceWithExactly(iteration);
             expect(resolver2).to.have.been.calledOnceWithExactly(iteration);
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(resolver3).to.not.have.been.called;
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(resolver4).to.not.have.been.called;
         });
 
@@ -216,6 +219,7 @@ describe('AsyncResolver', function () {
 
             expect(resolver1).to.have.been.calledOnceWithExactly(0);
             expect(resolver2).to.have.been.calledOnceWithExactly(0);
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(resolver3).to.not.have.been.called;
         });
     });

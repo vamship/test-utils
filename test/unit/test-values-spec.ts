@@ -43,10 +43,12 @@ describe('AnyInputList', function () {
         expectedValues.complex.forEach((itemType, index) => {
             expect(values[baseIndex + index]).to.be.an(itemType);
             if (itemType !== 'function') {
+                //eslint-disable-next-line tsel/no-unused-expressions
                 expect(values[index + baseIndex]).to.be.empty;
             } else {
                 // The dummy function should return undefined
                 const dummy = values[index + baseIndex] as () => unknown;
+                //eslint-disable-next-line tsel/no-unused-expressions
                 expect(dummy()).to.be.undefined;
             }
         });
@@ -340,11 +342,13 @@ describe('AnyInputList', function () {
             const expectedPrefix = 'foo';
             const ret = _testValues.getString(expectedPrefix);
 
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(ret).to.be.a('string').and.not.to.be.empty;
             const { tokens, prefix, suffix } = _split(ret);
 
             expect(tokens.length).to.be.at.least(2);
             expect(prefix).to.equal(expectedPrefix);
+            //eslint-disable-next-line tsel/no-unused-expressions
             expect(suffix).to.be.a('string').and.not.to.be.empty;
         });
 
@@ -375,6 +379,7 @@ describe('AnyInputList', function () {
             inputs.forEach((prefix) => {
                 const ret = _testValues.getString(prefix);
 
+                //eslint-disable-next-line tsel/no-unused-expressions
                 expect(ret.startsWith('undefined')).to.be.false;
                 expect(ret.substr(0, 1)).to.not.equal('_');
             });
